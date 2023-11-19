@@ -12,6 +12,8 @@ const {
 const {
   updateUserProfileController,
   getUserProfileController,
+  tutorProfileUpdateController,
+  profileImageController,
 } = require("./controllers/profile.controller")
 const { createUser } = require("../../validations/users/createUser.validation")
 const { loginValidation } = require("../../validations/users/loginValidation")
@@ -31,8 +33,14 @@ userRoute.use(isAuthenticated)
 
 userRoute.patch(
   "/update/:id",
-  uploadManager("image").single("profileImage"),
+  uploadManager("image").array("image"),
   updateUserProfileController
+)
+
+userRoute.patch(
+  "/profile-image",
+  uploadManager("profile").single("image"),
+  profileImageController
 )
 
 module.exports = userRoute

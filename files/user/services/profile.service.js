@@ -19,13 +19,19 @@ const {
 class ProfileService {
   static async updateProfileService(id, payload) {
     const { body, image } = payload
-
     delete body.email
+    delete body.password
 
-    const userprofile = await UserRepository.updateUserById(id, {
-      profileImage: image,
-      ...body,
-    })
+    const userprofile = await UserRepository.updateUserDetails(
+      { _id: new mongoose.Types.ObjectId(id) },
+      {
+        $set: {
+          "tutorEducationDetails.educationDoc": image[0],
+          "tutorEducationDetails.nationalId": image[1],
+          ...body,
+        },
+      }
+    )
 
     if (!userprofile) return { success: false, msg: UserFailure.UPDATE }
 
@@ -35,18 +41,24 @@ class ProfileService {
     }
   }
 
-  static async profileImage(payload, locals) {
+  static async profileImageService(payload, id) {
     const { image } = payload
-    const updateUser = await UserRepository.updateUserProfile(
-      { _id: locals._id },
+
+    const userprofile = await UserRepository.updateUserDetails(
+      { _id: new mongoose.Types.ObjectId(id) },
       {
-        profileImage: image,
+        $set: {
+          profileImage: image,
+        },
       }
     )
 
-    if (!updateUser) return { success: false, msg: UserFailure.FETCH }
+    if (!userprofile) return { success: false, msg: UserFailure.UPDATE }
 
-    return { success: true, msg: ProfileSuccess.UPDATE }
+    return {
+      success: true,
+      msg: UserSuccess.UPDATE,
+    }
   }
 
   static async getUserService(userPayload) {

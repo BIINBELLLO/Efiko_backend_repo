@@ -24,7 +24,19 @@ const userLoginController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const studentLoginCodeController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    UserService.studentUserLogin(req.body)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   createUserController,
-  userLoginController,
+  userLoginController, studentLoginCodeController
 }

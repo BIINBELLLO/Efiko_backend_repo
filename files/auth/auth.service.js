@@ -23,7 +23,7 @@ class AuthService {
 
     if (!confirmOtp) return { success: false, msg: AuthFailure.VERIFY_OTP }
 
-    if ((confirmOtp.isVerified))
+    if (confirmOtp.isVerified)
       return { success: false, msg: AuthFailure.VERIFIED }
 
     confirmOtp.isVerified = true
@@ -112,6 +112,36 @@ class AuthService {
       msg: AuthSuccess.OTP_SENT,
       otp: otp,
     }
+  }
+
+  static async studentLoginCode(payload) {
+    const { email } = payload
+    const user = await UserRepository.findSingleUserWithParams({
+      email: email,
+      accountType: "student",
+    })
+
+    if (!user) return { success: false, msg: AuthFailure.FETCH }
+
+    const { otp, expiry } = generateOtp()
+
+    //save otp to compare
+    user.loginCode = otp
+    await user.save()
+
+    /**send otp to email or phone number*/
+    const substitutional_parameters = {
+      loginCode: otp,
+    }
+
+    await sendMailNotification(
+      email,
+      "Login Code",
+      substitutional_parameters,
+      "LOGIN_CODE"
+    )
+
+    return { success: true, msg: AuthSuccess.OTP_SENT }
   }
 }
 

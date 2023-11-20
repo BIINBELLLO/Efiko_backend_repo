@@ -50,9 +50,22 @@ const verifyOtpController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const loginCodeController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    AuthService.studentLoginCode(req.body)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 module.exports = {
   verifyUserController,
   forgotPasswordController,
   resetPasswordController,
   verifyOtpController,
+  loginCodeController,
 }

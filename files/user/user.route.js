@@ -8,6 +8,7 @@ const { validate } = require("../../validations/validate")
 const {
   createUserController,
   userLoginController,
+  studentLoginCodeController,
 } = require("../user/controllers/user.controller")
 const {
   updateUserProfileController,
@@ -26,6 +27,8 @@ userRoute
 userRoute
   .route("/login")
   .post(validate(checkSchema(loginValidation)), userLoginController)
+
+userRoute.route("/student-login").post(studentLoginCodeController)
 
 userRoute.route("/").get(getUserProfileController)
 

@@ -96,5 +96,47 @@ class UserService {
       data: user,
     }
   }
+
+  static async studentUserLogin(payload) {
+    const { loginCode } = payload
+
+    //return result
+    const userProfile = await UserRepository.findSingleUserWithParams({
+      loginCode: loginCode,
+      accountType: "student",
+    })
+
+    if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
+
+    userProfile.loginCode = ""
+
+    userProfile.save()
+
+    let token
+
+    token = await tokenHandler({
+      _id: userProfile._id,
+      username: userProfile.username,
+      fullName: userProfile.fullName,
+      email: userProfile.email,
+      accountType: userProfile.accountType,
+      isAdmin: false,
+    })
+
+    const user = {
+      _id: userProfile._id,
+      username: userProfile.username,
+      fullName: userProfile.fullName,
+      email: userProfile.email,
+      ...token,
+    }
+
+    //return result
+    return {
+      success: true,
+      msg: UserSuccess.FETCH,
+      data: user,
+    }
+  }
 }
 module.exports = { UserService }

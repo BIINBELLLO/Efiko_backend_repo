@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema(
     fullName: {
       type: String,
     },
+    loginCode: {
+      type: String,
+    },
     age: {
       type: Number,
     },

@@ -122,7 +122,9 @@ class ProfileService {
   }
 
   static async getUserProfileService(payload) {
-    const user = await this.getUserService(payload)
+    const user = await UserRepository.findSingleUserWithParams({
+      ...payload,
+    })
 
     if (!user) return { success: false, msg: UserFailure.FETCH }
 

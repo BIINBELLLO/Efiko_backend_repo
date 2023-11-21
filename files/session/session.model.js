@@ -29,11 +29,14 @@ const sessionSchema = new mongoose.Schema(
     charges: {
       type: Number,
     },
-    rate: {
-      rating: Number,
-      recommendTutor: String,
-      reviews: String,
-    },
+    rating: [
+      {
+        rate: Number,
+        recommendTutor: String,
+        reviews: String,
+        ratedBy: { type: mongoose.Types.ObjectId, ref: "Users" },
+      },
+    ],
     status: {
       type: String,
       enum: ["pending", "completed"],

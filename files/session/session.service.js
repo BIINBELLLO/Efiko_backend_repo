@@ -33,7 +33,12 @@ class SessionService {
     }
   }
 
-  static async updateSessionService(id, payload) {
+  static async updateSessionService(id, payload, jwt) {
+    const { accountType } = jwt
+
+    if (accountType !== "tutor")
+      return { success: false, msg: SessionFailure.TUTOR }
+
     const updateSession = await SessionRepository.updateSessionDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {

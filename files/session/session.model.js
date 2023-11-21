@@ -6,6 +6,7 @@ const sessionSchema = new mongoose.Schema(
       type: String,
     },
     tutorId: { type: mongoose.Types.ObjectId, ref: "User" },
+    studentId: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     category: {
       type: String,
     },
@@ -14,6 +15,10 @@ const sessionSchema = new mongoose.Schema(
     },
     outcome: {
       type: String,
+    },
+    start: {
+      type: Boolean,
+      default: false,
     },
     date: {
       type: Date,
@@ -24,14 +29,15 @@ const sessionSchema = new mongoose.Schema(
     charges: {
       type: Number,
     },
+    rate: {
+      rating: Number,
+      recommendTutor: String,
+      reviews: String,
+    },
     status: {
       type: String,
+      enum: ["pending", "completed"],
       default: "pending",
-    },
-    sessionStatus: {
-      type: String,
-      enum: ["start", "yet-to-start"],
-      default: "yet-to-start",
     },
     type: {
       type: String,

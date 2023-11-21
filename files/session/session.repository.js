@@ -23,7 +23,19 @@ class SessionRepository {
   static async findAllSessionParams(sessionPayload) {
     const { limit, skip, sort, ...restOfPayload } = sessionPayload
 
-    const session = await Session.find({ ...restOfPayload })
+    const { search, ...rest } = restOfPayload
+
+    let query
+
+    if (search) {
+      query = { title: { $regex: search, $options: "i" }, ...rest }
+    } else {
+      query = { ...rest }
+    }
+
+    console.log("query", query)
+
+    const session = await Session.find({ ...query })
       .populate({ path: "tutorId", select: "userName fullName profileImage" })
       .sort(sort)
       .skip(skip)

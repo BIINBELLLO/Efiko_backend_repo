@@ -18,7 +18,7 @@ const createSessionController = async (req, res, next) => {
 
 const updateSessionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    SessionService.updateSessionService(req.params.id, req.body)
+    SessionService.updateSessionService(req.params.id, req.body, res.locals.jwt)
   )
 
   if (error) return next(error)
@@ -32,7 +32,7 @@ const getSessionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     SessionService.getSessionService(req.query)
   )
-
+  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

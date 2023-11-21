@@ -10,6 +10,7 @@ const {
   createSessionController,
   updateSessionController,
   getSessionController,
+  searchSessionController,
 } = require("./session.controller")
 
 sessionRoute.use(isAuthenticated)
@@ -20,7 +21,7 @@ sessionRoute
   .post(validate(checkSchema(sessionValidation)), createSessionController)
 
 sessionRoute.route("/:id").patch(updateSessionController)
-sessionRoute.route("/:id").patch(updateSessionController)
+
 sessionRoute.route("/").get(getSessionController)
 
 module.exports = sessionRoute

@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose")
+const { default: mongoose, mongo } = require("mongoose")
 const { queryConstructor } = require("../../utils")
 const { SessionSuccess, SessionFailure } = require("./session.messages")
 const { SessionRepository } = require("./session.repository")
@@ -73,7 +73,7 @@ class SessionService {
   }
 
   static async getSingleSession(payload) {
-    const session = await SessionRepository.findSingleUserWithParams({
+    const session = await SessionRepository.findSingleSessionWithParams({
       ...payload,
     })
 
@@ -83,6 +83,48 @@ class SessionService {
       success: true,
       msg: SessionSuccess.FETCH,
       data: session,
+    }
+  }
+
+  static async rateSessionService(id, payload, jwt) {
+    const session = await SessionRepository.findSingleSessionWithParams({
+      _id: new mongoose.Types.ObjectId(id),
+    })
+
+    if (!session) return { success: false, msg: SessionFailure.FETCH }
+
+    const updateSession = await SessionRepository.updateSessionDetails(
+      {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+      {
+        $push: {
+          rating: { ratedBy: new mongoose.Types.ObjectId(jwt._id), ...payload },
+        },
+      }
+    )
+
+    if (!updateSession) return { success: false, msg: SessionFailure.UPDATE }
+
+    return {
+      success: true,
+      msg: SessionSuccess.UPDATE,
+    }
+  }
+
+  static async getReviewService(id) {
+    const sessions = await SessionRepository.findSessionReview({
+      _id: new mongoose.Types.ObjectId(id),
+    })
+
+    if (!sessions || sessions.length === 0) {
+      return { success: false, msg: SessionFailure.FETCH }
+    }
+
+    return {
+      success: true,
+      msg: SessionSuccess.FETCH,
+      data: sessions.rating,
     }
   }
 }

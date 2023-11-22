@@ -33,7 +33,7 @@ const sessionSchema = new mongoose.Schema(
       {
         rate: Number,
         recommendTutor: String,
-        reviews: String,
+        review: String,
         ratedBy: { type: mongoose.Types.ObjectId, ref: "Users" },
       },
     ],

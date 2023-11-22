@@ -40,8 +40,33 @@ const getSessionController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const rateSessionController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    SessionService.rateSessionService(req.params.id, req.body, res.locals.jwt)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
+const getReviewServiceController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    SessionService.getReviewService(req.params.id)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
 module.exports = {
   createSessionController,
   updateSessionController,
   getSessionController,
+  rateSessionController,
+  getReviewServiceController,
 }

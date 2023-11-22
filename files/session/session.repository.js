@@ -33,15 +33,28 @@ class SessionRepository {
       query = { ...rest }
     }
 
-    console.log("query", query)
-
     const session = await Session.find({ ...query })
       .populate({ path: "tutorId", select: "userName fullName profileImage" })
+      .populate({
+        path: "rating.ratedBy",
+        model: "User",
+        select: "fullName userName", // Select the fields you want to include from the User model
+      })
       .sort(sort)
       .skip(skip)
       .limit(limit)
 
     return session
+  }
+
+  static async findSessionReview(payload) {
+    return Session.findById({ ...payload })
+      .populate({
+        path: "rating.ratedBy",
+        model: "User",
+        select: "userName fullName",
+      })
+      .exec()
   }
 
   static async updateSessionDetails(id, params) {

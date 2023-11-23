@@ -21,10 +21,6 @@ const NotificationSchema = new mongoose.Schema(
       enum: ["new", "read"],
       default: "new",
     },
-    // recipient: {
-    //   type: String,
-    //   enum: ["admin"],
-    // },
   },
   { timestamps: true }
 )

@@ -2,6 +2,10 @@ const { default: mongoose, mongo } = require("mongoose")
 const { queryConstructor } = require("../../utils")
 const { SessionSuccess, SessionFailure } = require("./session.messages")
 const { SessionRepository } = require("./session.repository")
+const {
+  NotificationRepository,
+} = require("../notification/notification.repository")
+
 const { LIMIT, SKIP, SORT } = require("../../constants")
 
 class SessionService {
@@ -25,6 +29,12 @@ class SessionService {
     })
 
     if (!session._id) return { success: false, msg: SessionFailure.CREATE }
+
+    await NotificationRepository.createNotification({
+      recipientId: new mongoose.Types.ObjectId(user._id),
+      title: `Session Created`,
+      message: `${jwt.fullName}, you have created a session: ${payload.title} successfully`,
+    })
 
     return {
       success: true,

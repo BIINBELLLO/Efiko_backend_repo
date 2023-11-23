@@ -11,7 +11,10 @@ const { UserRepository } = require("../user.repository")
 
 const { LIMIT, SKIP, SORT } = require("../../../constants")
 const { sendMailNotification } = require("../../../utils/email")
-// const { sendMailNotification } = require("../../../utils/email")
+const {
+  NotificationRepository,
+} = require("../../notification/notification.repository")
+
 class UserService {
   static async createUser(payload) {
     const { fullName, email } = payload
@@ -38,12 +41,22 @@ class UserService {
       emailOtp: otp,
     }
 
-    await sendMailNotification(
-      email,
-      "Sign-Up",
-      substitutional_parameters,
-      "VERIFICATION"
-    )
+    try {
+      await sendMailNotification(
+        email,
+        "Sign-Up",
+        substitutional_parameters,
+        "VERIFICATION"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
+
+    await NotificationRepository.createNotification({
+      recipientId: new mongoose.Types.ObjectId(user._id),
+      title: `New User`,
+      message: `Welcome to Efiko Learning, we are glad to have you with us`,
+    })
 
     return {
       success: true,

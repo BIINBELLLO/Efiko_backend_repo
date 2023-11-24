@@ -72,6 +72,36 @@ class UserService {
       email: email,
     })
 
+    let updatedProfile = true
+
+    if (
+      userProfile.accountType === "student" &&
+      !userProfile.userName &&
+      !userProfile.fullName &&
+      !userProfile.age &&
+      !userProfile.country &&
+      !userProfile.studentEducationDetails.education &&
+      !userProfile.studentEducationDetails.education
+    ) {
+      updatedProfile = false
+    }
+
+    if (
+      userProfile.accountType === "tutor" &&
+      !userProfile.userName &&
+      !userProfile.fullName &&
+      !userProfile.description &&
+      !userProfile.age &&
+      !userProfile.country &&
+      !userProfile.tutorEducationDetails.education &&
+      !userProfile.tutorEducationDetails.teachingExperience &&
+      !userProfile.tutorEducationDetails.subject &&
+      !userProfile.tutorEducationDetails.subject &&
+      !userProfile.tutorEducationDetails.nationalId
+    ) {
+      updatedProfile = false
+    }
+
     if (userProfile.isVerified !== true)
       return { success: false, msg: UserFailure.VERIFIED }
 
@@ -99,6 +129,7 @@ class UserService {
       username: userProfile.username,
       fullName: userProfile.fullName,
       email: userProfile.email,
+      updatedProfile,
       ...token,
     }
 

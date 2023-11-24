@@ -17,6 +17,8 @@ const createUserController = async (req, res, next) => {
 const userLoginController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(UserService.userLogin(req.body))
 
+  console.log("error", error)
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -38,5 +40,6 @@ const studentLoginCodeController = async (req, res, next) => {
 
 module.exports = {
   createUserController,
-  userLoginController, studentLoginCodeController
+  userLoginController,
+  studentLoginCodeController,
 }

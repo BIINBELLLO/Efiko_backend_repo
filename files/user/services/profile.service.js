@@ -147,19 +147,20 @@ class ProfileService {
       { password: 0 }
     )
 
-    const session = await SessionRepository.findAllSessionParams({
+    const sessions = await SessionRepository.findAllSessionParams({
       tutorId: new mongoose.Types.ObjectId(payload),
     })
 
-    if (!user) return { success: false, msg: UserFailure.FETCH }
+    // Extract only the 'rating' property from each session
+    const ratings = sessions.map((session) => session.rating)
 
-    const { rating } = session
-    console.log("rating", session)
+    if (!user) return { success: false, msg: UserFailure.FETCH }
 
     return {
       success: true,
       msg: UserSuccess.FETCH,
       data: user,
+      ratings,
     }
   }
 }

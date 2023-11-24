@@ -75,18 +75,6 @@ class UserService {
     let updatedProfile = true
 
     if (
-      userProfile.accountType === "student" &&
-      !userProfile.userName &&
-      !userProfile.fullName &&
-      !userProfile.age &&
-      !userProfile.country &&
-      !userProfile.studentEducationDetails.education &&
-      !userProfile.studentEducationDetails.education
-    ) {
-      updatedProfile = false
-    }
-
-    if (
       userProfile.accountType === "tutor" &&
       !userProfile.userName &&
       !userProfile.fullName &&
@@ -103,6 +91,9 @@ class UserService {
     }
 
     if (userProfile.isVerified !== true)
+      return { success: false, msg: UserFailure.VERIFIED }
+
+    if (userProfile.accountType !== "tutor")
       return { success: false, msg: UserFailure.VERIFIED }
 
     if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
@@ -152,9 +143,26 @@ class UserService {
 
     if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
 
+    if (userProfile.accountType !== "student")
+      return { success: false, msg: UserFailure.VERIFIED }
+
     userProfile.loginCode = ""
 
     userProfile.save()
+
+    let updatedProfile = true
+
+    if (
+      userProfile.accountType === "student" &&
+      !userProfile.userName &&
+      !userProfile.fullName &&
+      !userProfile.age &&
+      !userProfile.country &&
+      !userProfile.studentEducationDetails.education &&
+      !userProfile.studentEducationDetails.education
+    ) {
+      updatedProfile = false
+    }
 
     let token
 
@@ -172,6 +180,7 @@ class UserService {
       username: userProfile.username,
       fullName: userProfile.fullName,
       email: userProfile.email,
+      updatedProfile,
       ...token,
     }
 

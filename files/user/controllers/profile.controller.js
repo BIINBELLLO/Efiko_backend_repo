@@ -65,12 +65,27 @@ const updateUserProfileController = async (req, res, next) => {
 
   return responseHandler(res, 200, data)
 }
+
 const profileImageController = async (req, res, next) => {
   let value = await fileModifier(req)
 
   const [error, data] = await manageAsyncOps(
     ProfileService.profileImageService(value, res.locals.jwt._id)
   )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, 200, data)
+}
+
+const getProfileSessionController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    ProfileService.getProfileSessionService(req.params.id)
+  )
+
+  console.log("error", error)
 
   if (error) return next(error)
 
@@ -86,4 +101,5 @@ module.exports = {
   getUserProfileController,
   updateUserProfileController,
   profileImageController,
+  getProfileSessionController,
 }

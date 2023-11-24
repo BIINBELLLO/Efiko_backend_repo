@@ -10,6 +10,7 @@ const {
 const createHash = require("../../../utils/createHash")
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
+const { SessionRepository } = require("../../session/session.repository")
 const { LIMIT, SKIP, SORT } = require("../../../constants")
 const {
   ProfileFailure,
@@ -130,6 +131,30 @@ class ProfileService {
     )
 
     if (!user) return { success: false, msg: UserFailure.FETCH }
+
+    return {
+      success: true,
+      msg: UserSuccess.FETCH,
+      data: user,
+    }
+  }
+
+  static async getProfileSessionService(payload) {
+    const user = await UserRepository.findSingleUserWithParams(
+      {
+        _id: new mongoose.Types.ObjectId(payload),
+      },
+      { password: 0 }
+    )
+
+    const session = await SessionRepository.findAllSessionParams({
+      tutorId: new mongoose.Types.ObjectId(payload),
+    })
+
+    if (!user) return { success: false, msg: UserFailure.FETCH }
+
+    const { rating } = session
+    console.log("rating", session)
 
     return {
       success: true,

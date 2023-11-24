@@ -15,6 +15,7 @@ const {
   getUserProfileController,
   tutorProfileUpdateController,
   profileImageController,
+  getProfileSessionController,
 } = require("./controllers/profile.controller")
 const { createUser } = require("../../validations/users/createUser.validation")
 const { loginValidation } = require("../../validations/users/loginValidation")
@@ -45,5 +46,7 @@ userRoute.patch(
   uploadManager("profile").single("image"),
   profileImageController
 )
+
+userRoute.get("/profile-session/:id", getProfileSessionController)
 
 module.exports = userRoute

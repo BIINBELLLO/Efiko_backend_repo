@@ -8,8 +8,8 @@ module.exports.SessionSuccess = {
 module.exports.SessionFailure = {
   PASSWORD: "incorrect password",
   CREATE: "Unable to create session",
-  TUTOR: "only tutor can perfom this task",
-  EXIST: "session already exist, please sign in",
+  TUTOR: "only tutor can perform this task",
+  EXIST: "session already exist",
   UPDATE: "unable to Update",
   SESSION_EXIST: "session does not exist",
   SESSION_FOUND: "session not found, Sign-Up to login",

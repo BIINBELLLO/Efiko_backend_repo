@@ -31,7 +31,7 @@ class SessionService {
     if (!session._id) return { success: false, msg: SessionFailure.CREATE }
 
     await NotificationRepository.createNotification({
-      recipientId: new mongoose.Types.ObjectId(user._id),
+      recipientId: new mongoose.Types.ObjectId(jwt._id),
       title: `Session Created`,
       message: `${jwt.fullName}, you have created a session: ${payload.title} successfully`,
     })

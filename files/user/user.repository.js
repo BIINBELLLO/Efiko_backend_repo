@@ -1,5 +1,4 @@
 const { User } = require("./user.model")
-const mongoose = require("mongoose")
 
 class UserRepository {
   static async create(payload) {

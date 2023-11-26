@@ -34,7 +34,7 @@ class SessionRepository {
     }
 
     const session = await Session.find({ ...query })
-      .populate({ path: "tutorId", select: "userName fullName profileImage" })
+      .populate({ path: "tutorId", select: "userName fullName profileImage email" })
       .populate({
         path: "rating.ratedBy",
         model: "User",

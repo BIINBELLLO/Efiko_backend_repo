@@ -9,56 +9,28 @@ cloudinary.config({
   api_secret: config.CLOUDINARY_API_SECRET,
 })
 
-const width = 450
-const height = 330
-
 const uploadManager = (destination) => {
   return multer({
     storage: new CloudinaryStorage({
       cloudinary: cloudinary,
       params: {
         folder: `Efiko/${destination}`,
-        transformation: [{ width: width, height: height }],
       },
     }),
   })
 }
 
-const uploadFileManager = (destination) => {
-  return multer({
-    storage: new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: `Efiko/manage/${destination}`,
-      },
-    }),
+const uploadProfileManager = (destination) => {
+  const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: `Efiko/${destination}`,
+    },
   })
-}
 
-const videoManager = (destination) => {
   return multer({
-    storage: new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: `Efiko/manage/${destination}`,
-        format: "mp4",
-        resource_type: "video",
-      },
-    }),
-    fileFilter,
-  })
-}
-
-const audioManager = (destination) => {
-  return multer({
-    storage: new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: `Efiko/manage/${destination}`,
-        resource_type: "auto",
-      },
-    }),
-    fileFilter,
+    storage: storage,
+    fileFilter: (req, file, cb) => fileFilter(req, file, cb),
   })
 }
 
@@ -72,7 +44,5 @@ function fileFilter(req, file, cb) {
 
 module.exports = {
   uploadManager,
-  uploadFileManager,
-  videoManager,
-  audioManager,
+  uploadProfileManager,
 }

@@ -1,4 +1,4 @@
-const { uploadManager } = require("../../utils/multer")
+const { uploadManager, uploadProfileManager } = require("../../utils/multer")
 const { checkSchema } = require("express-validator")
 const userRoute = require("express").Router()
 const { isAuthenticated } = require("../../utils")
@@ -37,7 +37,7 @@ userRoute.use(isAuthenticated)
 
 userRoute.patch(
   "/update/:id",
-  uploadManager("image").array("image"),
+  uploadProfileManager("image").array("image"),
   updateUserProfileController
 )
 

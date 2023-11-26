@@ -16,6 +16,12 @@ const sessionSchema = new mongoose.Schema(
     outcome: {
       type: String,
     },
+    duration: {
+      type: String,
+    },
+    link: {
+      type: String,
+    },
     start: {
       type: Boolean,
       default: false,

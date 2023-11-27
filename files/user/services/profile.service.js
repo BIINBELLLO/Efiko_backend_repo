@@ -19,23 +19,16 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
-    const { body, files } = payload
-    // Extract image URLs from files
-    const [profileImageUrl, nationalIdUrl, ...educationDocUrls] = files.map(
-      (file) => file.path
-    )
+    const { body, image } = payload
     delete body.email
     delete body.password
+
     const userprofile = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
-          profileImage: profileImageUrl,
-          "tutorEducationDetails.nationalId": nationalIdUrl,
+          profileImage: image,
           ...body,
-        },
-        $addToSet: {
-          "tutorEducationDetails.educationDoc": { $each: educationDocUrls },
         },
       }
     )

@@ -53,8 +53,9 @@ const getUserProfileController = async (req, res, next) => {
 }
 
 const updateUserProfileController = async (req, res, next) => {
+  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    ProfileService.updateProfileService(req.params.id, req)
+    ProfileService.updateProfileService(req.params.id, value)
   )
 
   if (error) return next(error)

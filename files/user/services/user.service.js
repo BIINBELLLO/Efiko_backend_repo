@@ -143,9 +143,6 @@ class UserService {
 
     if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
 
-    if (userProfile.accountType !== "student")
-      return { success: false, msg: UserFailure.VERIFIED }
-
     userProfile.loginCode = ""
 
     userProfile.save()

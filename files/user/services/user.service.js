@@ -90,7 +90,7 @@ class UserService {
       updatedProfile = false
     }
 
-    if (userProfile.isVerified !== true)
+    if (!userProfile.isVerified)
       return { success: false, msg: UserFailure.VERIFIED }
 
     if (userProfile.accountType !== "tutor")

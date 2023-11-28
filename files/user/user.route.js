@@ -15,6 +15,8 @@ const {
   getUserProfileController,
   profileImageController,
   getProfileSessionController,
+  educationDocController,
+  nationalIdController,
 } = require("./controllers/profile.controller")
 const { createUser } = require("../../validations/users/createUser.validation")
 const { loginValidation } = require("../../validations/users/loginValidation")
@@ -38,6 +40,18 @@ userRoute.patch(
   "/update/:id",
   uploadManager("image").single("profileImage"),
   updateUserProfileController
+)
+
+userRoute.patch(
+  "/education-doc/:id",
+  uploadManager("image").array("educationImage"),
+  educationDocController
+)
+
+userRoute.patch(
+  "/national-id/:id",
+  uploadManager("image").single("nationalId"),
+  nationalIdController
 )
 
 userRoute.patch(

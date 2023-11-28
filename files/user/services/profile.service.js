@@ -162,6 +162,46 @@ class ProfileService {
       ratings,
     }
   }
+
+  static async educationDocService(payload, id) {
+    const { image } = payload
+
+    const userprofile = await UserRepository.updateUserDetails(
+      { _id: new mongoose.Types.ObjectId(id) },
+      {
+        $push: {
+          "tutorEducationDetails.educationDoc": [...image],
+        },
+      }
+    )
+
+    if (!userprofile) return { success: false, msg: UserFailure.UPDATE }
+
+    return {
+      success: true,
+      msg: UserSuccess.UPDATE,
+    }
+  }
+
+  static async nationIdService(payload, id) {
+    const { image } = payload
+
+    const userprofile = await UserRepository.updateUserDetails(
+      { _id: new mongoose.Types.ObjectId(id) },
+      {
+        $set: {
+          "tutorEducationDetails.nationalId": image,
+        },
+      }
+    )
+
+    if (!userprofile) return { success: false, msg: UserFailure.UPDATE }
+
+    return {
+      success: true,
+      msg: UserSuccess.UPDATE,
+    }
+  }
 }
 
 module.exports = { ProfileService }

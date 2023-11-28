@@ -46,7 +46,7 @@ class UserService {
       emailOtp: otp,
     }
 
-    if (accountType !== "student") {
+    if (accountType === "tutor") {
       try {
         await sendMailNotification(
           email,

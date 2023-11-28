@@ -7,17 +7,6 @@ const createUser = {
     isEmail: {
       errorMessage: "Invalid email address",
     },
-    custom: {
-      options: (v) => {
-        return User.find({
-          email: v,
-        }).then((user) => {
-          if (user.length > 0) {
-            return Promise.reject("Email already in use")
-          }
-        })
-      },
-    },
   },
   password: {
     notEmpty: true,

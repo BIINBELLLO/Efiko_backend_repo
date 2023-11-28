@@ -1,4 +1,3 @@
-
 const loginValidation = {
   email: {
     notEmpty: true,

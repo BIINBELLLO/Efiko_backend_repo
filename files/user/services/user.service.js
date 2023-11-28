@@ -17,7 +17,7 @@ const {
 
 class UserService {
   static async createUser(payload) {
-    const { fullName, email } = payload
+    const { fullName, email, accountType } = payload
 
     const userExist = await UserRepository.validateUser({
       email,
@@ -27,10 +27,15 @@ class UserService {
 
     const { otp, expiry } = generateOtp()
 
+    let verificationOtp = ""
+    if (accountType === "tutor") {
+      verificationOtp = otp
+    }
+
     //hash password
     const user = await UserRepository.create({
       ...payload,
-      verificationOtp: otp,
+      verificationOtp,
       password: await hashPassword(payload.password),
     })
 
@@ -41,22 +46,23 @@ class UserService {
       emailOtp: otp,
     }
 
-    try {
-      await sendMailNotification(
-        email,
-        "Sign-Up",
-        substitutional_parameters,
-        "VERIFICATION"
-      )
-    } catch (error) {
-      console.log("error", error)
+    if (accountType !== "student") {
+      try {
+        await sendMailNotification(
+          email,
+          "Sign-Up",
+          substitutional_parameters,
+          "VERIFICATION"
+        )
+      } catch (error) {
+        console.log("error", error)
+      }
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(user._id),
+        title: `New User`,
+        message: `Welcome to Efiko Learning, we are glad to have you with us`,
+      })
     }
-
-    await NotificationRepository.createNotification({
-      recipientId: new mongoose.Types.ObjectId(user._id),
-      title: `New User`,
-      message: `Welcome to Efiko Learning, we are glad to have you with us`,
-    })
 
     return {
       success: true,

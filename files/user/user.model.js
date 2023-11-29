@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     },
     tutorEducationDetails: {
       education: { type: String },
-      teachingExperience: { type: String },
+      teachingExperience: { type: Number },
       subject: { type: String },
       educationDoc: { type: [String] }, // Make sure to define it as an array of strings
       nationalId: { type: String },

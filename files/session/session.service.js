@@ -77,7 +77,7 @@ class SessionService {
     })
 
     if (sessions.length < 1)
-      return { success: false, msg: SessionFailure.FETCH, data: [] }
+      return { success: true, msg: SessionFailure.FETCH, data: [] }
 
     return { success: true, msg: SessionSuccess.FETCH, data: sessions }
   }
@@ -128,7 +128,7 @@ class SessionService {
     })
 
     if (!sessions || sessions.length === 0) {
-      return { success: false, msg: SessionFailure.FETCH }
+      return { success: true, msg: SessionFailure.FETCH, data: false }
     }
 
     return {

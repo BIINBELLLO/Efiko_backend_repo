@@ -12,7 +12,7 @@ module.exports.SessionFailure = {
   EXIST: "session already exist",
   UPDATE: "unable to Update",
   SESSION_EXIST: "session does not exist",
-  SESSION_FOUND: "session not found, Sign-Up to login",
+  SESSION_FOUND: "session not found",
   PHONE_EXIST: "Phone number exist already",
   SOFT_DELETE: "session account deleted",
   DELETE: "unable to delete",

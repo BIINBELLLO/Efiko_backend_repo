@@ -151,7 +151,7 @@ class ProfileService {
     })
 
     // Extract only the 'rating' property from each session
-    const ratings = sessions.map((session) => session.rating)
+    // const ratings = sessions.map((session) => session.rating)
 
     if (!user) return { success: false, msg: UserFailure.FETCH }
 
@@ -159,7 +159,7 @@ class ProfileService {
       success: true,
       msg: UserSuccess.FETCH,
       data: user,
-      ratings,
+      sessions,
     }
   }
 

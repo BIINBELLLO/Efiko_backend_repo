@@ -43,6 +43,7 @@ const sessionSchema = new mongoose.Schema(
         ratedBy: { type: mongoose.Types.ObjectId, ref: "Users" },
       },
     ],
+    averageRating: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ["pending", "completed"],
@@ -56,6 +57,33 @@ const sessionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
+
+sessionSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    const update = this.getUpdate()
+    const session = await this.model.findOne(this.getQuery())
+
+    // Calculate average rating only if there are ratings
+    if (session.rating && session.rating.length > 0) {
+      const totalRating = session.rating.reduce(
+        (sum, current) => sum + current.rate,
+        0
+      )
+      update.$set = update.$set || {}
+      update.$set.averageRating = totalRating / session.rating.length
+    } else {
+      // Set default averageRating if there are no ratings
+      update.$set = update.$set || {}
+      update.$set.averageRating = 0
+    }
+
+    // Call next to continue with the findOneAndUpdate operation
+    next()
+  } catch (error) {
+    // Handle any errors during the calculation
+    next(error)
+  }
+})
 
 const session = mongoose.model("Session", sessionSchema, "session")
 

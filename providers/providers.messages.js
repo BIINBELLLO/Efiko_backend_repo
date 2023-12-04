@@ -10,4 +10,5 @@ module.exports.providerMessages = {
   FETCH_BANK_DATA_SUCCESS: "Successfully fetched bank data",
   INITIATE_PAYMENT_SUCCESS: "Successfully initiated payment",
   INITIATE_PAYMENT_FAILURE: "Unable to initiate payment",
+  NULL: 'amount or currency cannot be null'
 }

@@ -39,7 +39,7 @@
     "nodemon": "^3.0.1",
     "openai": "^4.2.0",
     "socket.io": "^4.7.2",
-    "stripe": "^13.3.0",
+    "stripe": "^13.11.0",
     "uninstall": "^0.0.0",
     "uuid": "^9.0.0",
     "xss-clean": "^0.1.4"

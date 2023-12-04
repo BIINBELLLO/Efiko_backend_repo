@@ -1,12 +1,7 @@
-const mongoose = require("mongoose")
 const { config } = require("../../core/config")
-const {
-  TransactionRepository,
-} = require("../../files/transaction/transaction.repository")
-const { UserRepository } = require("../../files/user/user.repository")
-const { OrderService } = require("../../files/order/order.service")
-const { OrderRepository } = require("../../files/order/order.repository")
-const stripe = require("stripe")(config.STRIPE_SECRET_KEY)
+const { stripePaymentIntent } = require("../../utils/stripe")
+const { providerMessages } = require("../providers.messages")
+// const stripe = require("stripe")(process.env.STRIPE_KEY)
 
 class StripePaymentService {
   checkSuccessStatus(status, gatewayResponse) {
@@ -15,42 +10,17 @@ class StripePaymentService {
     return { success: false, msg: gatewayResponse }
   }
 
-  async createCheckOutSession(paymentPayload) {
-    const { priceId, quantity, userId, uuid } = paymentPayload
+  async initiatePaymentIntent(paymentPayload) {
+    const { amount, currency } = paymentPayload
+    const stripe = await stripePaymentIntent({ amount, currency })
 
-    const user = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(userId),
-    })
+    if (!stripe) return { success: false, msg: `unable to initiate payment` }
 
-    if (!user) return { success: false, msg: `user not found` }
-
-    try {
-      if (!user.stripeCustomerId) {
-        //- create stripe customer and save if not created to stripe side yet
-        let stripeCustomer = await stripe.customers.create({
-          email: user.email,
-        })
-
-        user.stripeCustomerId = stripeCustomer.id
-        await user.save()
-      }
-
-      const session = await stripe.checkout.sessions.create({
-        line_items: [
-          {
-            price: priceId,
-            quantity: quantity,
-          },
-        ],
-        customer: user.stripeCustomerId,
-        mode: `payment`,
-        success_url: `${process.env.STRIPE_SUCCESS_CALLBACK}/user/payment-success?userId=${user._id}&uuid=${uuid}`,
-        cancel_url: `${process.env.STRIPE_CANCEL_CALLBACK}/user/service?userId=${user._id}&uuid=${uuid}`,
-      })
-
-      return session
-    } catch (error) {
-      return { success: false, msg: error.message }
+    return {
+      success: true,
+      msg: `Payment initiation successful`,
+      clientSecret: stripe.client_secret,
+      transactionId: stripe.id,
     }
   }
 

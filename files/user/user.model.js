@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema(
     fullName: {
       type: String,
     },
+    firstName: { type: String },
+    lastName: { type: String },
     loginCode: {
       type: String,
     },

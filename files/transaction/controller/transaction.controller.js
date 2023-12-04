@@ -41,8 +41,25 @@ const retrieveTransactionController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const stripeWebHookController = async (req, res, next) => {
+  const sig = req.headers["stripe-signature"]
+  let event
+
+  event = stripe.webhooks.constructEvent(
+    req.rawBody,
+    sig,
+    process.env.WEBHOOK_SECRET
+  )
+  event = req.body
+  const [error, data] = await manageAsyncOps(
+    TransactionService.stripeWebhookService(event)
+  )
+  res.send(200)
+}
+
 module.exports = {
   getTransactionController,
   initiateStripePaymentController,
   retrieveTransactionController,
+  stripeWebHookController,
 }

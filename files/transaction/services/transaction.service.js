@@ -35,7 +35,6 @@ class TransactionService {
     if (!user) return { success: false, msg: `user not found` }
     if (!session) return { success: false, msg: `session id not found` }
 
-    console.log("second place")
     const paymentIntent = await this.paymentProvider.initiatePaymentIntent({
       amount,
       currency,
@@ -60,93 +59,6 @@ class TransactionService {
     }
   }
 
-  static async retrieveCheckOutSession(payload) {
-    const { uuid, userId } = payload
-
-    const user = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(userId),
-    })
-
-    if (!user) return { success: false, msg: `user not found` }
-
-    const transaction = await TransactionRepository.fetchOne({
-      userId: new mongoose.Types.ObjectId(userId),
-      transactionUuid: uuid,
-    })
-
-    if (!transaction) return { success: false, msg: `transaction not found` }
-
-    await this.getConfig()
-    const session = await this.paymentProvider.retrieveCheckOutSession(
-      transaction.sessionId
-    )
-
-    if (!session.id)
-      return { success: false, msg: `unable to unable to verify status` }
-
-    const { status } = session
-
-    const { priceId } = transaction
-
-    let deliveryTime
-    let planType
-
-    transaction.status = status
-    await transaction.save()
-
-    if (status === "complete") {
-      const subscription = await SubscriptionPlanRepository.fetchOne({
-        $or: [
-          { "availablePlans.basic.priceId": priceId },
-          { "availablePlans.pro.priceId": priceId },
-          { "availablePlans.max.priceId": priceId },
-        ],
-      })
-
-      if (subscription.availablePlans.basic.priceId === priceId) {
-        deliveryTime = subscription.availablePlans.basic.deliveryTime
-        planType = "basic"
-      } else if (subscription.availablePlans.pro.priceId === priceId) {
-        deliveryTime = subscription.availablePlans.pro.deliveryTime
-        planType = "pro"
-      } else if (subscription.availablePlans.max.priceId === priceId) {
-        deliveryTime = subscription.availablePlans.max.deliveryTime
-        planType = "max"
-      }
-
-      const currentDate = new Date()
-      const futureDate = new Date(
-        currentDate.getTime() + deliveryTime * 24 * 60 * 60 * 1000
-      )
-
-      const futureDateISOString = futureDate.toISOString()
-
-      await OrderService.createOrder({
-        userId: new mongoose.Types.ObjectId(userId),
-        orderName: transaction.subscriptionId,
-        orderValue: transaction.cost,
-        isConfirmed: true,
-        status: "active",
-        transactionId: transaction._id,
-        dateOfDelivery: futureDateISOString,
-        selectedTire: planType,
-      })
-    } else {
-      await OrderService.createOrder({
-        userId: new mongoose.Types.ObjectId(userId),
-        orderName: transaction.subscriptionId,
-        orderValue: transaction.cost,
-        isConfirmed: true,
-        transactionId: transaction._id,
-      })
-    }
-
-    return {
-      success: true,
-      msg: TransactionSuccess.UPDATE,
-      paymentStatus: status,
-    }
-  }
   static async getTransactionService(payload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
@@ -170,6 +82,56 @@ class TransactionService {
       msg: `transaction fetched successfully`,
       data: transaction,
     }
+  }
+
+  static async stripeWebhookService(event) {
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.canceled":
+        const paymentIntentCanceled = event.data.object
+
+        await TransactionRepository.updateTransactionDetails(
+          {
+            transactionId: paymentIntentCanceled.id,
+          },
+          {
+            currency: paymentIntentCanceled.currency,
+            amount: paymentIntentCanceled.amount,
+            status: "canceled",
+          }
+        )
+        break
+
+      case "payment_intent.payment_failed":
+        const paymentIntentPaymentFailed = event.data.object
+        await TransactionRepository.updateTransactionDetails(
+          {
+            transactionId: paymentIntentPaymentFailed.id,
+          },
+          {
+            currency: paymentIntentPaymentFailed.currency,
+            amount: paymentIntentPaymentFailed.amount,
+            status: "failed",
+          }
+        )
+        break
+      case "payment_intent.succeeded":
+        const paymentIntentSucceeded = event.data.object
+        await TransactionRepository.updateTransactionDetails(
+          {
+            transactionId: paymentIntentSucceeded.id,
+          },
+          {
+            currency: paymentIntentSucceeded.currency,
+            amount: paymentIntentSucceeded.amount,
+            status: "success",
+          }
+        )
+        break
+      default:
+        break
+    }
+    return { success: true, msg: `payment successfully verified` }
   }
 }
 

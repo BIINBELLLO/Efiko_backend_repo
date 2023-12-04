@@ -6,6 +6,7 @@ const TransactionSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
     },
+    transactionId: { type: String },
     name: {
       type: String,
     },
@@ -20,7 +21,7 @@ const TransactionSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["stripe", "other"],
-      default: "stripe"
+      default: "stripe",
     },
     sessionId: {
       type: mongoose.Types.ObjectId,

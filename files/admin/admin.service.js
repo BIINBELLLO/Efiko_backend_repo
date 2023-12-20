@@ -109,26 +109,11 @@ class AdminAuthService {
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
 
-  static async updateAdminService(data) {
-    const { body, params } = data
-    const { action } = body
-    let image
-    if (data.files) {
-      image = await uploadImageManager(data)
-    }
-
-    delete body.email
-    let status
-    if (action === "Deactivate") {
-      status = "Inactive"
-    }
-    if (action === "Activate") {
-      status = "Active"
-    }
+  static async updateAdminService(data, params) {
+    const { body, image } = data
 
     const admin = await AdminRepository.updateAdminById(params.id, {
-      image: image?.secure_url,
-      status,
+      image,
       ...body,
     })
 

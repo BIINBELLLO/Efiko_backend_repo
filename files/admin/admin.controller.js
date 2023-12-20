@@ -54,11 +54,11 @@ const getLoggedInAdminController = async (req, res, next) => {
 }
 
 const updateAdminController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    AdminAuthService.updateAdminService(req)
-  )
+  const value = await fileModifier(req)
 
-  console.log("error", error)
+  const [error, data] = await manageAsyncOps(
+    AdminAuthService.updateAdminService(value, req.params)
+  )
 
   if (error) return next(error)
 

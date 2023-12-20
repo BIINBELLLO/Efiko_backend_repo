@@ -29,5 +29,8 @@ adminRoute.route("/profile").get(getAdminController)
 adminRoute.route("/logged-in").get(getLoggedInAdminController)
 
 //update admin
-adminRoute.route("/update/:id").patch(updateAdminController)
+adminRoute
+  .route("/update/:id")
+  .patch(uploadManager("adminImage").single("image"), updateAdminController)
+  
 module.exports = adminRoute

@@ -8,10 +8,19 @@ const {
 } = require("../../utils/index")
 const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")
-const { UserRepository } = require("../user/user.repository")
+const { uploadImageManager } = require("../../utils/multer")
 
 class AdminAuthService {
-  static async adminSignUpService(body) {
+  static async adminSignUpService(data, locals) {
+    const { body, image } = data
+    console.log("locals", locals)
+
+    if (!image)
+      return { success: false, msg: adminMessages.UPDATE_IMAGE_FAILURE }
+
+    if (locals.accountType != "superAdmin") {
+      return { success: false, msg: authMessages.SUPER_ADMIN }
+    }
     const admin = await AdminRepository.fetchAdmin({
       email: body.email,
     })
@@ -21,14 +30,19 @@ class AdminAuthService {
     }
 
     const password = await hashPassword(body.password)
-    const signUp = await AdminRepository.create({ ...body, password })
+    const signUp = await AdminRepository.create({
+      ...body,
+      image,
+      password,
+    })
 
     return { success: true, msg: authMessages.ADMIN_CREATED, data: signUp }
   }
 
   static async adminLoginService(body) {
+    const { email, password } = body
     const admin = await AdminRepository.fetchAdmin({
-      email: body.email,
+      email: email,
     })
 
     if (!admin) {
@@ -38,28 +52,38 @@ class AdminAuthService {
       }
     }
 
-    const passwordCheck = await verifyPassword(body.password, admin.password)
+    const passwordCheck = await verifyPassword(password, admin.password)
 
     if (!passwordCheck) {
-      return { success: false, msg: authMessages.LOGIN_ERROR }
+      return { success: false, msg: authMessages.INCORRECT_PASSWORD }
     }
 
     admin.password = undefined
 
     const token = await tokenHandler({
       _id: admin._id,
-      email: admin.email,
       fullName: admin.fullName,
-      profileImage: admin.profileImage,
+      email: admin.email,
+      status: admin.status,
+      action: admin.action,
       accountType: admin.accountType,
+      userType: admin.userType,
       isAdmin: true,
     })
 
-    // admin.password = undefined
+    const adminDetails = {
+      _id: admin._id,
+      fullName: admin.fullName,
+      email: admin.email,
+      accountType: admin.accountType,
+      status: admin.status,
+      userType: admin.userType,
+      ...token,
+    }
     return {
       success: true,
       msg: authMessages.ADMIN_FOUND,
-      data: { admin, ...token },
+      data: adminDetails,
     }
   }
 
@@ -81,27 +105,45 @@ class AdminAuthService {
     if (getAdmin.length < 1)
       return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
+    getAdmin.password = undefined
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
 
   static async updateAdminService(data) {
     const { body, params } = data
-    const admin = await AdminRepository.updateAdminDetails(
-      { _id: new mongoose.Types.ObjectId(params.id) },
-      body
-    )
+    const { action } = body
+    let image
+    if (data.files) {
+      image = await uploadImageManager(data)
+    }
 
-    if (!admin) {
+    delete body.email
+    let status
+    if (action === "Deactivate") {
+      status = "Inactive"
+    }
+    if (action === "Activate") {
+      status = "Active"
+    }
+
+    const admin = await AdminRepository.updateAdminById(params.id, {
+      image: image?.secure_url,
+      status,
+      ...body,
+    })
+
+    if (!admin)
       return {
         success: false,
         msg: adminMessages.UPDATE_PROFILE_FAILURE,
       }
-    } else {
-      return {
-        success: true,
-        msg: adminMessages.UPDATE_PROFILE_SUCCESS,
-        admin,
-      }
+
+    admin.password = ""
+
+    return {
+      success: true,
+      msg: adminMessages.UPDATE_PROFILE_SUCCESS,
+      admin,
     }
   }
 
@@ -123,8 +165,8 @@ class AdminAuthService {
     //change password
     if (body.password !== body.confirmPassword) {
       return {
-        SUCCESS: false,
-        msg: "Passwords mismatch",
+        success: false,
+        msg: authMessages.MISMATCH_PASSWORD,
       }
     }
 

@@ -16,6 +16,7 @@ const routes = (app) => {
   app.use(`${base_url}/session`, sessionRoute)
   app.use(`${base_url}/report`, reportRoute)
   app.use(`${base_url}/transaction`, transactionRoute)
+  app.use(`${base_url}/admin`, adminRoute)
 }
 
 module.exports = routes

@@ -1,22 +1,33 @@
 const adminRoute = require("express").Router()
+const { checkSchema } = require("express-validator")
 const { isAuthenticated, adminVerifier } = require("../../utils/index")
 const { uploadManager } = require("../../utils/multer")
-const { getUserController } = require("../user/controllers/profile.controller")
+const { validate } = require("../../validations/validate")
+
 const {
   adminSignUpController,
   adminLogin,
   getAdminController,
+  updateAdminController,
+  getLoggedInAdminController,
 } = require("./admin.controller")
 
 //admin route
-adminRoute.route("/").post(adminSignUpController)
 adminRoute.route("/login").post(adminLogin)
-adminRoute.route("/profile").get(getAdminController)
 
 adminRoute.use(isAuthenticated)
 
-//user
-adminRoute.route("/user").get(getUserController)
+adminRoute
+  .route("/")
+  .post(
+    adminVerifier,
+    uploadManager("adminImage").single("image"),
+    adminSignUpController
+  )
 
+adminRoute.route("/profile").get(getAdminController)
+adminRoute.route("/logged-in").get(getLoggedInAdminController)
 
+//update admin
+adminRoute.route("/update/:id").patch(updateAdminController)
 module.exports = adminRoute

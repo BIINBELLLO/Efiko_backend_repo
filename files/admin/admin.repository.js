@@ -17,7 +17,9 @@ class AdminRepository {
 
   static async findAdminParams(userPayload) {
     const { limit, skip, sort, ...restOfPayload } = userPayload
-    const user = await Admin.find({ ...restOfPayload })
+    const user = await Admin.find({
+      ...restOfPayload,
+    })
       .sort(sort)
       .skip(skip)
       .limit(limit)
@@ -28,7 +30,8 @@ class AdminRepository {
   static async updateAdminById(id, params) {
     return Admin.findOneAndUpdate(
       { _id: new mongoose.Types.ObjectId(id) },
-      { $set: { ...params } }
+      { $set: { ...params } },
+      { new: true, runValidators: true }
     )
   }
 }

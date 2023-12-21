@@ -139,7 +139,7 @@ class UserService {
       ...token,
     }
 
-    //return result
+    //return
     return {
       success: true,
       msg: UserSuccess.FETCH,

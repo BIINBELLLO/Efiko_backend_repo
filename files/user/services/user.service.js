@@ -5,11 +5,10 @@ const {
   verifyPassword,
   generateOtp,
 } = require("../../../utils")
-const createHash = require("../../../utils/createHash")
+
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
 
-const { LIMIT, SKIP, SORT } = require("../../../constants")
 const { sendMailNotification } = require("../../../utils/email")
 const {
   NotificationRepository,
@@ -114,19 +113,28 @@ class UserService {
     userProfile.password = undefined
 
     token = await tokenHandler({
-      _id: userProfile._id,
-      username: userProfile.username,
+      userName: userProfile.userName,
       fullName: userProfile.fullName,
+      firstName: userProfile.firstName,
+      lastName: userProfile.lastName,
+      age: userProfile.age,
+      country: userProfile.country,
+      profileImage: userProfile.profileImage,
       email: userProfile.email,
       accountType: userProfile.accountType,
       isAdmin: false,
     })
 
     const user = {
-      _id: userProfile._id,
-      username: userProfile.username,
+      userName: userProfile.userName,
       fullName: userProfile.fullName,
+      firstName: userProfile.firstName,
+      lastName: userProfile.lastName,
+      age: userProfile.age,
+      country: userProfile.country,
+      profileImage: userProfile.profileImage,
       email: userProfile.email,
+      accountType: userProfile.accountType,
       updatedProfile,
       ...token,
     }
@@ -172,8 +180,13 @@ class UserService {
 
     token = await tokenHandler({
       _id: userProfile._id,
-      username: userProfile.username,
+      userName: userProfile.userName,
       fullName: userProfile.fullName,
+      firstName: userProfile.firstName,
+      lastName: userProfile.lastName,
+      age: userProfile.age,
+      country: userProfile.country,
+      profileImage: userProfile.profileImage,
       email: userProfile.email,
       accountType: userProfile.accountType,
       isAdmin: false,
@@ -181,9 +194,15 @@ class UserService {
 
     const user = {
       _id: userProfile._id,
-      username: userProfile.username,
+      userName: userProfile.userName,
       fullName: userProfile.fullName,
+      firstName: userProfile.firstName,
+      lastName: userProfile.lastName,
+      age: userProfile.age,
+      country: userProfile.country,
+      profileImage: userProfile.profileImage,
       email: userProfile.email,
+      accountType: userProfile.accountType,
       updatedProfile,
       ...token,
     }

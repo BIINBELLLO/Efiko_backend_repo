@@ -4,8 +4,6 @@ const path = require("path")
 const connectToDatabase = require("./db")
 const { config } = require("./config")
 
-const httpServer = require("http").Server(app)
-
 dotenv.config({ path: path.join(__dirname, "../.env") })
 
 const port = config.PORT || 5500

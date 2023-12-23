@@ -35,6 +35,9 @@ const sessionSchema = new mongoose.Schema(
     charges: {
       type: Number,
     },
+    recordingUrl: {
+      type: String,
+    },
     rating: [
       {
         rate: Number,

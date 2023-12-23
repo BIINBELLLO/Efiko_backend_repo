@@ -5,10 +5,30 @@ const { SessionRepository } = require("./session.repository")
 const {
   NotificationRepository,
 } = require("../notification/notification.repository")
-
-const { LIMIT, SKIP, SORT } = require("../../constants")
+const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
 
 class SessionService {
+  static async initiateSessionService(req) {
+    const session = await ZoomAPiServiceProvider.initiateZoomMeeting(req)
+    if (!session) return { success: false, msg: `unable to create session` }
+
+    return {
+      success: true,
+      msg: SessionSuccess.CREATE,
+      data: session,
+    }
+  }
+  static async getZoomMeetingService() {
+    const session = await ZoomAPiServiceProvider.getZoomMeeting()
+
+    if (!session) return { success: false, msg: `unable to create session` }
+
+    return {
+      success: true,
+      msg: SessionSuccess.CREATE,
+    }
+  }
+
   static async createSession(payload, jwt) {
     const { title, category } = payload
     const { accountType, _id } = jwt

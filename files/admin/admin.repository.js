@@ -16,15 +16,28 @@ class AdminRepository {
   }
 
   static async findAdminParams(userPayload) {
-    const { limit, skip, sort, ...restOfPayload } = userPayload
-    const user = await Admin.find({
+    const { limit, skip, sort, search, ...restOfPayload } = userPayload
+
+    let query = {}
+
+    if (search) {
+      query = {
+        $or: [
+          { fullName: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      }
+    }
+
+    const users = await Admin.find({
       ...restOfPayload,
+      ...query, // Spread the query object to include its properties
     })
       .sort(sort)
       .skip(skip)
       .limit(limit)
 
-    return user
+    return users
   }
 
   static async updateAdminById(id, params) {

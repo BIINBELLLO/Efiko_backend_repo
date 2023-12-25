@@ -4,6 +4,7 @@ const {
   tokenHandler,
   verifyPassword,
   generateOtp,
+  AlphaNumeric,
 } = require("../../../utils")
 
 const { UserSuccess, UserFailure } = require("../user.messages")
@@ -15,7 +16,7 @@ const {
 } = require("../../notification/notification.repository")
 
 class UserService {
-  static async createUser(payload) {
+  static async createUser(payload, locals) {
     const { fullName, email, accountType } = payload
 
     const userExist = await UserRepository.validateUser({
@@ -27,6 +28,46 @@ class UserService {
     const { otp, expiry } = generateOtp()
 
     let verificationOtp = ""
+
+    if (locals?.accountType === "superAdmin") {
+      const generatePassword = await AlphaNumeric(8)
+
+      const user = await UserRepository.create({
+        ...payload,
+        isVerified: true,
+        password: await hashPassword(generatePassword),
+      })
+
+      if (!user._id) return { success: false, msg: UserFailure.CREATE }
+
+      const substitutional_parameters = {
+        name: fullName,
+        password: generatePassword,
+        email,
+      }
+
+      try {
+        await sendMailNotification(
+          email,
+          "Sign-Up",
+          substitutional_parameters,
+          "ADMIN_STUDENT"
+        )
+      } catch (error) {
+        console.log("error", error)
+      }
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(user._id),
+        title: `New User`,
+        message: `Welcome to Efiko Learning, we are glad to have you with us`,
+      })
+
+      return {
+        success: true,
+        msg: UserSuccess.CREATE,
+      }
+    }
+
     if (accountType === "tutor") {
       verificationOtp = otp
     }

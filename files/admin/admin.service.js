@@ -12,27 +12,22 @@ const { uploadImageManager } = require("../../utils/multer")
 
 class AdminAuthService {
   static async adminSignUpService(data, locals) {
-    const { body, image } = data
-    console.log("locals", locals)
-
-    if (!image)
-      return { success: false, msg: adminMessages.UPDATE_IMAGE_FAILURE }
-
     if (locals.accountType != "superAdmin") {
       return { success: false, msg: authMessages.SUPER_ADMIN }
     }
     const admin = await AdminRepository.fetchAdmin({
-      email: body.email,
+      email: data.email,
     })
+
+    console.log("data", data)
 
     if (admin) {
       return { success: false, msg: authMessages.ADMIN_EXISTS }
     }
 
-    const password = await hashPassword(body.password)
+    const password = await hashPassword(data.password)
     const signUp = await AdminRepository.create({
-      ...body,
-      image,
+      ...data,
       password,
     })
 
@@ -93,7 +88,7 @@ class AdminAuthService {
       "createdAt",
       "Admin"
     )
-    if (error) return { SUCCESS: false, msg: error }
+    if (error) return { success: false, msg: error }
 
     const getAdmin = await AdminRepository.findAdminParams({
       ...params,
@@ -106,15 +101,17 @@ class AdminAuthService {
       return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
     getAdmin.password = undefined
-    return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
+    return {
+      success: true,
+      msg: authMessages.ADMIN_FOUND,
+      data: getAdmin,
+      length: getAdmin.length,
+    }
   }
 
   static async updateAdminService(data, params) {
-    const { body, image } = data
-
     const admin = await AdminRepository.updateAdminById(params.id, {
-      image,
-      ...body,
+      ...data,
     })
 
     if (!admin)

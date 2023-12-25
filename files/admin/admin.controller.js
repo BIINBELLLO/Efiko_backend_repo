@@ -4,10 +4,8 @@ const { responseHandler } = require("../../core/response")
 const { CustomError } = require("../../utils/errors")
 
 const adminSignUpController = async (req, res, next) => {
-  const value = await fileModifier(req)
-
   const [error, data] = await manageAsyncOps(
-    AdminAuthService.adminSignUpService(value, res.locals.jwt)
+    AdminAuthService.adminSignUpService(req.body, res.locals.jwt)
   )
 
   if (error) return next(error)
@@ -54,10 +52,8 @@ const getLoggedInAdminController = async (req, res, next) => {
 }
 
 const updateAdminController = async (req, res, next) => {
-  const value = await fileModifier(req)
-
   const [error, data] = await manageAsyncOps(
-    AdminAuthService.updateAdminService(value, req.params)
+    AdminAuthService.updateAdminService(req.body, req.params)
   )
 
   if (error) return next(error)

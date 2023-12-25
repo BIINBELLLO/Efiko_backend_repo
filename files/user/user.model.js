@@ -56,6 +56,16 @@ const userSchema = new mongoose.Schema(
     passwordToken: {
       type: String,
     },
+    status: {
+      type: String,
+      enum: ["Active", "Inactive"],
+      default: "Active",
+    },
+    action: {
+      type: String,
+      enum: ["Activate", "Deactivate"],
+      default: "Deactivate",
+    },
     verificationOtp: {
       type: String,
     },

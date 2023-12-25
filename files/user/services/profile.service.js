@@ -7,7 +7,6 @@ const {
   sanitizePhoneNumber,
   generateOtp,
 } = require("../../../utils")
-const createHash = require("../../../utils/createHash")
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
 const { SessionRepository } = require("../../session/session.repository")
@@ -68,7 +67,7 @@ class ProfileService {
       "User"
     )
     if (error) return { success: false, msg: error }
-
+    console.log("sort", sort)
     const allUsers = await UserRepository.findAllUsersParams({
       ...params,
       limit,
@@ -78,18 +77,23 @@ class ProfileService {
 
     if (allUsers.length < 1) return { success: false, msg: UserFailure.FETCH }
 
-    return { success: true, msg: UserSuccess.FETCH, data: allUsers }
+    return {
+      success: true,
+      msg: UserSuccess.FETCH,
+      data: allUsers,
+      length: allUsers.length,
+    }
   }
 
   static async UpdateUserService(body, locals) {
     const user = await UserRepository.findSingleUserWithParams({
-      _id: locals._id,
+      _id: new mongoose.Types.ObjectId(locals._id),
     })
 
     if (!user) return { success: false, msg: UserFailure.UPDATE }
 
     const updateUser = await UserRepository.updateUserProfile(
-      { _id: locals._id },
+      { _id: new mongoose.Types.ObjectId(locals._id) },
       {
         ...body,
       }
@@ -201,6 +205,29 @@ class ProfileService {
       success: true,
       msg: UserSuccess.UPDATE,
     }
+  }
+
+  static async activateAndDeactivateService(params, body) {
+    const { action } = body
+    let query = {}
+    if (action === "Deactivate") {
+      query = { status: "Inactive", action: "Activate" }
+    }
+
+    if (action === "Activate") {
+      query = { status: "Active", action: "Deactivate" }
+    }
+
+    const updateUser = await UserRepository.updateUserDetails(
+      { _id: new mongoose.Types.ObjectId(params) },
+      {
+        ...query,
+      }
+    )
+
+    if (!updateUser) return { success: false, msg: UserFailure.UPDATE }
+
+    return { success: true, msg: UserSuccess.UPDATE }
   }
 }
 

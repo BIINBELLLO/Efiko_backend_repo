@@ -29,10 +29,13 @@ class AdminRepository {
       }
     }
 
-    const users = await Admin.find({
-      ...restOfPayload,
-      ...query, // Spread the query object to include its properties
-    })
+    const users = await Admin.find(
+      {
+        ...restOfPayload,
+        ...query, // Spread the query object to include its properties
+      },
+      { password: 0 }
+    )
       .sort(sort)
       .skip(skip)
       .limit(limit)

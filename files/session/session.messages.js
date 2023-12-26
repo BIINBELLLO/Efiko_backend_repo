@@ -9,7 +9,7 @@ module.exports.SessionFailure = {
   PASSWORD: "incorrect password",
   CREATE: "Unable to create session",
   TUTOR: "only tutor can perform this task",
-  EXIST: "session already exist",
+  EXIST: "session name or title already exist",
   UPDATE: "unable to Update",
   SESSION_EXIST: "session does not exist",
   SESSION_FOUND: "session not found",

@@ -34,13 +34,16 @@ class SessionRepository {
     }
 
     const session = await Session.find({ ...query })
-      .populate({ path: "tutorId", select: "userName fullName profileImage email" })
+      .populate({
+        path: "tutorId",
+        select: "userName fullName profileImage email",
+      })
       .populate({
         path: "rating.ratedBy",
         model: "User",
         select: "fullName userName", // Select the fields you want to include from the User model
       })
-      .sort(sort)
+      .sort({ timeAndDate: -1 })
       .skip(skip)
       .limit(limit)
 

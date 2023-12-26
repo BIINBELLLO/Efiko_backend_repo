@@ -56,6 +56,10 @@ const userSchema = new mongoose.Schema(
     passwordToken: {
       type: String,
     },
+    approvalStatus: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected"],
+    },
     status: {
       type: String,
       enum: ["Active", "Inactive"],

@@ -3,7 +3,7 @@ const axios = require("axios")
 const accountCredentials = "account_credentials"
 
 class ZoomAPiServiceProvider {
-  static async initiateZoomMeeting() {
+  static async initiateZoomMeeting(body) {
     try {
       let access_token = await this.getAccessToken()
 
@@ -13,12 +13,12 @@ class ZoomAPiServiceProvider {
       }
 
       const payload = {
-        topic: "new setup",
-        start_time: "2024-12-19T17:28",
+        topic: body.title,
+        start_time: body.time,
         type: 2,
-        duration: 45,
-        timezone: "UTC",
-        agenda: "this is for the team meeting",
+        duration: body.duration,
+        timezone: body.timezone,
+        agenda: body.description,
         settings: {
           host_video: true,
           participant_video: true,
@@ -27,7 +27,7 @@ class ZoomAPiServiceProvider {
           watermark: false,
           use_pm: false,
           audio: "both",
-          auto_recording: "none",
+          // auto_recording: "none",
         },
       }
 
@@ -53,7 +53,7 @@ class ZoomAPiServiceProvider {
         status: 1,
       }
 
-      return { success: true, msg: "Meeting created", content }
+      return content
     } catch (error) {
       console.error(error)
       return { success: false, msg: "Error creating meeting" }
@@ -92,20 +92,3 @@ class ZoomAPiServiceProvider {
 }
 
 module.exports = { ZoomAPiServiceProvider }
-
-//getting meeting record link
-/**
- * 
- * 
-   // After the meeting is created, get recording information
-      const recordingResponse = await axios.get(
-        `https://api.zoom.us/v2/meetings/${response_data.id}/recordings`,
-        { headers }
-      );
-
-      if (recordingResponse.status !== 200) {
-        throw new Error("Unable to retrieve recording information");
-      }
-
-      const recordingData = recordingResponse.data;
- */

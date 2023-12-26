@@ -15,6 +15,7 @@ const { createUserController } = require("../user/controllers/user.controller")
 const {
   getUserController,
   activateAndDeactivateController,
+  updateTutorController,
 } = require("../user/controllers/profile.controller")
 
 //admin route
@@ -32,9 +33,11 @@ adminRoute.route("/").get(getAdminController)
 //update admin
 adminRoute.route("/update/:id").patch(updateAdminController)
 
-//student admin routes
+//suser admin routes
 adminRoute.route("/student").post(createUserController)
 adminRoute.route("/student").get(getUserController)
 adminRoute.route("/student/:id").patch(activateAndDeactivateController)
+adminRoute.route("/tutor").get(getUserController)
+adminRoute.route("/tutor/:id").patch(updateTutorController)
 
 module.exports = adminRoute

@@ -28,6 +28,7 @@ class UserService {
     const { otp, expiry } = generateOtp()
 
     let verificationOtp = ""
+    let approvalStatus = ""
 
     if (locals?.accountType === "superAdmin") {
       const generatePassword = await AlphaNumeric(8)
@@ -70,6 +71,7 @@ class UserService {
 
     if (accountType === "tutor") {
       verificationOtp = otp
+      approvalStatus = "Pending"
     }
 
     //hash password

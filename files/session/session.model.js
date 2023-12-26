@@ -19,12 +19,15 @@ const sessionSchema = new mongoose.Schema(
     duration: {
       type: String,
     },
-    link: {
+    meetingLink: {
       type: String,
     },
     start: {
       type: Boolean,
       default: false,
+    },
+    timeAndDate: {
+      type: Date,
     },
     date: {
       type: Date,
@@ -32,8 +35,8 @@ const sessionSchema = new mongoose.Schema(
     time: {
       type: String,
     },
-    charges: {
-      type: Number,
+    meetingPassword: {
+      type: String,
     },
     recordingUrl: {
       type: String,

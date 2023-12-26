@@ -8,33 +8,15 @@ const {
 const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
 
 class SessionService {
-  static async initiateSessionService(req) {
-    const session = await ZoomAPiServiceProvider.initiateZoomMeeting(req)
+  static async initiateSessionService(payload) {
+    const session = await ZoomAPiServiceProvider.initiateZoomMeeting(payload)
     if (!session) return { success: false, msg: `unable to create session` }
 
-    return {
-      success: true,
-      msg: SessionSuccess.CREATE,
-      data: session,
-    }
-  }
-  static async getZoomMeetingService() {
-    const session = await ZoomAPiServiceProvider.getZoomMeeting()
-
-    if (!session) return { success: false, msg: `unable to create session` }
-
-    return {
-      success: true,
-      msg: SessionSuccess.CREATE,
-    }
+    return session
   }
 
-  static async createSession(payload, jwt) {
+  static async createSession(payload) {
     const { title, category } = payload
-    const { accountType, _id } = jwt
-
-    if (accountType !== "tutor")
-      return { success: false, msg: SessionFailure.TUTOR }
 
     const sessionExist = await SessionRepository.validateSession({
       title,
@@ -43,18 +25,24 @@ class SessionService {
 
     if (sessionExist) return { success: false, msg: SessionFailure.EXIST }
 
+    const initiateSession = await this.initiateSessionService(payload)
+
+    const { meeting_url, password, meetingTime, purpose, duration } =
+      initiateSession
+
     const session = await SessionRepository.create({
-      tutorId: new mongoose.Types.ObjectId(_id),
-      ...payload,
+      title: purpose,
+      category: payload.category,
+      outcome: payload.outcome,
+      duration,
+      meetingLink: meeting_url,
+      timeAndDate: meetingTime,
+      data: payload.data,
+      time: payload.time,
+      meetingPassword: password,
     })
 
     if (!session._id) return { success: false, msg: SessionFailure.CREATE }
-
-    await NotificationRepository.createNotification({
-      recipientId: new mongoose.Types.ObjectId(jwt._id),
-      title: `Session Created`,
-      message: `${jwt.fullName}, you have created a session: ${payload.title} successfully`,
-    })
 
     return {
       success: true,
@@ -63,12 +51,7 @@ class SessionService {
     }
   }
 
-  static async updateSessionService(id, payload, jwt) {
-    const { accountType } = jwt
-
-    if (accountType !== "tutor")
-      return { success: false, msg: SessionFailure.TUTOR }
-
+  static async updateSessionService(id, payload) {
     const updateSession = await SessionRepository.updateSessionDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {

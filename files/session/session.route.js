@@ -12,19 +12,12 @@ const {
   getSessionController,
   rateSessionController,
   getReviewServiceController,
-  initiateSessionController,
-  getZoomSessionController,
 } = require("./session.controller")
-
-sessionRoute.route("/zoom").post(initiateSessionController)
-sessionRoute.route("/zoom").get(getZoomSessionController)
 
 sessionRoute.use(isAuthenticated)
 
 //routes
-sessionRoute
-  .route("/")
-  .post(validate(checkSchema(sessionValidation)), createSessionController)
+sessionRoute.route("/").post(createSessionController)
 
 sessionRoute.route("/:id").patch(updateSessionController)
 

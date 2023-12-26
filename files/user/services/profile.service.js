@@ -66,8 +66,10 @@ class ProfileService {
       "createdAt",
       "User"
     )
+    console.log("userPayload", userPayload)
+    console.log("params", params)
     if (error) return { success: false, msg: error }
-    console.log("sort", sort)
+
     const allUsers = await UserRepository.findAllUsersParams({
       ...params,
       limit,
@@ -154,9 +156,6 @@ class ProfileService {
       tutorId: new mongoose.Types.ObjectId(payload),
     })
 
-    // Extract only the 'rating' property from each session
-    // const ratings = sessions.map((session) => session.rating)
-
     if (!user) return { success: false, msg: UserFailure.FETCH }
 
     return {
@@ -222,6 +221,19 @@ class ProfileService {
       { _id: new mongoose.Types.ObjectId(params) },
       {
         ...query,
+      }
+    )
+
+    if (!updateUser) return { success: false, msg: UserFailure.UPDATE }
+
+    return { success: true, msg: UserSuccess.UPDATE }
+  }
+
+  static async updateTutorService(params, body) {
+    const updateUser = await UserRepository.updateUserDetails(
+      { _id: new mongoose.Types.ObjectId(params) },
+      {
+        ...body,
       }
     )
 

@@ -45,11 +45,6 @@ class ZoomProviderService {
             "Content-Type": "application/x-www-form-urlencoded",
           },
         },
-        // headers: {
-        //   Authorization: `Bearer ${Buffer.from(
-        //     `${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`
-        //   ).toString("base64")}`,
-        // },
       })
       const accessToken = zoomMeetingResponse.data.access_token
       res.send(`Access Token: ${accessToken}`)

@@ -21,7 +21,6 @@ const initiateStripePaymentController = async (req, res, next) => {
     TransactionService.initiateStripePayment(req.body)
   )
 
-  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

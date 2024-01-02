@@ -66,8 +66,6 @@ class ProfileService {
       "createdAt",
       "User"
     )
-    console.log("userPayload", userPayload)
-    console.log("params", params)
     if (error) return { success: false, msg: error }
 
     const allUsers = await UserRepository.findAllUsersParams({

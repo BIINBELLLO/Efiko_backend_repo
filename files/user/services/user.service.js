@@ -17,7 +17,7 @@ const {
 
 class UserService {
   static async createUser(payload, locals) {
-    const { fullName, email, accountType } = payload
+    const { firstName, email, accountType } = payload
 
     const userExist = await UserRepository.validateUser({
       email,
@@ -42,7 +42,7 @@ class UserService {
       if (!user._id) return { success: false, msg: UserFailure.CREATE }
 
       const substitutional_parameters = {
-        name: fullName,
+        name: firstName,
         password: generatePassword,
         email,
       }

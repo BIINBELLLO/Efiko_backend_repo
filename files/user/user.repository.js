@@ -27,16 +27,22 @@ class UserRepository {
     if (search) {
       query = {
         $or: [
-          { fullName: { $regex: search, $options: "i" } },
+          { firstName: { $regex: search, $options: "i" } },
+          { lastName: { $regex: search, $options: "i" } },
           { email: { $regex: search, $options: "i" } },
+          { fullName: { $regex: search, $options: "i" } },
         ],
+        ...restOfPayload,
       }
     }
 
-    const user = await User.find(
-      { ...restOfPayload, ...query },
-      { password: 0 }
-    )
+    if (search === null || search === undefined) {
+      query = {
+        ...restOfPayload,
+      }
+    }
+
+    const user = await User.find({ ...query }, { password: 0 })
       .sort(sort)
       .skip(skip)
       .limit(limit)

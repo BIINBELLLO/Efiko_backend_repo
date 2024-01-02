@@ -29,8 +29,12 @@ class SessionRepository {
 
     if (search) {
       query = { title: { $regex: search, $options: "i" }, ...rest }
-    } else {
-      query = { ...rest }
+    }
+
+    if (search === null || search === undefined) {
+      query = {
+        ...rest,
+      }
     }
 
     const session = await Session.find({ ...query })

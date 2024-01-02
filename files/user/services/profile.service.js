@@ -75,7 +75,7 @@ class ProfileService {
       sort,
     })
 
-    if (allUsers.length < 1) return { success: false, msg: UserFailure.FETCH }
+    if (allUsers.length < 1) return { success: true, msg: UserFailure.FETCH, data: [] }
 
     return {
       success: true,

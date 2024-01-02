@@ -18,6 +18,7 @@ const { sendMailNotification } = require("../../utils/email")
 class AdminAuthService {
   static async adminSignUpService(data, locals) {
     const { accountType, fullName, email } = data
+    console.log("accountType", accountType)
     if (locals.accountType != "superAdmin") {
       return { success: false, msg: authMessages.SUPER_ADMIN }
     }
@@ -44,23 +45,19 @@ class AdminAuthService {
         email,
       }
 
-      try {
-        await sendMailNotification(
-          email,
-          "Sign-Up",
-          substitutional_parameters,
-          "ADMIN_WELCOME"
-        )
-      } catch (error) {
-        console.log("error", error)
-      }
+      await sendMailNotification(
+        email,
+        "Sign-Up",
+        substitutional_parameters,
+        "ADMIN_WELCOME"
+      )
       await NotificationRepository.createNotification({
-        recipientId: new mongoose.Types.ObjectId(admin._id),
+        recipientId: new mongoose.Types.ObjectId(signUp._id),
         title: `New Admin`,
         message: `Welcome to Efiko Learning, we are glad to have you with us`,
       })
     }
-    
+
     return { success: true, msg: authMessages.ADMIN_CREATED, data: signUp }
   }
 

@@ -27,10 +27,17 @@ class CurriculumRepository {
           { title: { $regex: search, $options: "i" } },
           { description: { $regex: search, $options: "i" } },
         ],
+        ...restOfPayload,
       }
     }
 
-    const curriculum = await Curriculum.find({ ...restOfPayload, ...query })
+    if (search === null || search === undefined) {
+      query = {
+        ...restOfPayload,
+      }
+    }
+
+    const curriculum = await Curriculum.find({ ...query })
       .sort(sort)
       .skip(skip)
       .limit(limit)

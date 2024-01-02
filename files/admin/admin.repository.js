@@ -26,12 +26,18 @@ class AdminRepository {
           { fullName: { $regex: search, $options: "i" } },
           { email: { $regex: search, $options: "i" } },
         ],
+        ...restOfPayload,
+      }
+    }
+
+    if (search === null || search === undefined) {
+      query = {
+        ...restOfPayload,
       }
     }
 
     const admin = await Admin.find(
       {
-        ...restOfPayload,
         ...query, // Spread the query object to include its properties
       },
       { password: 0 }

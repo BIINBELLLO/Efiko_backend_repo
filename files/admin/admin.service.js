@@ -5,6 +5,7 @@ const {
   verifyPassword,
   tokenHandler,
   queryConstructor,
+  AlphaNumeric,
 } = require("../../utils/index")
 const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")

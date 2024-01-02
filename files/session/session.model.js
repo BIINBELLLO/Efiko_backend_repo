@@ -5,6 +5,7 @@ const sessionSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    curriculumId: { type: mongoose.Types.ObjectId, ref: "Curriculum" },
     tutorId: { type: mongoose.Types.ObjectId, ref: "User" },
     studentId: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     category: {

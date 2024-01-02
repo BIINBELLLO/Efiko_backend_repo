@@ -9,7 +9,6 @@ const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
 
 class SessionService {
   static async initiateSessionService(payload) {
-    console.log("payload", payload)
     const session = await ZoomAPiServiceProvider.initiateZoomMeeting(payload)
     if (!session) return { success: false, msg: `unable to create session` }
 
@@ -38,6 +37,7 @@ class SessionService {
       duration,
       meetingLink: meeting_url,
       timeAndDate: meetingTime,
+      curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
       data: payload.data,
       time: payload.time,
       meetingPassword: password,

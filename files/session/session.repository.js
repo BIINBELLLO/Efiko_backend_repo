@@ -35,6 +35,10 @@ class SessionRepository {
 
     const session = await Session.find({ ...query })
       .populate({
+        path: "curriculumId",
+        // select: "userName fullName profileImage email",
+      })
+      .populate({
         path: "tutorId",
         select: "userName fullName profileImage email",
       })

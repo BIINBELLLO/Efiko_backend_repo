@@ -9,6 +9,7 @@ const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
 
 class SessionService {
   static async initiateSessionService(payload) {
+    console.log("payload", payload)
     const session = await ZoomAPiServiceProvider.initiateZoomMeeting(payload)
     if (!session) return { success: false, msg: `unable to create session` }
 

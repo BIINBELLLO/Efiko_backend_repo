@@ -12,14 +12,13 @@ const { uploadImageManager } = require("../../utils/multer")
 
 class AdminAuthService {
   static async adminSignUpService(data, locals) {
+    const { accountType } = data
     if (locals.accountType != "superAdmin") {
       return { success: false, msg: authMessages.SUPER_ADMIN }
     }
     const admin = await AdminRepository.fetchAdmin({
       email: data.email,
     })
-
-    console.log("data", data)
 
     if (admin) {
       return { success: false, msg: authMessages.ADMIN_EXISTS }
@@ -28,7 +27,38 @@ class AdminAuthService {
     const password = await hashPassword(data.password)
     const signUp = await AdminRepository.create({
       ...data,
-      password,
+      password: generatePassword
+    })
+    const generatePassword = await AlphaNumeric(8)
+
+    const user = await UserRepository.create({
+      ...payload,
+      isVerified: true,
+      password: await hashPassword(generatePassword),
+    })
+
+    if (!user._id) return { success: false, msg: UserFailure.CREATE }
+
+    const substitutional_parameters = {
+      name: firstName,
+      password: generatePassword,
+      email,
+    }
+
+    try {
+      await sendMailNotification(
+        email,
+        "Sign-Up",
+        substitutional_parameters,
+        "ADMIN_STUDENT"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
+    await NotificationRepository.createNotification({
+      recipientId: new mongoose.Types.ObjectId(user._id),
+      title: `New User`,
+      message: `Welcome to Efiko Learning, we are glad to have you with us`,
     })
 
     return { success: true, msg: authMessages.ADMIN_CREATED, data: signUp }

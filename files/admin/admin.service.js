@@ -9,10 +9,14 @@ const {
 const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")
 const { uploadImageManager } = require("../../utils/multer")
+const {
+  NotificationRepository,
+} = require("../notification/notification.repository")
+const { sendMailNotification } = require("../../utils/email")
 
 class AdminAuthService {
   static async adminSignUpService(data, locals) {
-    const { accountType } = data
+    const { accountType, fullName, email } = data
     if (locals.accountType != "superAdmin") {
       return { success: false, msg: authMessages.SUPER_ADMIN }
     }
@@ -24,43 +28,38 @@ class AdminAuthService {
       return { success: false, msg: authMessages.ADMIN_EXISTS }
     }
 
-    const password = await hashPassword(data.password)
-    const signUp = await AdminRepository.create({
-      ...data,
-      password: generatePassword
-    })
     const generatePassword = await AlphaNumeric(8)
 
-    const user = await UserRepository.create({
-      ...payload,
-      isVerified: true,
-      password: await hashPassword(generatePassword),
+    const password = await hashPassword(generatePassword)
+    const signUp = await AdminRepository.create({
+      ...data,
+      password,
     })
 
-    if (!user._id) return { success: false, msg: UserFailure.CREATE }
-
-    const substitutional_parameters = {
-      name: firstName,
-      password: generatePassword,
-      email,
-    }
-
-    try {
-      await sendMailNotification(
+    if (accountType === "normalAdmin") {
+      const substitutional_parameters = {
+        name: fullName,
+        password: generatePassword,
         email,
-        "Sign-Up",
-        substitutional_parameters,
-        "ADMIN_STUDENT"
-      )
-    } catch (error) {
-      console.log("error", error)
-    }
-    await NotificationRepository.createNotification({
-      recipientId: new mongoose.Types.ObjectId(user._id),
-      title: `New User`,
-      message: `Welcome to Efiko Learning, we are glad to have you with us`,
-    })
+      }
 
+      try {
+        await sendMailNotification(
+          email,
+          "Sign-Up",
+          substitutional_parameters,
+          "ADMIN_WELCOME"
+        )
+      } catch (error) {
+        console.log("error", error)
+      }
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(admin._id),
+        title: `New Admin`,
+        message: `Welcome to Efiko Learning, we are glad to have you with us`,
+      })
+    }
+    
     return { success: true, msg: authMessages.ADMIN_CREATED, data: signUp }
   }
 

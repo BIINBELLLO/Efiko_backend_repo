@@ -33,7 +33,7 @@ adminRoute.route("/").get(getAdminController)
 //update admin
 adminRoute.route("/update/:id").patch(updateAdminController)
 
-//suser admin routes
+//user admin routes
 adminRoute.route("/student").post(createUserController)
 adminRoute.route("/student").get(getUserController)
 adminRoute.route("/student/:id").patch(activateAndDeactivateController)

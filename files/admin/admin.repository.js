@@ -29,7 +29,7 @@ class AdminRepository {
       }
     }
 
-    const users = await Admin.find(
+    const admin = await Admin.find(
       {
         ...restOfPayload,
         ...query, // Spread the query object to include its properties
@@ -40,7 +40,7 @@ class AdminRepository {
       .skip(skip)
       .limit(limit)
 
-    return users
+    return admin
   }
 
   static async updateAdminById(id, params) {

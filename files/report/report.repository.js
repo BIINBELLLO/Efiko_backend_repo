@@ -6,25 +6,40 @@ class ReportRepository {
     return await Report.create(reportPayload)
   }
 
-  static async findReportWithParams(reportPayload, select) {
-    return await Report.find({ ...reportPayload }).select(select)
-  }
-
   static async findSingleReportWithParams(reportPayload, select) {
     const report = await Report.findOne({ ...reportPayload }).select(select)
 
     return report
   }
 
-  static async findAllReportParams(reportPayload) {
-    const { limit, skip, sort, ...restOfPayload } = reportPayload
+  static async findAllReportParams(payload) {
+    const { limit, skip, sort, search, ...restOfPayload } = payload
 
-    const Report = await Report.find({ ...restOfPayload })
+    let query = {}
+
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { title: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+        ...restOfPayload,
+      }
+    }
+
+    if (search === null || search === undefined) {
+      query = {
+        ...restOfPayload,
+      }
+    }
+
+    const report = await Report.find({ ...query })
       .sort(sort)
       .skip(skip)
       .limit(limit)
 
-    return Report
+    return report
   }
 
   static async updateReportDetails(id, params) {

@@ -5,7 +5,6 @@ const reportSchema = new mongoose.Schema(
     email: {
       type: String,
     },
-    reportedBy: { type: mongoose.Types.ObjectId, ref: "User" },
     category: {
       type: String,
     },
@@ -14,6 +13,11 @@ const reportSchema = new mongoose.Schema(
     },
     issue: {
       type: String,
+    },
+    status: {
+      type: String,
+      default: "pending",
+      enum: ["pending", "approved"],
     },
   },
   { timestamps: true }

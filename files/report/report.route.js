@@ -1,10 +1,12 @@
 const reportRoute = require("express").Router()
-const { isAuthenticated } = require("../../utils")
-const { createReportController } = require("./report.controller")
 
-reportRoute.use(isAuthenticated)
+const {
+  createReportController,
+  getReportController,
+} = require("./report.controller")
 
 //routes
 reportRoute.route("/").post(createReportController)
+reportRoute.route("/").get(getReportController)
 
 module.exports = reportRoute

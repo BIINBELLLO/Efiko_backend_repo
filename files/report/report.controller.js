@@ -6,7 +6,19 @@ const { ReportService } = require("./report.service")
 
 const createReportController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    ReportService.createReport(req.body, res.locals.jwt)
+    ReportService.createReport(req.body)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
+const getReportController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    ReportService.getReportService(req.query)
   )
 
   if (error) return next(error)
@@ -18,4 +30,5 @@ const createReportController = async (req, res, next) => {
 
 module.exports = {
   createReportController,
+  getReportController,
 }

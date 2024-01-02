@@ -22,6 +22,8 @@ class UserRepository {
   static async findAllUsersParams(userPayload) {
     const { limit, skip, sort, search, ...restOfPayload } = userPayload
 
+    console.log("userPayload", userPayload)
+
     let query = {}
 
     if (search) {

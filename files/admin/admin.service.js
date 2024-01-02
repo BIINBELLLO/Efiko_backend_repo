@@ -18,7 +18,7 @@ const { sendMailNotification } = require("../../utils/email")
 class AdminAuthService {
   static async adminSignUpService(data, locals) {
     const { accountType, fullName, email } = data
-    console.log("accountType", accountType)
+
     if (locals.accountType != "superAdmin") {
       return { success: false, msg: authMessages.SUPER_ADMIN }
     }

@@ -16,6 +16,7 @@ class CurriculumRepository {
     return report
   }
 
+  //get curriculum
   static async findAllCurriculumParams(payload) {
     const { limit, skip, sort, search, ...restOfPayload } = payload
 

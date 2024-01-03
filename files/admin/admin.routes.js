@@ -21,8 +21,8 @@ const {
 //admin route
 adminRoute.route("/login").post(adminLogin)
 
-adminRoute.route("/profile").get(getAdminController)
 adminRoute.use(isAuthenticated)
+adminRoute.route("/profile").get(getAdminController)
 
 adminRoute.route("/").post(adminVerifier, adminSignUpController)
 

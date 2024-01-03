@@ -6,7 +6,6 @@ module.exports.CurriculumSuccess = {
 }
 
 module.exports.CurriculumFailure = {
-  PASSWORD: "Incorrect password",
   CREATE: "Unable to create curriculum",
   UPDATE: "unable to Update",
   NOT_FOUND: "Curriculum not available",
@@ -14,4 +13,5 @@ module.exports.CurriculumFailure = {
   SOFT_DELETE: "Curriculum account deleted",
   DELETE: "unable to delete",
   SEARCH_ERROR: "Invalid data input",
+  EXIST: "Curriculum title already exist",
 }

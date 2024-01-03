@@ -11,6 +11,14 @@ const { LIMIT, SKIP, SORT } = require("../../constants")
 class CurriculumService {
   static async createCurriculum(payload, jwt) {
     const { image, body } = payload
+
+    const curriculumExist =
+      await CurriculumRepository.findSingleCurriculumWithParams({
+        title: body.title,
+      })
+
+    if (curriculumExist) return { success: false, msg: CurriculumFailure.EXIST }
+
     const curriculum = await CurriculumRepository.create({
       createdBy: new mongoose.Types.ObjectId(jwt._id),
       pdfFile: image,
@@ -34,6 +42,8 @@ class CurriculumService {
     )
     if (error) return { success: false, msg: error }
 
+    const total = await CurriculumRepository.findCurriculumWithParams()
+
     const curriculum = await CurriculumRepository.findAllCurriculumParams({
       ...params,
       limit,
@@ -49,6 +59,7 @@ class CurriculumService {
       msg: CurriculumSuccess.FETCH,
       data: curriculum,
       length: curriculum.length,
+      total: total.length,
     }
   }
 

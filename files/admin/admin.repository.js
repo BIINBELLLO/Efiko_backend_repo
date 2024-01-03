@@ -10,6 +10,10 @@ class AdminRepository {
     const admin = await Admin.findOne({ ...body })
     return admin
   }
+  static async fetchAdminParams(body) {
+    const admin = await Admin.find({ ...body })
+    return admin
+  }
 
   static async updateAdminDetails(query, params) {
     return Admin.findOneAndUpdate({ ...query }, { $set: { ...params } })

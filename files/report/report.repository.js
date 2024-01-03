@@ -11,6 +11,11 @@ class ReportRepository {
 
     return report
   }
+  static async findReportWithParams(reportPayload, select) {
+    const report = await Report.find({ ...reportPayload }).select(select)
+
+    return report
+  }
 
   static async findAllReportParams(payload) {
     const { limit, skip, sort, search, ...restOfPayload } = payload

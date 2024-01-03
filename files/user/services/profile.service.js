@@ -68,6 +68,8 @@ class ProfileService {
     )
     if (error) return { success: false, msg: error }
 
+    const total = await UserRepository.findUserWithParams()
+
     const allUsers = await UserRepository.findAllUsersParams({
       ...params,
       limit,
@@ -75,13 +77,15 @@ class ProfileService {
       sort,
     })
 
-    if (allUsers.length < 1) return { success: true, msg: UserFailure.FETCH, data: [] }
+    if (allUsers.length < 1)
+      return { success: true, msg: UserFailure.FETCH, data: [] }
 
     return {
       success: true,
       msg: UserSuccess.FETCH,
       data: allUsers,
       length: allUsers.length,
+      total: total.length,
     }
   }
 

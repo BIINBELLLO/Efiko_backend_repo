@@ -38,6 +38,8 @@ class ReportService {
     )
     if (error) return { success: false, msg: error }
 
+    const total = await await ReportRepository.findReportWithParams()
+
     const reports = await ReportRepository.findAllReportParams({
       ...params,
       limit,
@@ -53,6 +55,7 @@ class ReportService {
       msg: ReportSuccess.FETCH,
       data: reports,
       length: reports.length,
+      total: total.length,
     }
   }
 }

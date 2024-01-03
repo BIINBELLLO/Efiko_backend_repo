@@ -117,6 +117,8 @@ class AdminAuthService {
     )
     if (error) return { success: false, msg: error }
 
+    const total = await AdminRepository.fetch()
+
     const getAdmin = await AdminRepository.findAdminParams({
       ...params,
       limit,
@@ -133,6 +135,7 @@ class AdminAuthService {
       msg: authMessages.ADMIN_FOUND,
       data: getAdmin,
       length: getAdmin.length,
+      total: total.length,
     }
   }
 

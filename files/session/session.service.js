@@ -73,6 +73,8 @@ class SessionService {
     )
     if (error) return { success: false, msg: error }
 
+    const total = await SessionRepository.findSessionWithParams()
+
     const sessions = await SessionRepository.findAllSessionParams({
       ...params,
       limit,
@@ -83,7 +85,13 @@ class SessionService {
     if (sessions.length < 1)
       return { success: true, msg: SessionFailure.FETCH, data: [] }
 
-    return { success: true, msg: SessionSuccess.FETCH, data: sessions }
+    return {
+      success: true,
+      msg: SessionSuccess.FETCH,
+      data: sessions,
+      length: sessions.length,
+      total: total.length,
+    }
   }
 
   static async getSingleSession(payload) {

@@ -24,7 +24,7 @@ adminRoute.route("/login").post(adminLogin)
 adminRoute.route("/profile").get(getAdminController)
 adminRoute.use(isAuthenticated)
 
-adminRoute.route("/").post(adminSignUpController)
+adminRoute.route("/").post(adminVerifier, adminSignUpController)
 
 adminRoute.route("/logged-in").get(getLoggedInAdminController)
 adminRoute.route("/").get(getAdminController)

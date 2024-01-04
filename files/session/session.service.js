@@ -34,6 +34,7 @@ class SessionService {
       title: purpose,
       category: payload.category,
       outcome: payload.outcome,
+      description: payload.description,
       duration,
       meetingLink: meeting_url,
       timeAndDate: meetingTime,

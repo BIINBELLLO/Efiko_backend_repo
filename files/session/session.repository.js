@@ -23,8 +23,6 @@ class SessionRepository {
   static async findAllSessionParams(sessionPayload) {
     const { limit, skip, sort, ...restOfPayload } = sessionPayload
 
-    console.log(sessionPayload)
-
     const { search, ...rest } = restOfPayload
 
     let query = {}

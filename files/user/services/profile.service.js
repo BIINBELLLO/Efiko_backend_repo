@@ -232,10 +232,16 @@ class ProfileService {
   }
 
   static async updateTutorService(params, body) {
+    let query = {}
+    const { approvalStatus } = body
+    if (approvalStatus === "Approved") {
+      query = { status: "Active" }
+    }
     const updateUser = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(params) },
       {
         ...body,
+        ...query,
       }
     )
 

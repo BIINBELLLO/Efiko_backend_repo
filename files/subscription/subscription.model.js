@@ -11,6 +11,11 @@ const subscriptionSchema = new mongoose.Schema(
     type: {
       type: String,
     },
+    status: {
+      type: String,
+      default: "Active",
+      enum: ["Inactive", "Active"],
+    },
   },
   { timestamps: true }
 )

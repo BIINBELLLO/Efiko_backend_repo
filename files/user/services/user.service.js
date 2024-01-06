@@ -17,7 +17,7 @@ const {
 
 class UserService {
   static async createUser(payload, locals) {
-    const { firstName, email, accountType } = payload
+    const { firstName, email, accountType, fullName } = payload
 
     const userExist = await UserRepository.validateUser({
       email,

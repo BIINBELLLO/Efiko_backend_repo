@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
     subjectInterest: [{ type: String }],
     tutorEducationDetails: {
       education: { type: String },
-      teachingExperience: { type: Number },
+      teachingExperience: { type: String },
       subject: { type: String },
       educationDoc: { type: [String] }, // Make sure to define it as an array of strings
       nationalId: { type: String },

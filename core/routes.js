@@ -6,6 +6,7 @@ const sessionRoute = require("../files/session/session.route")
 const reportRoute = require("../files/report/report.route")
 const transactionRoute = require("../files/transaction/transaction.route")
 const curriculumRoute = require("../files/curriculum/curriculum.route")
+const subscriptionRoute = require("../files/subscription/subscription.route")
 
 const routes = (app) => {
   const base_url = "/api/v1"
@@ -18,6 +19,7 @@ const routes = (app) => {
   app.use(`${base_url}/report`, reportRoute)
   app.use(`${base_url}/transaction`, transactionRoute)
   app.use(`${base_url}/curriculum`, curriculumRoute)
+  app.use(`${base_url}/subscription`, subscriptionRoute)
 }
 
 module.exports = routes

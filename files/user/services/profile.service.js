@@ -22,7 +22,6 @@ class ProfileService {
     delete body.email
     delete body.password
 
-    console.log("body", body)
     const userprofile = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {

@@ -6,17 +6,17 @@ const { ReportRepository } = require("./report.repository")
 const { LIMIT, SKIP, SORT } = require("../../constants")
 
 class ReportService {
-  static async createReport(payload) {
+  static async createReport(payload, params) {
     const report = await ReportRepository.create({
+      reportedBy: new mongoose.Types.ObjectId(params),
       ...payload,
     })
 
-    if (!report._id) return { success: false, msg: ReportFailure.CREATE }
+    if (!report) return { success: false, msg: ReportFailure.CREATE }
 
     return {
       success: true,
       msg: ReportSuccess.CREATE,
-      data: report,
     }
   }
 
@@ -57,6 +57,19 @@ class ReportService {
       length: reports.length,
       total: total.length,
     }
+  }
+
+  static async updateReportService(payload, id) {
+    const report = await ReportRepository.updateReportDetails(
+      {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+      { ...payload }
+    )
+
+    if (!payload) return { success: false, msg: ReportFailure.UPDATE }
+
+    return { success: true, msg: ReportSuccess.UPDATE }
   }
 }
 

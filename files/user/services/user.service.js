@@ -156,6 +156,7 @@ class UserService {
     userProfile.password = undefined
 
     token = await tokenHandler({
+      _id: userProfile._id,
       userName: userProfile.userName,
       fullName: userProfile.fullName,
       firstName: userProfile.firstName,

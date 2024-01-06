@@ -2,22 +2,20 @@ const mongoose = require("mongoose")
 
 const reportSchema = new mongoose.Schema(
   {
-    email: {
+    reportedBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+    title: {
       type: String,
     },
-    category: {
-      type: String,
-    },
-    subject: {
-      type: String,
-    },
-    issue: {
+    description: {
       type: String,
     },
     status: {
       type: String,
-      default: "pending",
-      enum: ["pending", "approved"],
+      default: "Pending",
+      enum: ["Pending", "Resolved"],
     },
   },
   { timestamps: true }

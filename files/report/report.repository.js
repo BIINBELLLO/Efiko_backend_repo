@@ -25,9 +25,8 @@ class ReportRepository {
     if (search) {
       query = {
         $or: [
-          { name: { $regex: search, $options: "i" } },
           { title: { $regex: search, $options: "i" } },
-          { email: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
         ],
         ...restOfPayload,
       }
@@ -40,6 +39,10 @@ class ReportRepository {
     }
 
     const report = await Report.find({ ...query })
+      .populate({
+        path: "reportedBy",
+        select: "firstName lastName fullName email",
+      })
       .sort(sort)
       .skip(skip)
       .limit(limit)

@@ -170,6 +170,7 @@ class UserService {
     })
 
     const user = {
+      _id: userProfile._id,
       userName: userProfile.userName,
       fullName: userProfile.fullName,
       firstName: userProfile.firstName,

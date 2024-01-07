@@ -22,6 +22,8 @@ class UserRepository {
   static async findAllUsersParams(userPayload) {
     const { limit, skip, sort, search, ...restOfPayload } = userPayload
 
+    let query = {}
+
     if (search) {
       query = {
         $or: [
@@ -33,7 +35,6 @@ class UserRepository {
       }
     }
 
-    console.log("query", query)
     const user = await User.find(
       { ...restOfPayload, ...query },
       { password: 0 }

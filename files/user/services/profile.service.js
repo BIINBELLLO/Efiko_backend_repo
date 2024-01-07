@@ -60,6 +60,7 @@ class ProfileService {
     }
   }
 
+  //changes
   static async getUserService(userPayload) {
     const { error, params, limit, skip, sort } = queryConstructor(
       userPayload,

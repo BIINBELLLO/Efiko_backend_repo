@@ -17,6 +17,7 @@ const {
   getProfileSessionController,
   educationDocController,
   nationalIdController,
+  getUserController,
 } = require("./controllers/profile.controller")
 const { createUser } = require("../../validations/users/createUser.validation")
 const { loginValidation } = require("../../validations/users/loginValidation")
@@ -32,7 +33,7 @@ userRoute
 
 userRoute.route("/student-login").post(studentLoginCodeController)
 
-userRoute.route("/").get(getUserProfileController)
+userRoute.route("/").get(getUserController)
 
 userRoute.use(isAuthenticated)
 

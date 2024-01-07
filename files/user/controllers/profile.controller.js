@@ -7,7 +7,7 @@ const { UserService } = require("../services/user.service")
 
 const getUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    ProfileService.getUserService(req.query, res.locals.jwt)
+    ProfileService.getUserService(req.query)
   )
 
   if (error) return next(error)

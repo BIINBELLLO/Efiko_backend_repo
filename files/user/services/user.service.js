@@ -130,9 +130,6 @@ class UserService {
       userProfile.age &&
       userProfile.country &&
       userProfile.tutorEducationDetails.education &&
-      userProfile.tutorEducationDetails.teachingExperience &&
-      userProfile.tutorEducationDetails.subject &&
-      userProfile.tutorEducationDetails.subject &&
       userProfile.tutorEducationDetails.nationalId
     ) {
       updatedProfile = true

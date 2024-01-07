@@ -126,11 +126,11 @@ class UserService {
     if (
       userProfile.accountType === "tutor" &&
       userProfile.fullName &&
-      userProfile.description &&
-      userProfile.age &&
-      userProfile.country &&
-      userProfile.tutorEducationDetails.education &&
-      userProfile.tutorEducationDetails.nationalId
+      userProfile.description !== false &&
+      userProfile.age !== false &&
+      userProfile.country !== false
+      // userProfile.tutorEducationDetails.education &&
+      // userProfile.tutorEducationDetails.nationalId
     ) {
       updatedProfile = true
     }

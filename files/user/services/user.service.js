@@ -121,22 +121,21 @@ class UserService {
       email: email,
     })
 
-    let updatedProfile = true
+    let updatedProfile = false
 
     if (
       userProfile.accountType === "tutor" &&
-      !userProfile.userName &&
-      !userProfile.fullName &&
-      !userProfile.description &&
-      !userProfile.age &&
-      !userProfile.country &&
-      !userProfile.tutorEducationDetails.education &&
-      !userProfile.tutorEducationDetails.teachingExperience &&
-      !userProfile.tutorEducationDetails.subject &&
-      !userProfile.tutorEducationDetails.subject &&
-      !userProfile.tutorEducationDetails.nationalId
+      userProfile.fullName &&
+      userProfile.description &&
+      userProfile.age &&
+      userProfile.country &&
+      userProfile.tutorEducationDetails.education &&
+      userProfile.tutorEducationDetails.teachingExperience &&
+      userProfile.tutorEducationDetails.subject &&
+      userProfile.tutorEducationDetails.subject &&
+      userProfile.tutorEducationDetails.nationalId
     ) {
-      updatedProfile = false
+      updatedProfile = true
     }
 
     if (!userProfile.isVerified)

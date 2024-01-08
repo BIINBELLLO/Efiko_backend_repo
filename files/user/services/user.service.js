@@ -128,9 +128,8 @@ class UserService {
       userProfile.fullName &&
       userProfile.description !== false &&
       userProfile.age !== false &&
-      userProfile.country !== false
-      // userProfile.tutorEducationDetails.education &&
-      // userProfile.tutorEducationDetails.nationalId
+      userProfile.country !== false &&
+      userProfile.tutorEducationDetails.nationalId
     ) {
       updatedProfile = true
     }

@@ -42,6 +42,10 @@ const sessionSchema = new mongoose.Schema(
     recordingUrl: {
       type: String,
     },
+    free: {
+      type: Boolean,
+      default: "false",
+    },
     rating: [
       {
         rate: Number,

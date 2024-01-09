@@ -32,6 +32,7 @@ class SessionService {
 
     const session = await SessionRepository.create({
       title: purpose,
+      free: payload.free,
       category: payload.category,
       tutorId: new mongoose.Types.ObjectId("6593fcbae5e7901f474cd999"),
       outcome: payload.outcome,

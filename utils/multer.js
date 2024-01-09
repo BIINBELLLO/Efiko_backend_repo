@@ -14,7 +14,7 @@ const uploadManager = (destination) => {
     storage: new CloudinaryStorage({
       cloudinary: cloudinary,
       params: {
-        folder: `ZillightLab/WhoUEpp/${destination}`,
+        folder: `efiko/${destination}`,
       },
     }),
   })

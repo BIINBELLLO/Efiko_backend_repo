@@ -15,6 +15,7 @@ const {
   ProfileFailure,
   ProfileSuccess,
 } = require("../messages/profile.messages")
+const { sendMailNotification } = require("../../../utils/email")
 
 class ProfileService {
   static async updateProfileService(id, payload) {
@@ -248,6 +249,19 @@ class ProfileService {
 
     if (!updateUser) return { success: false, msg: UserFailure.UPDATE }
 
+    if (approvalStatus === "Approved" || approvalStatus === "Rejected") {
+      const substitutional_parameters = {
+        name: updateUser.fullName,
+        status: approvalStatus,
+      }
+
+      await sendMailNotification(
+        updateUser.email,
+        "Approval Status",
+        substitutional_parameters,
+        "APPROVAL"
+      )
+    }
     return { success: true, msg: UserSuccess.UPDATE }
   }
 }

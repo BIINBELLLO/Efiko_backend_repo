@@ -28,37 +28,28 @@ const initiateStripePaymentController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
-const retrieveTransactionController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    TransactionService.retrieveCheckOutSession(req.query)
-  )
-
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, SUCCESS, data)
-}
-
 const stripeWebHookController = async (req, res, next) => {
-  const sig = req.headers["stripe-signature"]
-  let event
+  try {
+    const event = req.body
 
-  event = stripe.webhooks.constructEvent(
-    req.body,
-    sig,
-    process.env.WEBHOOK_SECRET
-  )
-  event = req.body
-  const [error, data] = await manageAsyncOps(
-    TransactionService.stripeWebhookService(event)
-  )
-  res.send(200)
+    console.log("body", event)
+
+    const [error, data] = await manageAsyncOps(
+      TransactionService.stripeWebhookService(event)
+    )
+
+    if (error) return next(error)
+    if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+    return responseHandler(res, SUCCESS, data)
+  } catch (error) {
+    console.error("Error in stripeWebHookController:", error)
+    next(error)
+  }
 }
 
 module.exports = {
   getTransactionController,
   initiateStripePaymentController,
-  retrieveTransactionController,
   stripeWebHookController,
 }

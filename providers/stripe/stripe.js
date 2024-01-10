@@ -17,8 +17,6 @@ class StripePaymentService {
     if (!stripe) return { success: false, msg: `unable to initiate payment` }
 
     return {
-      success: true,
-      msg: `Payment initiation successful`,
       clientSecret: stripe.client_secret,
       transactionId: stripe.id,
     }

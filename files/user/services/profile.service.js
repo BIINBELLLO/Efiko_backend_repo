@@ -172,7 +172,7 @@ class ProfileService {
 
   static async educationDocService(payload, id) {
     const { image } = payload
-    console.log("image", payload)
+
     const userprofile = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {

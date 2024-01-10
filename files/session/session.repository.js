@@ -47,6 +47,10 @@ class SessionRepository {
         select: "userName fullName profileImage email",
       })
       .populate({
+        path: "studentId",
+        select: "userName fullName profileImage email",
+      })
+      .populate({
         path: "rating.ratedBy",
         model: "User",
         select: "fullName userName", // Select the fields you want to include from the User model

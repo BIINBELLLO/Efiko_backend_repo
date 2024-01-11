@@ -113,10 +113,9 @@ class SessionService {
 
     if (book) {
       await NotificationRepository.createNotification({
-        recipientId: new mongoose.Types.ObjectId(params._id),
-        userType: "User",
-        title: `Session Book`,
-        message: `Hi, Your session - ${session.title} has been booked successfully`,
+        userType: "Admin",
+        title: `Session Booked`,
+        message: `Hi, Session - ${session.title} has been booked`,
       })
     }
     return { success: true, msg: SessionSuccess.UPDATE }

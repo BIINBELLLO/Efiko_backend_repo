@@ -36,11 +36,11 @@ const stripeWebHookController = async (req, res, next) => {
       TransactionService.stripeWebhookService(event)
     )
 
-    console.log("data", data)
-
     if (error) return next(error)
 
-    return res.status(200)
+    if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+    return responseHandler(res, SUCCESS, data)
   } catch (error) {
     console.error("Error in stripeWebHookController:", error)
     next(error)

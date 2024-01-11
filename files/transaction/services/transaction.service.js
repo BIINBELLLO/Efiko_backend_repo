@@ -1,13 +1,11 @@
 const { default: mongoose, mongo } = require("mongoose")
-const { v4: uuidv4 } = require("uuid")
 const { StripePaymentService } = require("../../../providers/stripe/stripe")
-const {
-  TransactionFailure,
-  TransactionSuccess,
-  TransactionMessages,
-} = require("../transaction.messages")
+const { TransactionSuccess } = require("../transaction.messages")
 const { UserRepository } = require("../../user/user.repository")
 const { SessionRepository } = require("../../session/session.repository")
+const {
+  NotificationRepository,
+} = require("../../notification/notification.repository")
 
 const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
@@ -89,8 +87,12 @@ class TransactionService {
 
   static async stripeWebhookService(event) {
     // Handle the event
+
     try {
       switch (event.type) {
+        case "payment_intent.created":
+          await this.handlePaymentIntentCreated(event)
+          break
         case "payment_intent.canceled":
           await this.handleCanceledPaymentIntent(event)
           break
@@ -135,7 +137,7 @@ class TransactionService {
       transactionId: paymentIntentSucceeded?.id,
     })
 
-    await SessionRepository.updateSessionDetails(
+    const session = await SessionRepository.updateSessionDetails(
       {
         _id: new mongoose.Types.ObjectId(getTransaction.sessionId),
       },
@@ -146,10 +148,46 @@ class TransactionService {
       }
     )
 
-    await TransactionRepository.updateTransactionDetails(
+    const transaction = await TransactionRepository.updateTransactionDetails(
       { transactionId: paymentIntentSucceeded?.id },
       { status: "completed" }
     )
+
+    await NotificationRepository.createNotification({
+      userType: "Admin",
+      title: `Session Booked By Student`,
+      message: `${session.title} has been Booked by ${transaction.name}`,
+    })
+  }
+
+  static async handlePaymentIntentCreated(event) {
+    const paymentIntentCreated = event.data.object
+
+    const getTransaction = await TransactionRepository.fetchOne({
+      transactionId: paymentIntentCreated?.id,
+    })
+
+    const session = await SessionRepository.updateSessionDetails(
+      {
+        _id: new mongoose.Types.ObjectId(getTransaction.sessionId),
+      },
+      {
+        $push: {
+          studentId: new mongoose.Types.ObjectId(getTransaction.userId),
+        },
+      }
+    )
+
+    const transaction = await TransactionRepository.updateTransactionDetails(
+      { transactionId: paymentIntentCreated?.id },
+      { status: "completed" }
+    )
+
+    await NotificationRepository.createNotification({
+      userType: "Admin",
+      title: `Session Booked By Student`,
+      message: `${session.title} has been Booked by ${transaction.name}`,
+    })
   }
 }
 

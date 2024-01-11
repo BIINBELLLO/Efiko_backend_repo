@@ -2,13 +2,13 @@ const mongoose = require("mongoose")
 
 const NotificationSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
+    userType: {
+      type: String,
+      enum: ["User", "Admin"],
     },
     recipientId: {
       type: mongoose.Types.ObjectId,
-      ref: "User",
+      refPath: "userType",
     },
     title: {
       type: String,

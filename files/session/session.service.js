@@ -55,6 +55,8 @@ class SessionService {
   }
 
   static async updateSessionService(id, payload) {
+    const { status } = payload
+
     const updateSession = await SessionRepository.updateSessionDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {
@@ -64,6 +66,37 @@ class SessionService {
 
     if (!updateSession) return { success: false, msg: SessionFailure.UPDATE }
 
+    if (status === "approved") {
+      const session = await SessionRepository.findSingleSessionWithParams(
+        {
+          _id: new mongoose.Types.ObjectId(id),
+        },
+        "studentId"
+      )
+
+      let firstStudentId = session.studentId[0]
+      console.log("firstStudentId", firstStudentId)
+
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(firstStudentId),
+        userType: "User",
+        title: `Session Approved`,
+        message: `Hi, Your session - ${session.title} has been approved`,
+      })
+    }
+
+    if (status === "tutorId") {
+      const session = await SessionRepository.findSingleSessionWithParams({
+        _id: new mongoose.Types.ObjectId(id),
+      })
+
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(firstStudentId),
+        userType: "User",
+        title: `Assigned Session`,
+        message: `Hi, You been assigned to - ${session.title} session`,
+      })
+    }
     return { success: true, msg: SessionSuccess.UPDATE }
   }
 

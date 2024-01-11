@@ -38,8 +38,16 @@ class SubscriptionService {
       "Subscription"
     )
     if (error) return { success: false, msg: error }
+    const { status } = payload
 
-    const total = await SubscriptionRepository.findSubscriptionWithParams()
+    let type = {}
+    if (status === "Active") {
+      type = { status: "Active" }
+    }
+
+    const total = await SubscriptionRepository.findSubscriptionWithParams({
+      ...type,
+    })
 
     const subscription = await SubscriptionRepository.findAllSubscriptionParams(
       {

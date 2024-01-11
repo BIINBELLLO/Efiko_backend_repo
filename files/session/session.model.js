@@ -57,7 +57,7 @@ const sessionSchema = new mongoose.Schema(
     averageRating: { type: Number, default: 0 },
     status: {
       type: String,
-      enum: ["pending", "completed"],
+      enum: ["pending", "completed", "approved"],
       default: "pending",
     },
     type: {

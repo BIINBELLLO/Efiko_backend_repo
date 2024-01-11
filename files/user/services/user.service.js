@@ -59,6 +59,7 @@ class UserService {
       }
       await NotificationRepository.createNotification({
         recipientId: new mongoose.Types.ObjectId(user._id),
+        userType: "User",
         title: `New User`,
         message: `Welcome to Efiko Learning, we are glad to have you with us`,
       })

@@ -11,7 +11,9 @@ class SessionRepository {
   }
 
   static async findSingleSessionWithParams(sessionPayload, select) {
-    const session = await Session.findOne({ ...sessionPayload }).select(select)
+    const session = await Session.findOne({ ...sessionPayload })
+      .select(select)
+      .lean()
 
     return session
   }

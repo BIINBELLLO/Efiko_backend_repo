@@ -90,9 +90,9 @@ class TransactionService {
 
     try {
       switch (event.type) {
-        case "payment_intent.created":
-          await this.handlePaymentIntentCreated(event)
-          break
+        // case "payment_intent.created":
+        //   await this.handlePaymentIntentCreated(event)
+        //   break
         case "payment_intent.canceled":
           await this.handleCanceledPaymentIntent(event)
           break

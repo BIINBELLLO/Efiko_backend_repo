@@ -4,7 +4,7 @@ const {
   SubscriptionSuccess,
   SubscriptionFailure,
 } = require("./subscription.messages")
-const { SubscriptionRepository } = require("./subsription.repository")
+const { SubscriptionRepository } = require("./subscription.repository")
 
 const { LIMIT, SKIP, SORT } = require("../../constants")
 

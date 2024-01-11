@@ -4,6 +4,9 @@ const { TransactionSuccess } = require("../transaction.messages")
 const { UserRepository } = require("../../user/user.repository")
 const { SessionRepository } = require("../../session/session.repository")
 const {
+  SubscriptionRepository,
+} = require("../../subscription/subscription.repository")
+const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
 
@@ -18,7 +21,7 @@ class TransactionService {
   }
 
   static async initiateStripePayment(payload) {
-    const { userId, sessionId, amount, currency } = payload
+    const { userId, subscriptionId, amount, currency } = payload
 
     await this.getConfig()
 
@@ -26,12 +29,14 @@ class TransactionService {
       _id: new mongoose.Types.ObjectId(userId),
     })
 
-    const session = await SessionRepository.findSingleSessionWithParams({
-      _id: new mongoose.Types.ObjectId(sessionId),
-    })
+    const subscription =
+      await SubscriptionRepository.findSingleSubscriptionWithParams({
+        _id: new mongoose.Types.ObjectId(subscriptionId),
+      })
 
     if (!user) return { success: false, msg: `User not found` }
-    if (!session) return { success: false, msg: `Session id not found` }
+    if (!subscription)
+      return { success: false, msg: `Subscription id not found` }
 
     const paymentIntent = await this.paymentProvider.initiatePaymentIntent({
       amount,
@@ -49,7 +54,7 @@ class TransactionService {
       currency,
       amount,
       userId,
-      sessionId,
+      subscriptionId,
       transactionId,
     })
 

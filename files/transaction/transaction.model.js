@@ -23,9 +23,9 @@ const TransactionSchema = new mongoose.Schema(
       enum: ["stripe", "other"],
       default: "stripe",
     },
-    sessionId: {
+    subscriptionId: {
       type: mongoose.Types.ObjectId,
-      ref: "Session",
+      ref: "Subscription",
     },
     status: {
       type: String,

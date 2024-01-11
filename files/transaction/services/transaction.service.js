@@ -120,6 +120,10 @@ class TransactionService {
       { transactionId: paymentIntentCanceled?.id },
       { status: "canceled" }
     )
+    return {
+      success: true,
+      msg: `Payment verification canceled`,
+    }
   }
 
   static async handleFailedPaymentIntent(event) {
@@ -128,6 +132,11 @@ class TransactionService {
       { transactionId: paymentIntentPaymentFailed?.id },
       { status: "failed" }
     )
+
+    return {
+      success: true,
+      msg: `Payment verification failed`,
+    }
   }
 
   static async handleSucceededPaymentIntent(event) {
@@ -158,6 +167,11 @@ class TransactionService {
       title: `Session Booked By Student`,
       message: `${session.title} has been Booked by ${transaction.name}`,
     })
+
+    return {
+      success: true,
+      msg: `Payment verification successful`,
+    }
   }
 
   static async handlePaymentIntentCreated(event) {

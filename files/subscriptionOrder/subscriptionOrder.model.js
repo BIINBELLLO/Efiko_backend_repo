@@ -10,7 +10,7 @@ const subscriptionOrderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    type: {
+    title: {
       type: String,
     },
     subscriptionId: { type: mongoose.Types.ObjectId, ref: "Subscription" },

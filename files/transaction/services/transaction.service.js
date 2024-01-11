@@ -7,6 +7,9 @@ const {
   SubscriptionRepository,
 } = require("../../subscription/subscription.repository")
 const {
+  SubscriptionOrderRepository,
+} = require("../../subscriptionOrder/subscriptionOrder.repository")
+const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
 
@@ -92,12 +95,8 @@ class TransactionService {
 
   static async stripeWebhookService(event) {
     // Handle the event
-
     try {
       switch (event.type) {
-        // case "payment_intent.created":
-        //   await this.handlePaymentIntentCreated(event)
-        //   break
         case "payment_intent.canceled":
           await this.handleCanceledPaymentIntent(event)
           break
@@ -151,62 +150,30 @@ class TransactionService {
       transactionId: paymentIntentSucceeded?.id,
     })
 
-    const session = await SessionRepository.updateSessionDetails(
-      {
-        _id: new mongoose.Types.ObjectId(getTransaction.sessionId),
-      },
-      {
-        $push: {
-          studentId: new mongoose.Types.ObjectId(getTransaction.userId),
-        },
-      }
-    )
+    const subscription = await SubscriptionRepository.fetchOne({
+      _id: new mongoose.Types.ObjectId(getTransaction.subscriptionId),
+    })
+
+    await SubscriptionOrderRepository.create({
+      amount: getTransaction.amount,
+      userId: new mongoose.Types.ObjectId(getTransaction.userId),
+      subscriptionId: new mongoose.Types.ObjectId(
+        getTransaction.subscriptionId
+      ),
+      isConfirmed: true,
+      dateStarted: new Date(),
+      title: subscription.title,
+    })
 
     const transaction = await TransactionRepository.updateTransactionDetails(
       { transactionId: paymentIntentSucceeded?.id },
       { status: "completed" }
     )
 
-    await NotificationRepository.createNotification({
-      userType: "Admin",
-      title: `Session Booked By Student`,
-      message: `${session.title} has been Booked by ${transaction.name}`,
-    })
-
     return {
       success: true,
       msg: `Payment verification successful`,
     }
-  }
-
-  static async handlePaymentIntentCreated(event) {
-    const paymentIntentCreated = event.data.object
-
-    const getTransaction = await TransactionRepository.fetchOne({
-      transactionId: paymentIntentCreated?.id,
-    })
-
-    const session = await SessionRepository.updateSessionDetails(
-      {
-        _id: new mongoose.Types.ObjectId(getTransaction.sessionId),
-      },
-      {
-        $push: {
-          studentId: new mongoose.Types.ObjectId(getTransaction.userId),
-        },
-      }
-    )
-
-    const transaction = await TransactionRepository.updateTransactionDetails(
-      { transactionId: paymentIntentCreated?.id },
-      { status: "completed" }
-    )
-
-    await NotificationRepository.createNotification({
-      userType: "Admin",
-      title: `Session Booked By Student`,
-      message: `${session.title} has been Booked by ${transaction.name}`,
-    })
   }
 }
 

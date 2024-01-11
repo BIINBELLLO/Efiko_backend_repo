@@ -18,7 +18,7 @@ const createSessionController = async (req, res, next) => {
 
 const updateSessionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    SessionService.updateSessionService(req.params.id, req.body)
+    SessionService.updateSessionService(req.params.id, req.body, res.locals.jwt)
   )
 
   if (error) return next(error)

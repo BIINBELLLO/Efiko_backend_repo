@@ -4,6 +4,9 @@ const { SessionSuccess, SessionFailure } = require("./session.messages")
 const { SessionRepository } = require("./session.repository")
 const { UserRepository } = require("../user/user.repository")
 const {
+  SubscriptionOrderRepository,
+} = require("../subscriptionOrder/subscriptionOrder.repository")
+const {
   NotificationRepository,
 } = require("../notification/notification.repository")
 const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
@@ -55,13 +58,25 @@ class SessionService {
     }
   }
 
-  static async updateSessionService(id, payload) {
-    const { status, tutorId } = payload
+  static async updateSessionService(id, payload, params) {
+    const { status, tutorId, book } = payload
+    let extra = {}
+    if (book) {
+      const subscriptionOrder =
+        await SubscriptionOrderRepository.findSingleSubscriptionOrderWithParams(
+          { userId: new mongoose.Types.ObjectId(params._id) }
+        )
+
+      if (!subscriptionOrder)
+        return { success: false, msg: `user cannot book session` }
+      extra = { $push: { studentId: new mongoose.Types.ObjectId(params._id) } }
+    }
 
     const updateSession = await SessionRepository.updateSessionDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {
         ...payload,
+        ...extra,
       }
     )
 
@@ -93,6 +108,15 @@ class SessionService {
         userType: "User",
         title: `Assigned Session`,
         message: `Hi, You been assigned to - ${updateSession.title} session`,
+      })
+    }
+
+    if (book) {
+      await NotificationRepository.createNotification({
+        recipientId: new mongoose.Types.ObjectId(params._id),
+        userType: "User",
+        title: `Session Book`,
+        message: `Hi, Your session - ${session.title} has been booked successfully`,
       })
     }
     return { success: true, msg: SessionSuccess.UPDATE }

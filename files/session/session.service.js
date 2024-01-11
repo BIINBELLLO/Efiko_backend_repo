@@ -2,6 +2,7 @@ const { default: mongoose, mongo } = require("mongoose")
 const { queryConstructor } = require("../../utils")
 const { SessionSuccess, SessionFailure } = require("./session.messages")
 const { SessionRepository } = require("./session.repository")
+const { UserRepository } = require("../user/user.repository")
 const {
   NotificationRepository,
 } = require("../notification/notification.repository")
@@ -55,7 +56,7 @@ class SessionService {
   }
 
   static async updateSessionService(id, payload) {
-    const { status } = payload
+    const { status, tutorId } = payload
 
     const updateSession = await SessionRepository.updateSessionDetails(
       { _id: new mongoose.Types.ObjectId(id) },
@@ -67,12 +68,9 @@ class SessionService {
     if (!updateSession) return { success: false, msg: SessionFailure.UPDATE }
 
     if (status === "approved") {
-      const session = await SessionRepository.findSingleSessionWithParams(
-        {
-          _id: new mongoose.Types.ObjectId(id),
-        },
-        "studentId"
-      )
+      const session = await SessionRepository.findSingleSessionWithParams({
+        _id: new mongoose.Types.ObjectId(id),
+      })
 
       let firstStudentId = session.studentId[0]
       console.log("firstStudentId", firstStudentId)
@@ -85,16 +83,16 @@ class SessionService {
       })
     }
 
-    if (status === "tutorId") {
-      const session = await SessionRepository.findSingleSessionWithParams({
-        _id: new mongoose.Types.ObjectId(id),
+    if (tutorId) {
+      const tutor = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(tutorId),
       })
 
       await NotificationRepository.createNotification({
-        recipientId: new mongoose.Types.ObjectId(firstStudentId),
+        recipientId: new mongoose.Types.ObjectId(tutor._id),
         userType: "User",
         title: `Assigned Session`,
-        message: `Hi, You been assigned to - ${session.title} session`,
+        message: `Hi, You been assigned to - ${updateSession.title} session`,
       })
     }
     return { success: true, msg: SessionSuccess.UPDATE }

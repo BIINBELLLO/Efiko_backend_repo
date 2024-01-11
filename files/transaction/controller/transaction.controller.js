@@ -39,7 +39,7 @@ const stripeWebHookController = async (req, res, next) => {
     )
 
     if (error) return next(error)
-    if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+    if (!data?.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
 
     return responseHandler(res, SUCCESS, data)
   } catch (error) {

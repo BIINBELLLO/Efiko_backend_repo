@@ -36,6 +36,8 @@ const stripeWebHookController = async (req, res, next) => {
       TransactionService.stripeWebhookService(event)
     )
 
+    console.log("data", data)
+
     if (error) return next(error)
 
     return res.status(200)

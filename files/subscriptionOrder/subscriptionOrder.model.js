@@ -8,7 +8,6 @@ const subscriptionOrderSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     title: {
       type: String,

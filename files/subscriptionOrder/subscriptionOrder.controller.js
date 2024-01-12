@@ -18,7 +18,7 @@ const createSubscriptionOrderController = async (req, res, next) => {
 
 const getSubscriptionOrderController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    SubscriptionOrderService.getSubscriptionOrderController(req.query)
+    SubscriptionOrderService.getSubscriptionOrderService(req.query)
   )
 
   if (error) return next(error)
@@ -43,21 +43,8 @@ const updateSubscriptionOrderController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
-const deleteSubscriptionOrderController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    SubscriptionOrderService.deleteSubscriptionOrderService(req.params)
-  )
-
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, SUCCESS, data)
-}
-
 module.exports = {
   createSubscriptionOrderController,
   getSubscriptionOrderController,
   updateSubscriptionOrderController,
-  deleteSubscriptionOrderController,
 }

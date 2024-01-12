@@ -4,7 +4,6 @@ const {
   createSubscriptionOrderController,
   getSubscriptionOrderController,
   updateSubscriptionOrderController,
-  deleteSubscriptionOrderController,
 } = require("./subscriptionOrder.controller")
 
 subscriptionOrder.use(isAuthenticated)
@@ -15,7 +14,5 @@ subscriptionOrder.route("/").post(createSubscriptionOrderController)
 subscriptionOrder.route("/").get(getSubscriptionOrderController)
 
 subscriptionOrder.route("/:id").patch(updateSubscriptionOrderController)
-
-subscriptionOrder.route("/:id").delete(deleteSubscriptionOrderController)
 
 module.exports = subscriptionOrder

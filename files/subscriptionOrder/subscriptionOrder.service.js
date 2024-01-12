@@ -4,11 +4,13 @@ const {
   SubscriptionOrderSuccess,
   SubscriptionOrderFailure,
 } = require("./subscriptionOrder.messages")
-const { SubscriptionRepository } = require("./subscriptionOrder.repository")
+const {
+  SubscriptionOrderRepository,
+} = require("./subscriptionOrder.repository")
 
 class SubscriptionOrderService {
   static async createSubscriptionOrder(payload) {
-    const subscriptionOrder = await SubscriptionRepository.create({
+    const subscriptionOrder = await SubscriptionOrderRepository.create({
       ...payload,
     })
 
@@ -29,10 +31,11 @@ class SubscriptionOrderService {
     )
     if (error) return { success: false, msg: error }
 
-    const total = await SubscriptionRepository.findSubscriptionWithParams({})
+    const total =
+      await SubscriptionOrderRepository.findSubscriptionOrderWithParams({})
 
     const subscriptionOrder =
-      await SubscriptionRepository.findAllSubscriptionParams({
+      await SubscriptionOrderRepository.findAllSubscriptionOrderParams({
         ...params,
         limit,
         skip,
@@ -57,7 +60,7 @@ class SubscriptionOrderService {
 
   static async updateSubscriptionOrderService(data, params) {
     const subscriptionOrder =
-      await SubscriptionRepository.updateSubscriptionOrderService(
+      await SubscriptionOrderRepository.updateSubscriptionOrderDetails(
         { _id: new mongoose.Types.ObjectId(params.id) },
         {
           ...data,
@@ -78,7 +81,7 @@ class SubscriptionOrderService {
 
   static async deleteSubscriptionOrderService(params) {
     const subscriptionOrder =
-      await SubscriptionRepository.deleteSubscriptionDetails({
+      await SubscriptionOrderRepository.deleteSubscriptionOrderDetails({
         _id: new mongoose.Types.ObjectId(params.id),
       })
 

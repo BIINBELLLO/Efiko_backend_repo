@@ -154,6 +154,10 @@ class TransactionService {
       _id: new mongoose.Types.ObjectId(getTransaction.subscriptionId),
     })
 
+    // Calculate the expiration date for the next month
+    const currentExpiresAt = new Date()
+    currentExpiresAt.setMonth(currentExpiresAt.getMonth() + 1)
+
     await SubscriptionOrderRepository.create({
       amount: getTransaction.amount,
       userId: new mongoose.Types.ObjectId(getTransaction.userId),
@@ -163,9 +167,10 @@ class TransactionService {
       isConfirmed: true,
       dateStarted: new Date(),
       title: subscription.title,
+      expiresAt: currentExpiresAt,
     })
 
-    const transaction = await TransactionRepository.updateTransactionDetails(
+    await TransactionRepository.updateTransactionDetails(
       { transactionId: paymentIntentSucceeded?.id },
       { status: "completed" }
     )

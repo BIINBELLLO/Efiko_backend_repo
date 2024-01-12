@@ -62,13 +62,21 @@ class SessionService {
     const { status, tutorId, book } = payload
     let extra = {}
     if (book) {
+      // Get subscription orders where the current date is not greater than expiresAt
+      const currentDate = new Date()
       const subscriptionOrder =
         await SubscriptionOrderRepository.findSingleSubscriptionOrderWithParams(
-          { userId: new mongoose.Types.ObjectId(params._id) }
+          {
+            userId: new mongoose.Types.ObjectId(params._id),
+            expiresAt: { $gte: currentDate },
+          }
         )
 
       if (!subscriptionOrder)
-        return { success: false, msg: `user cannot book session` }
+        return {
+          success: false,
+          msg: `User cannot book session, subscription order expired`,
+        }
       extra = { $push: { studentId: new mongoose.Types.ObjectId(params._id) } }
     }
 
@@ -112,11 +120,19 @@ class SessionService {
     }
 
     if (book) {
-      await NotificationRepository.createNotification({
-        userType: "Admin",
-        title: `Session Booked`,
-        message: `Hi, Session - ${session.title} has been booked`,
-      })
+      await Promise.all([
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Booked`,
+          message: `Hi, Session - ${updateSession.title} has been booked`,
+        }),
+
+        await NotificationRepository.createNotification({
+          userType: "User",
+          title: `Session Booked`,
+          message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
+        }),
+      ])
     }
     return { success: true, msg: SessionSuccess.UPDATE }
   }

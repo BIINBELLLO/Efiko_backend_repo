@@ -122,6 +122,8 @@ class UserService {
       email: email,
     })
 
+    if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
+
     let updatedProfile = false
 
     if (

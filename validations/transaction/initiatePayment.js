@@ -1,11 +1,11 @@
 const initiatePaymentValidation = {
-  sessionId: {
-    notEmpty: true,
-    errorMessage: "sessionId cannot be empty",
-  },
   userId: {
     notEmpty: true,
-    errorMessage: " userId cannot be empty",
+    errorMessage: "userId cannot be empty",
+  },
+  subscriptionId: {
+    notEmpty: true,
+    errorMessage: "subscriptionId cannot be empty",
   },
   amount: {
     notEmpty: true,

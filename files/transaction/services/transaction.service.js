@@ -101,9 +101,11 @@ class TransactionService {
           await this.handleCanceledPaymentIntent(event)
           break
         case "payment_intent.payment_failed":
+          console.log("the failed payment is working")
           await this.handleFailedPaymentIntent(event)
           break
         case "payment_intent.succeeded":
+          console.log("the successful payment is working")
           await this.handleSucceededPaymentIntent(event)
           break
         default:

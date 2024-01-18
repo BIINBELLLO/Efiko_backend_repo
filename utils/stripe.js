@@ -9,6 +9,9 @@ const stripePaymentIntent = async (payload) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount,
     currency,
+    automatic_payment_methods: {
+      enabled: true,
+    },
   })
 
   return paymentIntent

@@ -15,7 +15,7 @@ const { isAuthenticated } = require("../../utils")
 transactionRoute.get("/", getTransactionController)
 transactionRoute.post("/stripe-webhook", stripeWebHookController)
 
-// transactionRoute.use(isAuthenticated)
+transactionRoute.use(isAuthenticated)
 
 transactionRoute.post(
   "/initiate",

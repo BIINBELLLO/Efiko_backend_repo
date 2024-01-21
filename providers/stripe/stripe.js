@@ -51,8 +51,6 @@ class StripePaymentService {
 
   async createProductId(title, currency, amount) {
     try {
-      ///
-
       const product = await stripe.products.create({
         name: title,
       })

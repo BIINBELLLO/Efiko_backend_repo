@@ -28,7 +28,7 @@ class TransactionService {
   static async initiateCheckoutSession(payload) {
     const { priceId, userId, subscriptionId } = payload
 
-    const [subscription, user] = await Promise.all([
+    const [user, subscription] = await Promise.all([
       await UserRepository.findSingleUserWithParams({
         _id: new mongoose.Types.ObjectId(userId),
       }),
@@ -38,10 +38,9 @@ class TransactionService {
       }),
     ])
 
+    if (!user) return { success: false, msg: `User not found` }
     if (!subscription)
       return { success: false, msg: `Subscription id not found` }
-
-    if (!user) return { success: false, msg: `User not found` }
 
     await this.getConfig()
     const checkout = await this.paymentProvider.createCheckOutSession({
@@ -73,11 +72,8 @@ class TransactionService {
       }
     }
 
-    let originalNumber = amount_total
-    let decimalNumber = parseFloat((originalNumber / 100).toFixed(2))
-
     await TransactionRepository.create({
-      amount: decimalNumber,
+      amount: subscription.amount,
       userId,
       priceId,
       sessionId: id,

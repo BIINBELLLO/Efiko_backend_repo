@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       enum: ["student", "tutor"],
     },
+    stripeCustomerId: { type: String },
     isDelete: {
       type: Boolean,
       default: false,

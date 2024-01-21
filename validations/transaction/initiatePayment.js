@@ -7,13 +7,9 @@ const initiatePaymentValidation = {
     notEmpty: true,
     errorMessage: "subscriptionId cannot be empty",
   },
-  amount: {
+  priceId: {
     notEmpty: true,
     errorMessage: "amount cannot be empty",
-  },
-  currency: {
-    notEmpty: true,
-    errorMessage: " userId cannot be empty",
   },
 }
 

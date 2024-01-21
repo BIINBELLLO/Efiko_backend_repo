@@ -7,8 +7,8 @@ const {
 
 const {
   getTransactionController,
-  initiateStripePaymentController,
   stripeWebHookController,
+  checkoutTransactionController,
 } = require("./controller/transaction.controller")
 const { isAuthenticated } = require("../../utils")
 
@@ -20,7 +20,7 @@ transactionRoute.use(isAuthenticated)
 transactionRoute.post(
   "/initiate",
   validate(checkSchema(initiatePaymentValidation)),
-  initiateStripePaymentController
+  checkoutTransactionController
 )
 
 //routes

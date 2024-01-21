@@ -16,9 +16,9 @@ const getTransactionController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
-const initiateStripePaymentController = async (req, res, next) => {
+const checkoutTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    TransactionService.initiateStripePayment(req.body)
+    TransactionService.initiateCheckoutSession(req.body)
   )
 
   if (error) return next(error)
@@ -49,6 +49,6 @@ const stripeWebHookController = async (req, res, next) => {
 
 module.exports = {
   getTransactionController,
-  initiateStripePaymentController,
+  checkoutTransactionController,
   stripeWebHookController,
 }

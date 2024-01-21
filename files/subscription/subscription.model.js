@@ -8,9 +8,13 @@ const subscriptionSchema = new mongoose.Schema(
     amount: {
       type: String,
     },
+    currency: {
+      type: String,
+    },
     type: {
       type: String,
     },
+    priceId: { type: String },
     status: {
       type: String,
       default: "Active",

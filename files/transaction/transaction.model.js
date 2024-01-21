@@ -6,13 +6,6 @@ const TransactionSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
     },
-    transactionId: { type: String },
-    name: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
     amount: {
       type: Number,
       required: true,
@@ -32,10 +25,20 @@ const TransactionSchema = new mongoose.Schema(
       enum: ["pending", "completed", "failed", "canceled"],
       default: "pending",
     },
-    paymentFor: {
+    channel: {
+      type: String,
+      default: "stripe",
+    },
+    sessionId: {
       type: String,
     },
-    transactionId: { type: String },
+    priceId: {
+      type: String,
+    },
+    transactionUuid: {
+      type: String,
+    },
+
     currency: {
       type: String,
     },

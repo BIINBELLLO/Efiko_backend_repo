@@ -1,5 +1,6 @@
 const { default: mongoose, mongo } = require("mongoose")
 const { StripePaymentService } = require("../../../providers/stripe/stripe")
+const { v4: uuidv4 } = require("uuid")
 const { TransactionSuccess } = require("../transaction.messages")
 const { UserRepository } = require("../../user/user.repository")
 const { SessionRepository } = require("../../session/session.repository")
@@ -15,6 +16,7 @@ const {
 
 const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
+const uuid = uuidv4()
 
 class TransactionService {
   static paymentProvider
@@ -23,48 +25,70 @@ class TransactionService {
     this.paymentProvider = new StripePaymentService()
   }
 
-  static async initiateStripePayment(payload) {
-    const { userId, subscriptionId, amount, currency } = payload
+  static async initiateCheckoutSession(payload) {
+    const { priceId, userId, subscriptionId } = payload
 
-    await this.getConfig()
-
-    const user = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(userId),
-    })
-
-    const subscription =
+    const [subscription, user] = await Promise.all([
+      await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(userId),
+      }),
       await SubscriptionRepository.findSingleSubscriptionWithParams({
         _id: new mongoose.Types.ObjectId(subscriptionId),
-      })
+        priceId,
+      }),
+    ])
 
-    if (!user) return { success: false, msg: `User not found` }
     if (!subscription)
       return { success: false, msg: `Subscription id not found` }
 
-    const paymentIntent = await this.paymentProvider.initiatePaymentIntent({
-      amount,
-      currency,
+    if (!user) return { success: false, msg: `User not found` }
+
+    await this.getConfig()
+    const checkout = await this.paymentProvider.createCheckOutSession({
+      priceId,
+      userId,
+      uuid,
     })
 
-    if (!paymentIntent)
-      return { success: false, msg: `Unable to create payment intent` }
+    if (!checkout)
+      return { success: false, msg: `unable to successfully checkout` }
 
-    const { transactionId } = paymentIntent
+    const confirmTransaction = await TransactionRepository.fetchOne({
+      priceId,
+      userId,
+    })
+
+    const { id, amount_total } = checkout
+
+    if (confirmTransaction) {
+      await TransactionRepository.updateTransactionDetails(
+        { priceId },
+        { sessionId: id }
+      )
+
+      return {
+        success: true,
+        msg: TransactionSuccess.INITIATE,
+        data: checkout,
+      }
+    }
+
+    let originalNumber = amount_total
+    let decimalNumber = parseFloat((originalNumber / 100).toFixed(2))
 
     await TransactionRepository.create({
-      name: `${user.firstName} ${user.lastName}`,
-      email: user.email,
-      currency,
-      amount,
+      amount: originalNumber,
       userId,
+      priceId,
+      sessionId: id,
       subscriptionId,
-      transactionId,
+      transactionUuid: uuid,
     })
 
     return {
       success: true,
       msg: TransactionSuccess.INITIATE,
-      data: paymentIntent,
+      data: checkout,
     }
   }
 

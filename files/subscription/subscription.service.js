@@ -4,12 +4,20 @@ const {
   SubscriptionSuccess,
   SubscriptionFailure,
 } = require("./subscription.messages")
+const { StripePaymentService } = require("../../providers/stripe/stripe")
 const { SubscriptionRepository } = require("./subscription.repository")
 
 const { LIMIT, SKIP, SORT } = require("../../constants")
 
 class SubscriptionService {
+  static paymentProvider
+
+  static async getConfig() {
+    this.paymentProvider = new StripePaymentService()
+  }
+
   static async createSubscription(payload) {
+    const { title, currency, amount } = payload
     const subscriptionExist =
       await SubscriptionRepository.findSingleSubscriptionWithParams({
         title: payload.title,
@@ -18,7 +26,16 @@ class SubscriptionService {
     if (subscriptionExist)
       return { success: false, msg: SubscriptionFailure.EXIST }
 
+    await this.getConfig()
+    const product = await this.paymentProvider.createProductId(
+      title,
+      currency,
+      amount
+    )
+    console.log("product", product)
     const subscription = await SubscriptionRepository.create({
+      priceId: product,
+      currency,
       ...payload,
     })
 

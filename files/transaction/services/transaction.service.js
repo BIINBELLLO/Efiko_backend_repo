@@ -77,7 +77,7 @@ class TransactionService {
     let decimalNumber = parseFloat((originalNumber / 100).toFixed(2))
 
     await TransactionRepository.create({
-      amount: originalNumber,
+      amount: decimalNumber,
       userId,
       priceId,
       sessionId: id,

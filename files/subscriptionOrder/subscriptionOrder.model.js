@@ -5,6 +5,9 @@ const subscriptionOrderSchema = new mongoose.Schema(
     amount: {
       type: Number,
     },
+    userEmail: {
+      type: String,
+    },
     userId: {
       type: mongoose.Types.ObjectId,
       ref: "User",

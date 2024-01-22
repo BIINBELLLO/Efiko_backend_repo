@@ -32,7 +32,7 @@ const retrieveTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     TransactionService.retrieveCheckOutSession(req.query)
   )
-  console.log("error for payment verification")
+  console.log("error for payment verification", error)
 
   if (error) return next(error)
 

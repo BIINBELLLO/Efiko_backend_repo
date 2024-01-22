@@ -133,7 +133,9 @@ class TransactionService {
     if (!session.id)
       return { success: false, msg: `unable to unable to verify status` }
 
-    const { status } = session
+    const { status, customer_details } = session
+    const { email } = customer_details
+    console.log("session", session)
 
     const { priceId } = transaction
     transaction.status = status
@@ -156,6 +158,7 @@ class TransactionService {
 
       await SubscriptionOrderRepository.create({
         userId: new mongoose.Types.ObjectId(userId),
+        userEmail: email,
         subscriptionId: transaction.subscriptionId,
         amount: transaction.amount,
         isConfirmed: true,

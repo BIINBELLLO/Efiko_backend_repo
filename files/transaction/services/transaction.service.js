@@ -135,26 +135,22 @@ class TransactionService {
 
     const { status, customer_details } = session
     const { email } = customer_details
-    console.log("session", session)
 
     const { priceId } = transaction
     transaction.status = status
     await transaction.save()
-    let deliveryTime
 
     if (status === "complete") {
-      const subscription = await SubscriptionRepository.fetchOne({ priceId })
+      const subscription =
+        await SubscriptionRepository.findSingleSubscriptionWithParams({
+          priceId,
+        })
       if (!subscription)
         return {
           return: false,
           msg: `priceId id not identified with subscription`,
         }
       let currentDate = new Date()
-      const expiryDate = new Date(
-        currentDate.getTime() + deliveryTime * 24 * 60 * 60 * 1000
-      )
-
-      const futureDateISOString = expiryDate.toISOString()
 
       await SubscriptionOrderRepository.create({
         userId: new mongoose.Types.ObjectId(userId),
@@ -164,7 +160,7 @@ class TransactionService {
         isConfirmed: true,
         status: "active",
         transactionId: transaction._id,
-        expiresAt: futureDateISOString,
+        expiresAt: currentDate,
       })
     }
 

@@ -10,9 +10,6 @@ const {
 const {
   SubscriptionOrderRepository,
 } = require("../../subscriptionOrder/subscriptionOrder.repository")
-const {
-  NotificationRepository,
-} = require("../../notification/notification.repository")
 
 const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
@@ -57,7 +54,7 @@ class TransactionService {
       userId,
     })
 
-    const { id, amount_total } = checkout
+    const { id } = checkout
 
     if (confirmTransaction) {
       await TransactionRepository.updateTransactionDetails(
@@ -113,93 +110,65 @@ class TransactionService {
     }
   }
 
-  static async stripeWebhookService(event) {
-    // Handle the event
-    try {
-      switch (event.type) {
-        case "payment_intent.canceled":
-          await this.handleCanceledPaymentIntent(event)
-          break
-        case "payment_intent.payment_failed":
-          console.log("the failed payment is working")
-          await this.handleFailedPaymentIntent(event)
-          break
-        case "payment_intent.succeeded":
-          console.log("the successful payment is working")
-          await this.handleSucceededPaymentIntent(event)
-          break
-        default:
-          return {
-            success: true,
-            msg: "Transaction created successfully",
-          }
-      }
-    } catch (error) {
-      console.error("Error in verifyPayment:", error)
-      throw error
-    }
-  }
+  static async retrieveCheckOutSession(payload) {
+    const { uuid, userId } = payload
 
-  static async handleCanceledPaymentIntent(event) {
-    const paymentIntentCanceled = event.data.object
-    await TransactionRepository.updateTransactionDetails(
-      { transactionId: paymentIntentCanceled?.id },
-      { status: "canceled" }
-    )
-    return {
-      success: true,
-      msg: `Payment verification canceled`,
-    }
-  }
-
-  static async handleFailedPaymentIntent(event) {
-    const paymentIntentPaymentFailed = event.data.object
-    await TransactionRepository.updateTransactionDetails(
-      { transactionId: paymentIntentPaymentFailed?.id },
-      { status: "failed" }
-    )
-
-    return {
-      success: true,
-      msg: `Payment verification failed`,
-    }
-  }
-
-  static async handleSucceededPaymentIntent(event) {
-    const paymentIntentSucceeded = event.data.object
-
-    const getTransaction = await TransactionRepository.fetchOne({
-      transactionId: paymentIntentSucceeded?.id,
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(userId),
     })
 
-    const subscription = await SubscriptionRepository.fetchOne({
-      _id: new mongoose.Types.ObjectId(getTransaction.subscriptionId),
+    if (!user) return { success: false, msg: `user not found` }
+
+    const transaction = await TransactionRepository.fetchOne({
+      userId: new mongoose.Types.ObjectId(userId),
+      transactionUuid: uuid,
     })
 
-    // Calculate the expiration date for the next month
-    const currentExpiresAt = new Date()
-    currentExpiresAt.setMonth(currentExpiresAt.getMonth() + 1)
+    if (!transaction) return { success: false, msg: `transaction not found` }
 
-    await SubscriptionOrderRepository.create({
-      amount: getTransaction.amount,
-      userId: new mongoose.Types.ObjectId(getTransaction.userId),
-      subscriptionId: new mongoose.Types.ObjectId(
-        getTransaction.subscriptionId
-      ),
-      isConfirmed: true,
-      dateStarted: new Date(),
-      title: subscription.title,
-      expiresAt: currentExpiresAt,
-    })
-
-    await TransactionRepository.updateTransactionDetails(
-      { transactionId: paymentIntentSucceeded?.id },
-      { status: "completed" }
+    await this.getConfig()
+    const session = await this.paymentProvider.retrieveCheckOutSession(
+      transaction.sessionId
     )
+    if (!session.id)
+      return { success: false, msg: `unable to unable to verify status` }
+
+    const { status } = session
+
+    const { priceId } = transaction
+    transaction.status = status
+    await transaction.save()
+    let deliveryTime
+
+    if (status === "complete") {
+      const subscription = await SubscriptionRepository.fetchOne({ priceId })
+      if (!subscription)
+        return {
+          return: false,
+          msg: `priceId id not identified with subscription`,
+        }
+      let currentDate = new Date()
+      const expiryDate = new Date(
+        currentDate.getTime() + deliveryTime * 24 * 60 * 60 * 1000
+      )
+
+      const futureDateISOString = expiryDate.toISOString()
+
+      await SubscriptionOrderRepository.create({
+        userId: new mongoose.Types.ObjectId(userId),
+        subscriptionId: transaction.subscriptionId,
+        amount: transaction.amount,
+        isConfirmed: true,
+        status: "active",
+        transactionId: transaction._id,
+        expiresAt: futureDateISOString,
+      })
+    }
 
     return {
       success: true,
-      msg: `Payment verification successful`,
+      msg: TransactionSuccess.UPDATE,
+      paymentStatus: status,
     }
   }
 }

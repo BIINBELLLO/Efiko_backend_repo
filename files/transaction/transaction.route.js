@@ -7,13 +7,12 @@ const {
 
 const {
   getTransactionController,
-  stripeWebHookController,
   checkoutTransactionController,
+  retrieveTransactionController,
 } = require("./controller/transaction.controller")
 const { isAuthenticated } = require("../../utils")
 
 transactionRoute.get("/", getTransactionController)
-transactionRoute.post("/stripe-webhook", stripeWebHookController)
 
 transactionRoute.use(isAuthenticated)
 
@@ -22,6 +21,7 @@ transactionRoute.post(
   validate(checkSchema(initiatePaymentValidation)),
   checkoutTransactionController
 )
+transactionRoute.get("/verify", retrieveTransactionController)
 
 //routes
 module.exports = transactionRoute

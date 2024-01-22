@@ -26,7 +26,10 @@ class SubscriptionOrderRepository {
       }
     }
 
-    const subscriptionOrder = await SubscriptionOrder.find({ ...restOfPayload, ...query })
+    const subscriptionOrder = await SubscriptionOrder.find({
+      ...restOfPayload,
+      ...query,
+    })
       .sort(sort)
       .skip(skip)
       .limit(limit)

@@ -9,9 +9,7 @@ const subscriptionOrderSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
     },
-    title: {
-      type: String,
-    },
+
     subscriptionId: { type: mongoose.Types.ObjectId, ref: "Subscription" },
     transactionId: {
       type: mongoose.Types.ObjectId,
@@ -21,7 +19,6 @@ const subscriptionOrderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    dateStarted: { type: Date },
     expiresAt: { type: Date },
   },
   { timestamps: true }

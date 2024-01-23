@@ -112,12 +112,20 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(tutorId),
       })
 
-      await NotificationRepository.createNotification({
-        recipientId: new mongoose.Types.ObjectId(tutor._id),
-        userType: "User",
-        title: `Assigned Session`,
-        message: `Hi, You been assigned to - ${updateSession.title} session`,
-      })
+      Promise.all([
+        await NotificationRepository.createNotification({
+          recipientId: new mongoose.Types.ObjectId(tutor._id),
+          userType: "User",
+          title: `Assigned Session`,
+          message: `Hi, You been assigned to - ${updateSession.title} session`,
+        }),
+        await sendMailNotification(
+          `${tutor.email}`,
+          "Assigned Session",
+          { name: `${tutor.fullName}`, session: `${updateSession.title}` },
+          "SESSION"
+        ),
+      ])
     }
 
     if (book) {
@@ -125,7 +133,7 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(params),
       })
 
-      await Promise.all([
+      Promise.all([
         await NotificationRepository.createNotification({
           userType: "Admin",
           title: `Session Booked`,

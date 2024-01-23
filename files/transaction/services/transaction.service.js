@@ -72,7 +72,7 @@ class TransactionService {
     }
   }
 
-  static async getTransactionService(payload, locals) {
+  static async getTransactionService(payload) {
     const { error, params, limit, skip, sort } = queryConstructor(
       payload,
       "createdAt",
@@ -128,6 +128,7 @@ class TransactionService {
     await transaction.save()
 
     if (status === "complete") {
+      console.log("complete is not done")
       const subscription =
         await SubscriptionRepository.findSingleSubscriptionWithParams({
           priceId,

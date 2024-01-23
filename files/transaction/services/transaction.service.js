@@ -56,19 +56,6 @@ class TransactionService {
 
     const { id } = checkout
 
-    if (confirmTransaction) {
-      await TransactionRepository.updateTransactionDetails(
-        { priceId },
-        { sessionId: id }
-      )
-
-      return {
-        success: true,
-        msg: TransactionSuccess.INITIATE,
-        data: checkout,
-      }
-    }
-
     await TransactionRepository.create({
       amount: subscription.amount,
       userId,

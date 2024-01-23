@@ -189,13 +189,13 @@ class TransactionService {
         await sendMailNotification(
           email,
           "Subscription Payment",
-          {},
+          { type: `${subscription.type}` },
           "SUBSCRIPTION"
         )
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(userId),
           title: `Subscription Done`,
-          message: `Hi, you have successfully subscribed. You can now book a session`,
+          message: `Hi, your ${subscription.type} subscription is successful. You can now book a session`,
         })
       } catch (error) {
         console.log("error", error)

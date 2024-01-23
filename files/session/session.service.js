@@ -10,6 +10,7 @@ const {
   NotificationRepository,
 } = require("../notification/notification.repository")
 const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
+const { sendMailNotification } = require("../../utils/email")
 
 class SessionService {
   static async initiateSessionService(payload) {
@@ -67,7 +68,7 @@ class SessionService {
       const subscriptionOrder =
         await SubscriptionOrderRepository.findSingleSubscriptionOrderWithParams(
           {
-            userId: new mongoose.Types.ObjectId(params._id),
+            userId: new mongoose.Types.ObjectId(params),
             expiresAt: { $gte: currentDate },
           }
         )
@@ -120,18 +121,27 @@ class SessionService {
     }
 
     if (book) {
+      const user = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(params),
+      })
+
       await Promise.all([
         await NotificationRepository.createNotification({
           userType: "Admin",
           title: `Session Booked`,
           message: `Hi, Session - ${updateSession.title} has been booked`,
         }),
-
         await NotificationRepository.createNotification({
           userType: "User",
           title: `Session Booked`,
           message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
         }),
+        await sendMailNotification(
+          `${user.email}`,
+          "Session Booked",
+          { name: `${user.firstName}`, session: `${updateSession.title}` },
+          "BOOKING"
+        ),
       ])
     }
     return { success: true, msg: SessionSuccess.UPDATE }

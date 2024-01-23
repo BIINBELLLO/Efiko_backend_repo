@@ -12,7 +12,7 @@ const {
 } = require("./controller/transaction.controller")
 const { isAuthenticated } = require("../../utils")
 
-// transactionRoute.get("/", getTransactionController)
+transactionRoute.get("/", getTransactionController)
 
 //authenticate
 transactionRoute.use(isAuthenticated)

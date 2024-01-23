@@ -20,7 +20,6 @@ const checkoutTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     TransactionService.initiateCheckoutSession(req.body)
   )
-  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
@@ -32,7 +31,6 @@ const retrieveTransactionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     TransactionService.retrieveCheckOutSession(req.query)
   )
-  console.log("error for payment verification", error)
 
   if (error) return next(error)
 

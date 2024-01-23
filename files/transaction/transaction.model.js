@@ -22,7 +22,7 @@ const TransactionSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "completed", "failed", "canceled", "open"],
+      enum: ["pending", "complete", "failed", "canceled", "open"],
       default: "pending",
     },
     channel: {

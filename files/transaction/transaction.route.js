@@ -14,6 +14,7 @@ const { isAuthenticated } = require("../../utils")
 
 transactionRoute.get("/", getTransactionController)
 
+//authenticate
 transactionRoute.use(isAuthenticated)
 
 transactionRoute.post(

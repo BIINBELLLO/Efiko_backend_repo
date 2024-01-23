@@ -13,6 +13,16 @@ const subscriptionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
+      enum: [
+        "Weekly",
+        "Bi-Weekly",
+        "Tri-Weekly",
+        "Monthly",
+        "Bi-Monthly",
+        "Quarterly",
+        "Semi-Annually",
+        "Annually",
+      ],
     },
     priceId: { type: String },
     status: {

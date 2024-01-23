@@ -3,16 +3,19 @@ const { StripePaymentService } = require("../../../providers/stripe/stripe")
 const { v4: uuidv4 } = require("uuid")
 const { TransactionSuccess } = require("../transaction.messages")
 const { UserRepository } = require("../../user/user.repository")
-const { SessionRepository } = require("../../session/session.repository")
 const {
   SubscriptionRepository,
 } = require("../../subscription/subscription.repository")
 const {
   SubscriptionOrderRepository,
 } = require("../../subscriptionOrder/subscriptionOrder.repository")
+const { sendMailNotification } = require("../../../utils/email")
 
 const { TransactionRepository } = require("../transaction.repository")
 const { queryConstructor } = require("../../../utils")
+const {
+  NotificationRepository,
+} = require("../../notification/notification.repository")
 const uuid = uuidv4()
 
 class TransactionService {
@@ -137,7 +140,40 @@ class TransactionService {
           return: false,
           msg: `priceId id not identified with subscription`,
         }
-      let currentDate = new Date()
+
+      let expirationDays
+
+      // Determine expiration days based on subscription type
+      switch (subscription.type) {
+        case "Weekly":
+          expirationDays = 7
+          break
+        case "Monthly":
+          expirationDays = 31
+          break
+        case "Bi-Weekly":
+          expirationDays = 2
+          break
+        case "Tri-Weekly":
+          expirationDays = 3
+          break
+        case "Quarterly":
+          expirationDays = 93
+          break
+        case "Semi-Annually":
+          expirationDays = 186
+          break
+        case "Annually":
+          expirationDays = 365
+          break
+
+        default:
+          expirationDays = 2 // Default to 30 days for unknown types
+      }
+
+      // Calculate expiresAt by adding expirationDays to currentDate
+      const expiresAt = new Date()
+      expiresAt.setDate(expiresAt.getDate() + expirationDays)
 
       await SubscriptionOrderRepository.create({
         userId: new mongoose.Types.ObjectId(userId),
@@ -147,8 +183,23 @@ class TransactionService {
         isConfirmed: true,
         status: "active",
         transactionId: transaction._id,
-        expiresAt: currentDate,
+        expiresAt,
       })
+      try {
+        await sendMailNotification(
+          email,
+          "Subscription Payment",
+          {},
+          "SUBSCRIPTION"
+        )
+        await NotificationRepository.createNotification({
+          recipientId: new mongoose.Types.ObjectId(userId),
+          title: `Subscription Done`,
+          message: `Hi, you have successfully subscribed. You can now book a session`,
+        })
+      } catch (error) {
+        console.log("error", error)
+      }
     }
 
     return {

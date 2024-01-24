@@ -71,10 +71,11 @@ class SessionService {
           expiresAt: { $gte: currentDate },
         })
 
-      if (SubscriptionOrderRepository.length < 1)
+      if (subscriptionOrder.length < 1)
         return {
-          success: false,
+          success: true,
           msg: `User cannot book session, subscription order expired`,
+          data: [],
         }
       extra = { $push: { studentId: new mongoose.Types.ObjectId(params._id) } }
     }

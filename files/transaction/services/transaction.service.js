@@ -175,7 +175,7 @@ class TransactionService {
       const expiresAt = new Date()
       expiresAt.setDate(expiresAt.getDate() + expirationDays)
 
-      await SubscriptionOrderRepository.create({
+      const order = await SubscriptionOrderRepository.create({
         name: subscription.type,
         userId: new mongoose.Types.ObjectId(userId),
         userEmail: email,
@@ -190,13 +190,21 @@ class TransactionService {
         await sendMailNotification(
           email,
           "Subscription Payment",
-          { type: `${subscription.type}` },
+          {
+            type: `${subscription.type}`,
+            date: `${order.expiresAt.slice(0, 10)}`,
+          },
           "SUBSCRIPTION"
         )
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(userId),
           title: `Subscription Done`,
-          message: `Hi, your ${subscription.type} subscription is successful. You can now book a session`,
+          message: `Hi, your ${
+            subscription.type
+          } subscription is successful. You can now book a session. Note: Your subscription expires on ${order.expiresAt.slice(
+            0,
+            10
+          )}`,
         })
       } catch (error) {
         console.log("error", error)

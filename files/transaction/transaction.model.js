@@ -7,7 +7,7 @@ const TransactionSchema = new mongoose.Schema(
       ref: "User",
     },
     amount: {
-      type: Number,
+      type: String,
       required: true,
     },
     channel: {

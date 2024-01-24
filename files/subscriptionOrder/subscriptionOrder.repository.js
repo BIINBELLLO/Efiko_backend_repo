@@ -22,7 +22,11 @@ class SubscriptionOrderRepository {
 
     if (search) {
       query = {
-        $or: [{ amount: { $regex: search, $options: "i" } }],
+        $or: [
+          { userEmail: { $regex: search, $options: "i" } },
+          { name: { $regex: search, $options: "i" } },
+          { amount: { $regex: search, $options: "i" } },
+        ],
       }
     }
 
@@ -30,6 +34,7 @@ class SubscriptionOrderRepository {
       ...restOfPayload,
       ...query,
     })
+      .populate({ path: "subscriptionId", select: "type" })
       .sort(sort)
       .skip(skip)
       .limit(limit)

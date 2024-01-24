@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const subscriptionOrderSchema = new mongoose.Schema(
   {
     amount: {
-      type: Number,
+      type: String,
     },
     userEmail: {
       type: String,

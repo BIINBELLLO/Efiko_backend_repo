@@ -176,6 +176,7 @@ class TransactionService {
       expiresAt.setDate(expiresAt.getDate() + expirationDays)
 
       await SubscriptionOrderRepository.create({
+        name: subscription.type,
         userId: new mongoose.Types.ObjectId(userId),
         userEmail: email,
         subscriptionId: transaction.subscriptionId,

@@ -99,6 +99,9 @@ class SessionService {
       const studentEmail = session.studentId[0].email
       const studentName = session.studentId[0].firstName
 
+      session.sessionFor = studentId
+      await session.save()
+
       Promise.all([
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(studentId),

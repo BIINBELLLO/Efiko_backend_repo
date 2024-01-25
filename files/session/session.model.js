@@ -17,6 +17,9 @@ const sessionSchema = new mongoose.Schema(
     outcome: {
       type: String,
     },
+    sessionFor: {
+      type: String,
+    },
     duration: {
       type: String,
     },

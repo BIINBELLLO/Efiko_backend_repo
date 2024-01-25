@@ -13,7 +13,10 @@ class SessionRepository {
   static async findSingleSessionWithParams(sessionPayload, select) {
     const session = await Session.findOne({ ...sessionPayload })
       .select(select)
-      .lean()
+      .populate({
+        path: "studentId",
+        select: "_id userName fullName firstName lastName profileImage email", // Specify the fields you want to include
+      })
 
     return session
   }

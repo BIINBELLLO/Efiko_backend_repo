@@ -95,15 +95,24 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(id),
       })
 
-      let firstStudentId = session.studentId[0]
-      console.log("firstStudentId", firstStudentId)
+      const studentId = session.studentId[0]._id
+      const studentEmail = session.studentId[0].email
+      const studentName = session.studentId[0].firstName
 
-      await NotificationRepository.createNotification({
-        recipientId: new mongoose.Types.ObjectId(firstStudentId),
-        userType: "User",
-        title: `Session Approved`,
-        message: `Hi, Your session - ${session.title} has been approved`,
-      })
+      Promise.all([
+        await NotificationRepository.createNotification({
+          recipientId: new mongoose.Types.ObjectId(studentId),
+          userType: "User",
+          title: `Session Approved`,
+          message: `Hi, Your session - ${session.title} has been approved`,
+        }),
+        await sendMailNotification(
+          `${studentEmail}`,
+          "Session Approved",
+          { name: `${studentName}`, session: `${session.title}` },
+          "SESSION_APPROVED"
+        ),
+      ])
     }
 
     if (tutorId) {

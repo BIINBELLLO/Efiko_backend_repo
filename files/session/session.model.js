@@ -36,6 +36,7 @@ const sessionSchema = new mongoose.Schema(
     date: {
       type: Date,
     },
+    book: { type: Boolean, default: false },
     time: {
       type: String,
     },

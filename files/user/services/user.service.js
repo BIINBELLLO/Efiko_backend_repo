@@ -141,7 +141,7 @@ class UserService {
       return { success: false, msg: UserFailure.VERIFIED }
 
     if (userProfile.accountType !== "tutor")
-      return { success: false, msg: UserFailure.VERIFIED }
+      return { success: false, msg: `Only tutors are permitted/authorized` }
 
     if (!userProfile) return { success: false, msg: UserFailure.USER_EXIST }
 

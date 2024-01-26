@@ -65,17 +65,26 @@ class SessionService {
     if (book) {
       // Get subscription orders where the current date is not greater than expiresAt
       const currentDate = new Date()
-      const [subscriptionOrder, subscriptionOrderExist] = Promise.all([
+
+      const subscriptionOrder =
         await SubscriptionOrderRepository.findAllSubscriptionOrderParams({
           userId: new mongoose.Types.ObjectId(params),
           expiresAt: { $gte: currentDate },
-        }),
+        })
+
+      const subscriptionOrderExist =
         await SubscriptionOrderRepository.findSingleSubscriptionOrderWithParams(
           {
             userId: new mongoose.Types.ObjectId(params),
           }
-        ),
-      ])
+        )
+
+      if (!subscriptionOrderExist)
+        return {
+          success: false,
+          msg: `User does not have subscription`,
+          data: [],
+        }
 
       if (subscriptionOrder.length < 1)
         return {
@@ -84,12 +93,6 @@ class SessionService {
           data: [],
         }
 
-      if (!subscriptionOrderExist)
-        return {
-          success: false,
-          msg: `User does not have subscription`,
-          data: [],
-        }
       extra = { $push: { studentId: new mongoose.Types.ObjectId(params._id) } }
     }
 

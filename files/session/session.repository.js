@@ -49,16 +49,16 @@ class SessionRepository {
       })
       .populate({
         path: "tutorId",
-        select: "userName fullName profileImage email",
+        select: "userName fullName firstName lastName profileImage email",
       })
       .populate({
         path: "studentId",
-        select: "userName fullName profileImage email",
+        select: "userName fullName firstName lastName profileImage email",
       })
       .populate({
         path: "rating.ratedBy",
         model: "User",
-        select: "fullName userName", // Select the fields you want to include from the User model
+        select: "userName fullName firstName lastName profileImage email", // Select the fields you want to include from the User model
       })
       .sort({ timeAndDate: -1 })
       .skip(skip)
@@ -72,7 +72,7 @@ class SessionRepository {
       .populate({
         path: "rating.ratedBy",
         model: "User",
-        select: "userName fullName",
+        select: "userName fullName firstName lastName profileImage email",
       })
       .exec()
   }

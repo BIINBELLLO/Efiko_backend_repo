@@ -70,9 +70,11 @@ class SessionService {
           userId: new mongoose.Types.ObjectId(params),
           expiresAt: { $gte: currentDate },
         }),
-        await SubscriptionOrderRepository.findAllSubscriptionOrderParams({
-          userId: new mongoose.Types.ObjectId(params),
-        }),
+        await SubscriptionOrderRepository.findSingleSubscriptionOrderWithParams(
+          {
+            userId: new mongoose.Types.ObjectId(params),
+          }
+        ),
       ])
 
       if (subscriptionOrder.length < 1)
@@ -81,8 +83,8 @@ class SessionService {
           msg: `User cannot book session, subscription order expired`,
           data: [],
         }
-        
-      if (subscriptionOrderExist.length < 1)
+
+      if (!subscriptionOrderExist)
         return {
           success: false,
           msg: `User does not have subscription`,

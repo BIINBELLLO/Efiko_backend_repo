@@ -26,9 +26,7 @@ class SessionRepository {
   }
 
   static async findAllSessionParams(sessionPayload) {
-    const { limit, skip, sort, ...restOfPayload } = sessionPayload
-
-    const { search, ...rest } = restOfPayload
+    const { limit, skip, sort, search, ...restOfPayload } = sessionPayload
 
     let query = {}
 
@@ -36,16 +34,21 @@ class SessionRepository {
       query = { title: { $regex: search, $options: "i" }, ...rest }
     }
 
-    if (search === null || search === undefined) {
+    if (search) {
       query = {
-        ...rest,
+        $or: [
+          { category: { $regex: search, $options: "i" } },
+          { title: { $regex: search, $options: "i" } },
+          { time: { $regex: search, $options: "i" } },
+          { duration: { $regex: search, $options: "i" } },
+          { status: { $regex: search, $options: "i" } },
+        ],
       }
     }
 
-    const session = await Session.find({ ...query })
+    const session = await Session.find({ ...restOfPayload, ...query })
       .populate({
         path: "curriculumId",
-        // select: "userName fullName profileImage email",
       })
       .populate({
         path: "tutorId",

@@ -11,6 +11,7 @@ const {
 } = require("../notification/notification.repository")
 const { ZoomAPiServiceProvider } = require("../../providers/zoom/zoom.api")
 const { sendMailNotification } = require("../../utils/email")
+const { AdminRepository } = require("../admin/admin.repository")
 
 class SessionService {
   static async initiateSessionService(payload) {
@@ -156,9 +157,21 @@ class SessionService {
     }
 
     if (book) {
+      const allAdmin = await AdminRepository.fetchAdminParams()
+
       const user = await UserRepository.findSingleUserWithParams({
         _id: new mongoose.Types.ObjectId(params),
       })
+
+      for (let i = 0; i <= 3; i++) {
+        const admin = allAdmin[i]
+        await sendMailNotification(
+          `${admin.email}`,
+          "Session Booked",
+          { session: `${updateSession.title}` },
+          "ADMIN_BOOKING"
+        )
+      }
 
       Promise.all([
         await NotificationRepository.createNotification({

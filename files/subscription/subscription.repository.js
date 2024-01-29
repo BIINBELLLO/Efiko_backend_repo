@@ -30,17 +30,10 @@ class SubscriptionRepository {
           { title: { $regex: search, $options: "i" } },
           { amount: { $regex: search, $options: "i" } },
         ],
-        ...restOfPayload,
       }
     }
 
-    if (search === null || search === undefined) {
-      query = {
-        ...restOfPayload,
-      }
-    }
-
-    const subscription = await Subscription.find({ ...query })
+    const subscription = await Subscription.find({ ...restOfPayload, ...query })
       .sort(sort)
       .skip(skip)
       .limit(limit)

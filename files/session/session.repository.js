@@ -31,10 +31,6 @@ class SessionRepository {
     let query = {}
 
     if (search) {
-      query = { title: { $regex: search, $options: "i" }, ...rest }
-    }
-
-    if (search) {
       query = {
         $or: [
           { category: { $regex: search, $options: "i" } },

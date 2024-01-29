@@ -93,7 +93,7 @@ class SessionService {
           data: [],
         }
 
-      extra = { $push: { studentId: new mongoose.Types.ObjectId(params._id) } }
+      extra = { studentId: new mongoose.Types.ObjectId(params._id) }
     }
 
     const updateSession = await SessionRepository.updateSessionDetails(
@@ -111,9 +111,9 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(id),
       })
 
-      const studentId = session.studentId[0]._id
-      const studentEmail = session.studentId[0].email
-      const studentName = session.studentId[0].firstName
+      const studentId = session.studentId._id
+      const studentEmail = session.studentId.email
+      const studentName = session.studentId.firstName
 
       session.sessionFor = studentId
       await session.save()

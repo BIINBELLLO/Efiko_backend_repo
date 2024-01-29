@@ -7,7 +7,7 @@ const sessionSchema = new mongoose.Schema(
     },
     curriculumId: { type: mongoose.Types.ObjectId, ref: "Curriculum" },
     tutorId: { type: mongoose.Types.ObjectId, ref: "User" },
-    studentId: [{ type: mongoose.Types.ObjectId, ref: "User" }],
+    studentId: { type: mongoose.Types.ObjectId, ref: "User" },
     category: {
       type: String,
     },

@@ -23,6 +23,6 @@ sessionRoute.route("/:id").patch(updateSessionController)
 
 sessionRoute.route("/").get(getSessionController)
 sessionRoute.route("/rating/:id").patch(rateSessionController)
-sessionRoute.route("/rating/:id").get(getReviewServiceController)
+sessionRoute.route("/rating/:id").get(getReviewServiceController) 
 
 module.exports = sessionRoute

@@ -21,6 +21,13 @@ class SessionService {
     return session
   }
 
+  // static async getZoomSessionService() {
+  //   const session = await ZoomAPiServiceProvider.getZoomMeeting()
+  //   if (!session) return { success: false, msg: `unable to get zoom session` }
+
+  //   return session
+  // }
+
   static async createSession(payload) {
     const { title, category } = payload
 
@@ -59,6 +66,17 @@ class SessionService {
       msg: SessionSuccess.CREATE,
     }
   }
+
+  // static async getZoomSession() {
+  //   const initiateSession = await this.getZoomSessionService()
+
+  //   if (!initiateSession) return { success: false, msg: `unsuccessful` }
+
+  //   return {
+  //     success: true,
+  //     msg: `successful`,
+  //   }
+  // }
 
   static async updateSessionService(id, payload, params) {
     const { status, tutorId, book } = payload

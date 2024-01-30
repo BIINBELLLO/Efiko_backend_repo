@@ -12,6 +12,7 @@ const {
   getSessionController,
   rateSessionController,
   getReviewServiceController,
+  // getZoomSessionController,
 } = require("./session.controller")
 
 sessionRoute.use(isAuthenticated)
@@ -23,6 +24,7 @@ sessionRoute.route("/:id").patch(updateSessionController)
 
 sessionRoute.route("/").get(getSessionController)
 sessionRoute.route("/rating/:id").patch(rateSessionController)
-sessionRoute.route("/rating/:id").get(getReviewServiceController) 
+sessionRoute.route("/rating/:id").get(getReviewServiceController)
+// sessionRoute.route("/zoom").get(getZoomSessionController)
 
 module.exports = sessionRoute

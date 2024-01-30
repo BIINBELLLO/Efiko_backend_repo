@@ -8,7 +8,7 @@ const NotificationSchema = new mongoose.Schema(
     },
     recipientId: {
       type: mongoose.Types.ObjectId,
-      refPath: "userType",
+      ref: "User",
     },
     title: {
       type: String,

@@ -15,15 +15,6 @@ class NotificationRepository {
     const notification = await Notification.find({
       ...restOfPayload,
     })
-      .populate("userId", {
-        firstName: 1,
-        lastName: 1,
-        profileImage: 1,
-      })
-      .populate("recipientId", {
-        firstName: 1,
-        lastName: 1,
-      })
       .sort(sort)
       .skip(skip)
       .limit(limit)

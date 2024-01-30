@@ -115,6 +115,16 @@ class SessionService {
       extra = { studentId: new mongoose.Types.ObjectId(params._id) }
     }
 
+    const updateSession = await SessionRepository.updateSessionDetails(
+      { _id: new mongoose.Types.ObjectId(id) },
+      {
+        ...payload,
+        ...extra,
+      }
+    )
+
+    if (!updateSession) return { success: false, msg: SessionFailure.UPDATE }
+
     if (status === "approved") {
       const session = await SessionRepository.findSingleSessionWithParams({
         _id: new mongoose.Types.ObjectId(id),
@@ -200,16 +210,6 @@ class SessionService {
         ),
       ])
     }
-
-    const updateSession = await SessionRepository.updateSessionDetails(
-      { _id: new mongoose.Types.ObjectId(id) },
-      {
-        ...payload,
-        ...extra,
-      }
-    )
-
-    if (!updateSession) return { success: false, msg: SessionFailure.UPDATE }
 
     return { success: true, msg: SessionSuccess.UPDATE }
   }

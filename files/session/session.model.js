@@ -52,10 +52,10 @@ const sessionSchema = new mongoose.Schema(
     },
     rating: [
       {
-        rate: Number,
+        rate: { type: Number, default: 0 },
         recommendTutor: String,
         review: String,
-        ratedBy: { type: mongoose.Types.ObjectId, ref: "Users" },
+        ratedBy: { type: mongoose.Types.ObjectId, ref: "User" },
       },
     ],
     averageRating: { type: Number, default: 0 },

@@ -38,7 +38,7 @@ class ZoomAPiServiceProvider {
       )
 
       if (meetingResponse.status !== 201) {
-        throw new Error("Unable to generate meeting link")
+        return { success: false, msg: "Unable to generate meeting link" }
       }
 
       const response_data = meetingResponse.data
@@ -49,7 +49,7 @@ class ZoomAPiServiceProvider {
         meetingTime: response_data.start_time,
         purpose: response_data.topic,
         duration: response_data.duration,
-        message: "Success",
+        message: "success",
         status: 1,
       }
 

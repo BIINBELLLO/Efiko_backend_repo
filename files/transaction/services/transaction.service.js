@@ -16,7 +16,7 @@ const { queryConstructor } = require("../../../utils")
 const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
-const uuid = uuidv4()
+let uuid = uuidv4()
 
 class TransactionService {
   static paymentProvider
@@ -27,6 +27,14 @@ class TransactionService {
 
   static async initiateCheckoutSession(payload) {
     const { priceId, userId, subscriptionId } = payload
+
+    const confirmUuid = await TransactionRepository.fetchOne({
+      transactionUuid: uuid,
+    })
+
+    if (confirmUuid) {
+      uuid = uuidv4() // Generate a new UUID
+    }
 
     const [user, subscription] = await Promise.all([
       await UserRepository.findSingleUserWithParams({
@@ -52,12 +60,13 @@ class TransactionService {
     if (!checkout)
       return { success: false, msg: `unable to successfully checkout` }
 
-    const confirmTransaction = await TransactionRepository.fetchOne({
-      priceId,
-      userId,
-    })
-
     const { id } = checkout
+
+    if (!id)
+      return {
+        success: false,
+        msg: `Transaction incomplete, Session Id not available`,
+      }
 
     await TransactionRepository.create({
       amount: subscription.amount,
@@ -131,6 +140,7 @@ class TransactionService {
     await transaction.save()
 
     if (status === "complete") {
+      console.log("status1", status)
       const subscription =
         await SubscriptionRepository.findSingleSubscriptionWithParams({
           priceId,
@@ -186,25 +196,24 @@ class TransactionService {
         transactionId: transaction._id,
         expiresAt,
       })
+
+      const expireDate = order.expiresAt
+      const splitDate = expireDate.toString()
+
       try {
         await sendMailNotification(
           email,
           "Subscription Payment",
           {
             type: `${subscription.type}`,
-            date: `${order.expiresAt.slice(0, 10)}`,
+            date: `${splitDate}`,
           },
           "SUBSCRIPTION"
         )
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(userId),
           title: `Subscription Done`,
-          message: `Hi, your ${
-            subscription.type
-          } subscription is successful. You can now book a session. Note: Your subscription expires on ${order.expiresAt.slice(
-            0,
-            10
-          )}`,
+          message: `Hi, your ${subscription.type} subscription is successful. You can now book a session. Note: Your subscription expires on ${splitDate}`,
         })
       } catch (error) {
         console.log("error", error)

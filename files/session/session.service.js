@@ -47,9 +47,9 @@ class SessionService {
       title: purpose,
       free: payload.free,
       category: payload.category,
-      tutorId: new mongoose.Types.ObjectId("6593fcbae5e7901f474cd999"),
       outcome: payload.outcome,
       description: payload.description,
+      rating: [{}],
       duration,
       meetingLink: meeting_url,
       timeAndDate: meetingTime,
@@ -112,7 +112,7 @@ class SessionService {
           data: [],
         }
 
-      extra = { studentId: new mongoose.Types.ObjectId(params._id) }
+      extra = { studentId: new mongoose.Types.ObjectId(params) }
     }
 
     const updateSession = await SessionRepository.updateSessionDetails(
@@ -129,6 +129,16 @@ class SessionService {
       const session = await SessionRepository.findSingleSessionWithParams({
         _id: new mongoose.Types.ObjectId(id),
       })
+
+      // console.log("session", session)
+      if (!session.studentId) {
+        session.status = "pending"
+        await session.save()
+        return {
+          success: false,
+          msg: `Approval can only be done when there's a student for the session`,
+        }
+      }
 
       const studentId = session.studentId._id
       const studentEmail = session.studentId.email

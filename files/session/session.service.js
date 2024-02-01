@@ -130,7 +130,6 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(id),
       })
 
-      // console.log("session", session)
       if (!session.studentId) {
         session.status = "pending"
         await session.save()

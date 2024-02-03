@@ -5,6 +5,9 @@ const sessionSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    meetingId: {
+      type: String,
+    },
     curriculumId: { type: mongoose.Types.ObjectId, ref: "Curriculum" },
     tutorId: { type: mongoose.Types.ObjectId, ref: "User" },
     studentId: { type: mongoose.Types.ObjectId, ref: "User" },
@@ -23,6 +26,7 @@ const sessionSchema = new mongoose.Schema(
     duration: {
       type: String,
     },
+    recordingLink: { type: String },
     meetingLink: {
       type: String,
     },
@@ -41,9 +45,6 @@ const sessionSchema = new mongoose.Schema(
       type: String,
     },
     meetingPassword: {
-      type: String,
-    },
-    recordingUrl: {
       type: String,
     },
     free: {

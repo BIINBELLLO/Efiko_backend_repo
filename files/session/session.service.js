@@ -21,12 +21,12 @@ class SessionService {
     return session
   }
 
-  // static async getZoomSessionService() {
-  //   const session = await ZoomAPiServiceProvider.getZoomMeeting()
-  //   if (!session) return { success: false, msg: `unable to get zoom session` }
+  static async getZoomSessionService() {
+    const session = await ZoomAPiServiceProvider.getZoomMeeting()
+    if (!session) return { success: false, msg: `unable to get zoom session` }
 
-  //   return session
-  // }
+    return session
+  }
 
   static async createSession(payload) {
     const { title, category } = payload
@@ -40,12 +40,13 @@ class SessionService {
 
     const initiateSession = await this.initiateSessionService(payload)
 
-    const { meeting_url, password, meetingTime, purpose, duration } =
+    const { meeting_url, password, meetingTime, purpose, duration, meetingId } =
       initiateSession
 
     const session = await SessionRepository.create({
       title: purpose,
       free: payload.free,
+      meetingId,
       category: payload.category,
       outcome: payload.outcome,
       description: payload.description,
@@ -67,16 +68,16 @@ class SessionService {
     }
   }
 
-  // static async getZoomSession() {
-  //   const initiateSession = await this.getZoomSessionService()
+  static async getZoomSession() {
+    const initiateSession = await this.getZoomSessionService()
 
-  //   if (!initiateSession) return { success: false, msg: `unsuccessful` }
+    if (!initiateSession) return { success: false, msg: `unsuccessful` }
 
-  //   return {
-  //     success: true,
-  //     msg: `successful`,
-  //   }
-  // }
+    return {
+      success: true,
+      msg: `successful`,
+    }
+  }
 
   static async updateSessionService(id, payload, params) {
     const { status, tutorId, book } = payload
@@ -305,6 +306,35 @@ class SessionService {
       success: true,
       msg: SessionSuccess.FETCH,
       data: sessions.rating,
+    }
+  }
+
+  static async zoomSessionWebhookService(params) {
+    console.log("this is for params", findSingleSessionWithParams)
+    try {
+      const { event, payload } = params
+      // Check if the event is a recording completed event
+      if (event === "recording.completed") {
+        const { meetingId, recording_files } = payload.object
+
+        // Find the meeting in the database
+        const meeting = await SessionRepository.findSingleSessionWithParams({
+          meetingId,
+        })
+        if (meeting) {
+          // Update the urlRecord field with the recording link
+          const urlRecord = recording_files[0].download_url
+          meeting.recordingLink = urlRecord
+          meeting.type = "recorded"
+
+          // Save the updated meeting in the database
+          await meeting.save()
+
+          console.log(`Recording link updated for meeting ${meetingId}`)
+        }
+      }
+    } catch (error) {
+      console.log("error", error)
     }
   }
 }

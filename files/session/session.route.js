@@ -12,8 +12,11 @@ const {
   getSessionController,
   rateSessionController,
   getReviewServiceController,
-  // getZoomSessionController,
+  getZoomSessionController,
+  zoomWebhookController,
 } = require("./session.controller")
+
+sessionRoute.route("/zoom/webhook").post(zoomWebhookController)
 
 sessionRoute.use(isAuthenticated)
 
@@ -25,6 +28,6 @@ sessionRoute.route("/:id").patch(updateSessionController)
 sessionRoute.route("/").get(getSessionController)
 sessionRoute.route("/rating/:id").patch(rateSessionController)
 sessionRoute.route("/rating/:id").get(getReviewServiceController)
-// sessionRoute.route("/zoom").get(getZoomSessionController)
+sessionRoute.route("/zoom").get(getZoomSessionController)
 
 module.exports = sessionRoute

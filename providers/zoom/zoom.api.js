@@ -46,6 +46,7 @@ class ZoomAPiServiceProvider {
       const content = {
         meeting_url: response_data.join_url,
         password: response_data.password,
+        meetingId: response_data.id,
         meetingTime: response_data.start_time,
         purpose: response_data.topic,
         duration: response_data.duration,
@@ -60,44 +61,43 @@ class ZoomAPiServiceProvider {
     }
   }
 
-  // static async getZoomMeeting(body) {
-  //   try {
-  //     let access_token = await this.getAccessToken()
+  static async getZoomMeeting(body) {
+    try {
+      let access_token = await this.getAccessToken()
 
-  //     const headers = {
-  //       Authorization: `Bearer ${access_token}`,
-  //       "Content-Type": "application/json",
-  //     }
-  //     //       uuid: '82a8C2raQf+Jb09CeY+iMA==',
-  //     // id: 85995386818,
-  //     const zoomResponse = await axios.get(
-  //       `https://api.zoom.us/v2/meetings/85995386818`,
-  //       { headers }
-  //     )
+      const headers = {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      }
 
-  //     const meetingDetails = zoomResponse.data
-  //     let recordingDetails
+      const zoomResponse = await axios.get(
+        // `https://api.zoom.us/v2/meetings/89914548453`,
+        `https://api.zoom.us/v2/meetings/${89914548453}/recordings`,
+        { headers }
+      )
 
-  //     // Check if recording files are present
-  //     if (
-  //       meetingDetails.recording_files &&
-  //       meetingDetails.recording_files.length > 0
-  //     ) {
-  //       recordingDetails = meetingDetails.recording_files.map((file) => ({
-  //         recordingId: file.id,
-  //         recordingType: file.recording_type,
-  //         recordingUrl: file.download_url,
-  //       }))
-  //     }
+      console.log("zoomResponse", zoomResponse)
+      const meetingDetails = zoomResponse.data
+      let recordingDetails
 
-  //     const response_data = zoomResponse.data
-  //     console.log("recordingDetails", recordingDetails)
-  //     console.log("response_data", response_data)
-  //   } catch (error) {
-  //     console.error(error)
-  //     return { success: false, msg: "Error getting meeting" }
-  //   }
-  // }
+      // Check if recording files are present
+      if (
+        meetingDetails.recording_files &&
+        meetingDetails.recording_files.length > 0
+      ) {
+        recordingDetails = meetingDetails.recording_files.map((file) => ({
+          recordingId: file.id,
+          recordingType: file.recording_type,
+          recordingUrl: file.download_url,
+        }))
+      }
+
+      const response_data = zoomResponse.data
+    } catch (error) {
+      console.error(error)
+      return { success: false, msg: "Error getting meeting" }
+    }
+  }
 
   static async getAccessToken() {
     try {

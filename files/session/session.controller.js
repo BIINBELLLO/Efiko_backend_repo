@@ -67,22 +67,35 @@ const getReviewServiceController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
-// const getZoomSessionController = async (req, res, next) => {
-//   const [error, data] = await manageAsyncOps(SessionService.getZoomSession())
+const getZoomSessionController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(SessionService.getZoomSession())
 
-//   console.log("error", error)
+  console.log("error", error)
 
-//   if (error) return next(error)
+  if (error) return next(error)
 
-//   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
 
-//   return responseHandler(res, SUCCESS, data)
-// }
+  return responseHandler(res, SUCCESS, data)
+}
+
+const zoomWebhookController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    SessionService.zoomSessionWebhookService(req.body)
+  )
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  res.status(200).end()
+}
+
 module.exports = {
   createSessionController,
   updateSessionController,
   getSessionController,
   rateSessionController,
   getReviewServiceController,
-  // getZoomSessionController,
+  getZoomSessionController,
+  zoomWebhookController,
 }

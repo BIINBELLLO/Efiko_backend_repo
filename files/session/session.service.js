@@ -311,25 +311,27 @@ class SessionService {
 
   static async zoomSessionWebhookService(params) {
     const { event, payload } = params
-    // Check if the event is a recording completed event
-    if (event === "recording.stopped") {
-      const { meetingId } = payload.object
-      // Find the meeting in the database
-      const meeting = await SessionRepository.findSingleSessionWithParams({
-        meetingId,
-      })
-      const zoom = await ZoomAPiServiceProvider.getZoomMeeting()
-      console.log("zoom meeting return", zoom)
-      return zoom
-      if (zoom) {
-        // Update the urlRecord field with the recording link
-        const urlRecord = recording_files[0].download_url
-        meeting.recordingLink = urlRecord
-        meeting.type = "recorded"
+    try {
+      // Check if the event is a recording completed event
+      if (event === "recording.stopped") {
+        const { meetingId } = payload.object
+        // Find the meeting in the database
+        const meeting = await SessionRepository.findSingleSessionWithParams({
+          meetingId,
+        })
+        const zoom = await ZoomAPiServiceProvider.getZoomMeeting()
+        console.log("zoom", zoom)
+        if (zoom) {
+          // Update the urlRecord field with the recording link
+          meeting.recordingLink = zoom
+          meeting.type = "recorded"
 
-        // Save the updated meeting in the database
-        await meeting.save()
+          // Save the updated meeting in the database
+          await meeting.save()
+        }
       }
+    } catch (error) {
+      console.log("update zoom recording error", error)
     }
   }
 }

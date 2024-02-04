@@ -315,6 +315,7 @@ class SessionService {
       // Check if the event is a recording completed event
       if (event === "recording.stopped") {
         const { meetingId } = payload.object
+        console.log("payload.object", payload.object)
         // Find the meeting in the database
         const meeting = await SessionRepository.findSingleSessionWithParams({
           meetingId,

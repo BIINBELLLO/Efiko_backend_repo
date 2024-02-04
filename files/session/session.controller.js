@@ -82,77 +82,77 @@ const getZoomSessionController = async (req, res, next) => {
 
 const zoomWebhookController = async (req, res, next) => {
   try {
+    var response
+
     console.log("req.headers", req.headers)
     console.log("req.body", req.body)
 
-    // Construct the message string
+    // construct the message string
     const message = `v0:${
       req.headers["x-zm-request-timestamp"]
     }:${JSON.stringify(req.body)}`
 
-    // Calculate HMAC signature for request validation
     const hashForVerify = crypto
       .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
       .update(message)
       .digest("hex")
 
-    // Compare calculated signature with the received signature
+    // hash the message string with your Webhook Secret Token and prepend the version semantic
     const signature = `v0=${hashForVerify}`
     console.log("signature", signature)
 
+    // you validating the request came from Zoom
     if (req.headers["x-zm-signature"] === signature) {
-      // Request came from Zoom and is validated
-
-      if (req.body.event === "endpoint.url_verification") {
-        // Handle URL verification
-
-        // Calculate HMAC hash for URL validation
+      // Zoom validating you control the webhook endpoint
+      if (req.body.event === "endpoint.url_validation") {
+        console.log("error one")
         const hashForValidate = crypto
           .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
           .update(req.body.payload.plainToken)
           .digest("hex")
-
-        console.log("hashForValidate", hashForValidate)
-
-        // Respond with the calculated hash for URL validation
-        const response = {
+        console.log("error two")
+        response = {
           message: {
             plainToken: req.body.payload.plainToken,
             encryptedToken: hashForValidate,
           },
+          status: 200,
         }
 
-        console.log("response.message", response.message)
+        console.log(response.message)
 
-        res.status(200).json(response)
+        res.status(response.status)
+        res.json(response.message)
+        console.log("error five")
       } else {
-        // Authorized request to Zoom Webhook sample. Implement your business logic here.
-
-        const response = {
+        response = {
           message: "Authorized request to Zoom Webhook sample.",
           status: 200,
         }
 
-        console.log("response.message", response.message)
+        console.log(response.message)
 
-        res.status(200).json(response)
+        res.status(response.status)
+        res.json(response)
+
+        // business logic here, example make API request to Zoom or 3rd party
       }
     } else {
-      // Unauthorized request
-      const response = {
+      response = {
         message: "Unauthorized request to Zoom Webhook sample.",
         status: 401,
       }
 
       console.log(response.message)
 
-      res.status(401).json(response)
+      res.status(response.status)
+      res.json(response)
     }
   } catch (error) {
-    console.error("zoom error", error)
-    res.status(500).json({ error: "Internal Server Error" })
+    console.log("zoom error", error)
   }
 }
+
 module.exports = {
   createSessionController,
   updateSessionController,

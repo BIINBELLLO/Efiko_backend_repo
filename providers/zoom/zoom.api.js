@@ -56,13 +56,12 @@ class ZoomAPiServiceProvider {
 
       return content
     } catch (error) {
-      console.error(error)
+      console.error("getting zoom error", error.message)
       return { success: false, msg: "Error creating meeting" }
     }
   }
 
   static async getZoomMeeting(meetingId) {
-    console.log("meetingId2", meetingId)
     try {
       let access_token = await this.getAccessToken()
 
@@ -122,7 +121,7 @@ class ZoomAPiServiceProvider {
 
       return access_token
     } catch (error) {
-      console.error(error)
+      console.error("error message", error.message)
       throw new Error("Error getting access token")
     }
   }

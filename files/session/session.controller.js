@@ -107,33 +107,32 @@ const zoomWebhookController = async (req, res, next) => {
   if (req.headers["x-zm-signature"] === signature) {
     // Zoom validating you control the webhook endpoint
     if (req.body.event === "endpoint.url_validation") {
+      console.log("error one")
       const hashForValidate = crypto
         .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
         .update(req.body.payload.plainToken)
         .digest("hex")
-
+      console.log("error two")
       response = {
         message: {
           plainToken: req.body.payload.plainToken,
           encryptedToken: hashForValidate,
         },
-        status: 200,
       }
+      console.log("error three")
 
-      console.log(response.message)
+      console.log("response.message", response.message)
 
-      res.status(response.status)
-      res.json(response.message)
+      res.send(200)
     } else {
       response = {
         message: "Authorized request to Zoom Webhook sample.",
         status: 200,
       }
 
-      console.log(response.message)
+      console.log("response.message", response.message)
 
-      res.status(response.status)
-      res.json(response)
+      res.send(200)
 
       // business logic here, example make API request to Zoom or 3rd party
     }

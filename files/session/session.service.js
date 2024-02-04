@@ -319,6 +319,8 @@ class SessionService {
         const meeting = await SessionRepository.findSingleSessionWithParams({
           meetingId,
         })
+
+        console.log("meetingId", meetingId)
         const zoom = await ZoomAPiServiceProvider.getZoomMeeting(meetingId)
         console.log("zoom", zoom)
         if (zoom) {
@@ -331,7 +333,7 @@ class SessionService {
         }
       }
     } catch (error) {
-      console.log("update zoom recording error", error)
+      console.log("update zoom recording error", error.message)
     }
   }
 }

@@ -62,6 +62,7 @@ class ZoomAPiServiceProvider {
   }
 
   static async getZoomMeeting(meetingId) {
+    console.log("meetingId2", meetingId)
     try {
       let access_token = await this.getAccessToken()
 
@@ -89,10 +90,13 @@ class ZoomAPiServiceProvider {
           recordingUrl: file.download_url,
         }))
       }
-
+      console.log(
+        "recordingDetails[0].recordingUrl",
+        recordingDetails[0].recordingUrl
+      )
       return recordingDetails[0].recordingUrl
     } catch (error) {
-      console.error("geting zoom error", error)
+      console.error("getting zoom error", error.message)
     }
   }
 

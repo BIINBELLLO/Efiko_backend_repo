@@ -312,9 +312,7 @@ class SessionService {
   static async zoomSessionWebhookService(params) {
     const { event, payload } = params
     // Check if the event is a recording completed event
-    // if (event === "recording.completed") {
-    if (event === "meeting.created") {
-      console.log("meeting is just created", params)
+    if (event === "recording.completed") {
       const { meetingId, recording_files } = payload.object
 
       // Find the meeting in the database
@@ -322,6 +320,8 @@ class SessionService {
         meetingId,
       })
       if (meeting) {
+        console.log("recording_files", recording_files)
+        console.log("payload.object", payload.object)
         // Update the urlRecord field with the recording link
         const urlRecord = recording_files[0].download_url
         meeting.recordingLink = urlRecord
@@ -329,8 +329,6 @@ class SessionService {
 
         // Save the updated meeting in the database
         await meeting.save()
-
-        console.log(`Recording link updated for meeting ${meetingId}`)
       }
     }
   }

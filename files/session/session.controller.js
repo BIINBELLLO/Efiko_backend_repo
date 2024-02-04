@@ -117,7 +117,10 @@ const zoomWebhookController = async (req, res, next) => {
         res.status(response.status)
         res.json(response.message)
       } else {
-        console.log("req.body", req.body)
+        const event = req.body
+        const [error, data] = await manageAsyncOps(
+          SessionService.zoomSessionWebhookService(event)
+        )
         response = {
           message: "Authorized request to Zoom Webhook sample.",
           status: 200,
@@ -125,8 +128,6 @@ const zoomWebhookController = async (req, res, next) => {
 
         res.status(response.status)
         res.json(response)
-
-        // business logic here, example make API request to Zoom or 3rd party
       }
     } else {
       response = {

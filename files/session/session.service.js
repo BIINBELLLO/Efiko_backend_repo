@@ -310,31 +310,28 @@ class SessionService {
   }
 
   static async zoomSessionWebhookService(params) {
-    console.log("this is for params", findSingleSessionWithParams)
-    try {
-      const { event, payload } = params
-      // Check if the event is a recording completed event
-      if (event === "recording.completed") {
-        const { meetingId, recording_files } = payload.object
+    const { event, payload } = params
+    // Check if the event is a recording completed event
+    // if (event === "recording.completed") {
+    if (event === "meeting.created") {
+      console.log("meeting is just created", params)
+      const { meetingId, recording_files } = payload.object
 
-        // Find the meeting in the database
-        const meeting = await SessionRepository.findSingleSessionWithParams({
-          meetingId,
-        })
-        if (meeting) {
-          // Update the urlRecord field with the recording link
-          const urlRecord = recording_files[0].download_url
-          meeting.recordingLink = urlRecord
-          meeting.type = "recorded"
+      // Find the meeting in the database
+      const meeting = await SessionRepository.findSingleSessionWithParams({
+        meetingId,
+      })
+      if (meeting) {
+        // Update the urlRecord field with the recording link
+        const urlRecord = recording_files[0].download_url
+        meeting.recordingLink = urlRecord
+        meeting.type = "recorded"
 
-          // Save the updated meeting in the database
-          await meeting.save()
+        // Save the updated meeting in the database
+        await meeting.save()
 
-          console.log(`Recording link updated for meeting ${meetingId}`)
-        }
+        console.log(`Recording link updated for meeting ${meetingId}`)
       }
-    } catch (error) {
-      console.log("error", error)
     }
   }
 }

@@ -87,8 +87,8 @@ const zoomWebhookController = async (req, res, next) => {
   // )
   var response
 
-  console.log(req.headers)
-  console.log(req.body)
+  console.log("req.headers", req.headers)
+  console.log("req.body", req.body)
 
   // construct the message string
   const message = `v0:${req.headers["x-zm-request-timestamp"]}:${JSON.stringify(
@@ -102,6 +102,8 @@ const zoomWebhookController = async (req, res, next) => {
 
   // hash the message string with your Webhook Secret Token and prepend the version semantic
   const signature = `v0=${hashForVerify}`
+
+  console.log("signature", signature)
 
   // you validating the request came from Zoom
   if (req.headers["x-zm-signature"] === signature) {

@@ -118,6 +118,7 @@ const zoomWebhookController = async (req, res, next) => {
         res.json(response.message)
       } else {
         const event = req.body
+        console.log("error", error)
         const [error, data] = await manageAsyncOps(
           SessionService.zoomSessionWebhookService(event)
         )

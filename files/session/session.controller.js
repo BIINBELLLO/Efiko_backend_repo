@@ -123,7 +123,7 @@ const zoomWebhookController = async (req, res, next) => {
 
       console.log("response.message", response.message)
 
-      res.send(200)
+      res.status(200)
     } else {
       response = {
         message: "Authorized request to Zoom Webhook sample.",
@@ -132,7 +132,7 @@ const zoomWebhookController = async (req, res, next) => {
 
       console.log("response.message", response.message)
 
-      res.send(200)
+      res.status(200)
 
       // business logic here, example make API request to Zoom or 3rd party
     }
@@ -144,7 +144,7 @@ const zoomWebhookController = async (req, res, next) => {
 
     console.log(response.message)
 
-    res.status(response.status)
+    res.status(401)
     res.json(response)
   }
 }

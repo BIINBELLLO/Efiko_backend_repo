@@ -125,6 +125,7 @@ const zoomWebhookController = async (req, res, next) => {
         res.json(response.message)
         console.log("error five")
       } else {
+        console.log("req.body", req.body)
         response = {
           message: "Authorized request to Zoom Webhook sample.",
           status: 200,

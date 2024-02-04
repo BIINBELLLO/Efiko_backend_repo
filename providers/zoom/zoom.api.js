@@ -71,12 +71,10 @@ class ZoomAPiServiceProvider {
       }
 
       const zoomResponse = await axios.get(
-        // `https://api.zoom.us/v2/meetings/89914548453`,
-        `https://api.zoom.us/v2/meetings/${89914548453}/recordings`,
+        `https://api.zoom.us/v2/meetings/${85898378509}/recordings`,
         { headers }
       )
 
-      console.log("zoomResponse", zoomResponse)
       const meetingDetails = zoomResponse.data
       let recordingDetails
 
@@ -92,7 +90,7 @@ class ZoomAPiServiceProvider {
         }))
       }
 
-      const response_data = zoomResponse.data
+      return { meetingDetails, recordingDetails }
     } catch (error) {
       console.error(error)
       return { success: false, msg: "Error getting meeting" }

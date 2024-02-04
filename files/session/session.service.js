@@ -313,13 +313,14 @@ class SessionService {
     const { event, payload } = params
     // Check if the event is a recording completed event
     if (event === "recording.stopped") {
-      const { meetingId, recording_files } = payload.object
-      console.log("recording files", recording_files)
-
+      const { meetingId } = payload.object
       // Find the meeting in the database
       const meeting = await SessionRepository.findSingleSessionWithParams({
         meetingId,
       })
+      const zoom = await ZoomAPiServiceProvider.getZoomMeeting()
+      console.log("zoom meeting return", zoom)
+      return zoom
       if (meeting) {
         // Update the urlRecord field with the recording link
         const urlRecord = recording_files[0].download_url

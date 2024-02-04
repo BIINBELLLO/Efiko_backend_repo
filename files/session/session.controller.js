@@ -85,69 +85,73 @@ const zoomWebhookController = async (req, res, next) => {
   //   SessionService.zoomSessionWebhookService(req.body)
   // )
   // )
-  var response
+  try {
+    var response
 
-  console.log("req.headers", req.headers)
-  console.log("req.body", req.body)
+    console.log("req.headers", req.headers)
+    console.log("req.body", req.body)
 
-  // construct the message string
-  const message = `v0:${req.headers["x-zm-request-timestamp"]}:${JSON.stringify(
-    req.body
-  )}`
+    // construct the message string
+    const message = `v0:${
+      req.headers["x-zm-request-timestamp"]
+    }:${JSON.stringify(req.body)}`
 
-  const hashForVerify = crypto
-    .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
-    .update(message)
-    .digest("hex")
+    const hashForVerify = crypto
+      .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
+      .update(message)
+      .digest("hex")
 
-  // hash the message string with your Webhook Secret Token and prepend the version semantic
-  const signature = `v0=${hashForVerify}`
+    // hash the message string with your Webhook Secret Token and prepend the version semantic
+    const signature = `v0=${hashForVerify}`
+    console.log("signature", signature)
 
-  console.log("signature", signature)
+    // you validating the request came from Zoom
+    if (req.headers["x-zm-signature"] === signature) {
+      // Zoom validating you control the webhook endpoint
+      if (req.body.event === "endpoint.url_validation") {
+        console.log("error one")
+        const hashForValidate = crypto
+          .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
+          .update(req.body.payload.plainToken)
+          .digest("hex")
+        console.log("error two")
+        response = {
+          message: {
+            plainToken: req.body.payload.plainToken,
+            encryptedToken: hashForValidate,
+          },
+        }
+        console.log("error three")
 
-  // you validating the request came from Zoom
-  if (req.headers["x-zm-signature"] === signature) {
-    // Zoom validating you control the webhook endpoint
-    if (req.body.event === "endpoint.url_validation") {
-      console.log("error one")
-      const hashForValidate = crypto
-        .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET_TOKEN)
-        .update(req.body.payload.plainToken)
-        .digest("hex")
-      console.log("error two")
-      response = {
-        message: {
-          plainToken: req.body.payload.plainToken,
-          encryptedToken: hashForValidate,
-        },
+        console.log("response.message", response.message)
+
+        res.status(200)
+        console.log("error five")
+      } else {
+        response = {
+          message: "Authorized request to Zoom Webhook sample.",
+          status: 200,
+        }
+
+        console.log("response.message", response.message)
+
+        res.status(200)
+
+        // business logic here, example make API request to Zoom or 3rd party
       }
-      console.log("error three")
-
-      console.log("response.message", response.message)
-
-      res.status(200)
     } else {
       response = {
-        message: "Authorized request to Zoom Webhook sample.",
-        status: 200,
+        message: "Unauthorized request to Zoom Webhook sample.",
+        status: 401,
       }
 
-      console.log("response.message", response.message)
+      console.log(response.message)
 
-      res.status(200)
-
-      // business logic here, example make API request to Zoom or 3rd party
+      res.status(401)
+      res.json(response)
     }
-  } else {
-    response = {
-      message: "Unauthorized request to Zoom Webhook sample.",
-      status: 401,
-    }
-
-    console.log(response.message)
-
-    res.status(401)
-    res.json(response)
+  } catch (error) {
+    console.log("zoom error", error)
   }
 }
 

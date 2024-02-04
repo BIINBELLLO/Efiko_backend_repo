@@ -90,7 +90,7 @@ class ZoomAPiServiceProvider {
         }))
       }
 
-      return { meetingDetails, recordingDetails }
+      return recordingDetails
     } catch (error) {
       console.error(error)
       return { success: false, msg: "Error getting meeting" }

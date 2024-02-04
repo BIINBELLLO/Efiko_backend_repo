@@ -321,7 +321,7 @@ class SessionService {
       const zoom = await ZoomAPiServiceProvider.getZoomMeeting()
       console.log("zoom meeting return", zoom)
       return zoom
-      if (meeting) {
+      if (zoom) {
         // Update the urlRecord field with the recording link
         const urlRecord = recording_files[0].download_url
         meeting.recordingLink = urlRecord

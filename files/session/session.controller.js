@@ -85,7 +85,7 @@ const zoomWebhookController = async (req, res, next) => {
   //   SessionService.zoomSessionWebhookService(req.body)
   // )
   // )
-  let response
+  var response
 
   console.log(req.headers)
   console.log(req.body)

@@ -61,7 +61,7 @@ class ZoomAPiServiceProvider {
     }
   }
 
-  static async getZoomMeeting(body) {
+  static async getZoomMeeting(meetingId) {
     try {
       let access_token = await this.getAccessToken()
 
@@ -71,7 +71,7 @@ class ZoomAPiServiceProvider {
       }
 
       const zoomResponse = await axios.get(
-        `https://api.zoom.us/v2/meetings/${85898378509}/recordings`,
+        `https://api.zoom.us/v2/meetings/${meetingId}/recordings`,
         { headers }
       )
 
@@ -92,8 +92,7 @@ class ZoomAPiServiceProvider {
 
       return recordingDetails[0].recordingUrl
     } catch (error) {
-      console.error(error)
-      return { success: false, msg: "Error getting meeting" }
+      console.error("geting zoom error", error)
     }
   }
 

@@ -319,11 +319,11 @@ class SessionService {
         const meeting = await SessionRepository.findSingleSessionWithParams({
           meetingId,
         })
-        const zoom = await ZoomAPiServiceProvider.getZoomMeeting()
+        const zoom = await ZoomAPiServiceProvider.getZoomMeeting(meetingId)
         console.log("zoom", zoom)
         if (zoom) {
           // Update the urlRecord field with the recording link
-          meeting.recordingLink = zoom
+          meeting.recordingLink = `${zoom}`
           meeting.type = "recorded"
 
           // Save the updated meeting in the database

@@ -26,7 +26,7 @@ const sessionSchema = new mongoose.Schema(
     duration: {
       type: String,
     },
-    recordingLink: { type: String },
+    recordingLink: { type: String, default: "no-link" },
     meetingLink: {
       type: String,
     },

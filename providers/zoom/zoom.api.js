@@ -90,6 +90,7 @@ class ZoomAPiServiceProvider {
           recordingUrl: file.download_url,
         }))
       }
+      console.log("recordingDetails", recordingDetails)
       console.log(
         "recordingDetails[0].recordingUrl",
         recordingDetails[0].recordingUrl

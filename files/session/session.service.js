@@ -314,16 +314,16 @@ class SessionService {
     try {
       // Check if the event is a recording completed event
       if (event === "recording.stopped") {
-        const { meetingId } = payload.object
-        console.log("payload.object", payload.object)
+        const { id } = payload.object
         // Find the meeting in the database
         const meeting = await SessionRepository.findSingleSessionWithParams({
-          meetingId,
+          meetingId: id,
         })
 
-        console.log("meetingId", meetingId)
-        const zoom = await ZoomAPiServiceProvider.getZoomMeeting(meetingId)
-        console.log("zoom", zoom)
+        if (!meeting) new Error("Meeting/Session not available")
+
+        const zoom = await ZoomAPiServiceProvider.getZoomMeeting(id)
+
         if (zoom) {
           // Update the urlRecord field with the recording link
           meeting.recordingLink = `${zoom}`

@@ -90,11 +90,7 @@ class ZoomAPiServiceProvider {
           recordingUrl: file.download_url,
         }))
       }
-      console.log("recordingDetails", recordingDetails)
-      console.log(
-        "recordingDetails[0].recordingUrl",
-        recordingDetails[0].recordingUrl
-      )
+
       return recordingDetails[0].recordingUrl
     } catch (error) {
       console.error("getting zoom error", error.message)

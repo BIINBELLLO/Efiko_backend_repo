@@ -81,6 +81,12 @@ class SessionService {
 
   static async updateSessionService(id, payload, params) {
     const { status, tutorId, book } = payload
+
+    const confirmSession = await SessionRepository.findSingleSessionWithParams({
+      _id: new mongoose.Types.ObjectId(id),
+    })
+
+    if (!confirmSession) return { success: false, msg: SessionFailure.FETCH }
     let extra = {}
     if (book) {
       // Get subscription orders where the current date is not greater than expiresAt

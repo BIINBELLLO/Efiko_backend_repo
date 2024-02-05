@@ -25,6 +25,7 @@ const updateSessionController = async (req, res, next) => {
       res.locals.jwt._id
     )
   )
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

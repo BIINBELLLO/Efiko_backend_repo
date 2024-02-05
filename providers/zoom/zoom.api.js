@@ -12,9 +12,11 @@ class ZoomAPiServiceProvider {
         "Content-Type": "application/json",
       }
 
+      const timeAndDate = `${body.date}T${body.time}:00Z`
+
       const payload = {
         topic: body.title,
-        start_time: body.time,
+        start_time: timeAndDate,
         type: 2,
         duration: body.duration,
         timezone: body.timezone,

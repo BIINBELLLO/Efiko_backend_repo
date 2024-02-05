@@ -34,8 +34,8 @@ const sessionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    timeAndDate: {
-      type: Date,
+    time: {
+      type: String,
     },
     date: {
       type: Date,

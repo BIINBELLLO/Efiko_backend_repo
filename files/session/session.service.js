@@ -47,7 +47,7 @@ class SessionService {
 
     const initiateSession = await this.initiateSessionService(payload)
 
-    const { meeting_url, password, meetingTime, purpose, duration, meetingId } =
+    const { meeting_url, password, purpose, duration, meetingId } =
       initiateSession
 
     const session = await SessionRepository.create({
@@ -60,9 +60,9 @@ class SessionService {
       rating: [{}],
       duration,
       meetingLink: meeting_url,
-      timeAndDate: meetingTime,
       curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
-      data: payload.data,
+      date: payload.date,
+      time: payload.time,
       meetingPassword: password,
     })
 
@@ -204,34 +204,38 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(params),
       })
 
-      for (let i = 0; i <= 3; i++) {
-        const admin = allAdmin[i]
-        await sendMailNotification(
-          `${admin.email}`,
-          "Session Booked",
-          { session: `${updateSession.title}` },
-          "ADMIN_BOOKING"
-        )
-      }
+      try {
+        for (let i = 0; i <= 3; i++) {
+          const admin = allAdmin[i]
+          await sendMailNotification(
+            `${admin?.email}`,
+            "Session Booked",
+            { session: `${updateSession.title}` },
+            "ADMIN_BOOKING"
+          )
+        }
 
-      Promise.all([
-        await NotificationRepository.createNotification({
-          userType: "Admin",
-          title: `Session Booked`,
-          message: `Hi, Session - ${updateSession.title} has been booked`,
-        }),
-        await NotificationRepository.createNotification({
-          userType: "User",
-          title: `Session Booked`,
-          message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
-        }),
-        await sendMailNotification(
-          `${user.email}`,
-          "Session Booked",
-          { name: `${user.firstName}`, session: `${updateSession.title}` },
-          "BOOKING"
-        ),
-      ])
+        Promise.all([
+          await NotificationRepository.createNotification({
+            userType: "Admin",
+            title: `Session Booked`,
+            message: `Hi, Session - ${updateSession.title} has been booked`,
+          }),
+          await NotificationRepository.createNotification({
+            userType: "User",
+            title: `Session Booked`,
+            message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
+          }),
+          await sendMailNotification(
+            `${user.email}`,
+            "Session Booked",
+            { name: `${user.firstName}`, session: `${updateSession.title}` },
+            "BOOKING"
+          ),
+        ])
+      } catch (error) {
+        console.log("mail notification error", error.message)
+      }
     }
 
     return { success: true, msg: SessionSuccess.UPDATE }

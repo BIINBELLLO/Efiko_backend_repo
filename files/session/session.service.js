@@ -21,6 +21,13 @@ class SessionService {
     return session
   }
 
+  static async updateMeetingService(id, payload) {
+    const session = await ZoomAPiServiceProvider.updateZoomMeeting(id, payload)
+    if (!session) return { success: false, msg: `unable to update Session` }
+
+    return session
+  }
+
   static async getZoomSessionService() {
     const session = await ZoomAPiServiceProvider.getZoomMeeting()
     if (!session) return { success: false, msg: `unable to get zoom session` }
@@ -56,7 +63,6 @@ class SessionService {
       timeAndDate: meetingTime,
       curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
       data: payload.data,
-      time: payload.time,
       meetingPassword: password,
     })
 
@@ -88,6 +94,7 @@ class SessionService {
 
     if (!confirmSession) return { success: false, msg: SessionFailure.FETCH }
     let extra = {}
+
     if (book) {
       // Get subscription orders where the current date is not greater than expiresAt
       const currentDate = new Date()

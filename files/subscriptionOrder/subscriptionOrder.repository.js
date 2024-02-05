@@ -34,7 +34,7 @@ class SubscriptionOrderRepository {
       ...restOfPayload,
       ...query,
     })
-      .populate({ path: "subscriptionId", select: "type" })
+      .populate({ path: "subscriptionId", select: "type currency" })
       .sort(sort)
       .skip(skip)
       .limit(limit)

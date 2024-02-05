@@ -41,9 +41,6 @@ const sessionSchema = new mongoose.Schema(
       type: Date,
     },
     book: { type: Boolean, default: false },
-    time: {
-      type: String,
-    },
     meetingPassword: {
       type: String,
     },

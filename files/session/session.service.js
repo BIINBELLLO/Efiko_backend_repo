@@ -167,6 +167,11 @@ class SessionService {
           title: `Session Approved`,
           message: `Hi, Your session - ${session.title} has been approved`,
         }),
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Approved`,
+          message: `Hi, You have approved session - ${session.title} has been approved`,
+        }),
         await sendMailNotification(
           `${studentEmail}`,
           "Session Approved",
@@ -187,6 +192,11 @@ class SessionService {
           userType: "User",
           title: `Assigned Session`,
           message: `Hi, You been assigned to - ${updateSession.title} session`,
+        }),
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Approved`,
+          message: `Hi, You have assigned session - ${updateSession.title} to a tutor`,
         }),
         await sendMailNotification(
           `${tutor.email}`,

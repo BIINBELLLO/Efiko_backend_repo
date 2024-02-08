@@ -214,6 +214,25 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(params),
       })
 
+      Promise.all([
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Booked`,
+          message: `Hi, Session - ${updateSession.title} has been booked`,
+        }),
+        await NotificationRepository.createNotification({
+          userType: "User",
+          title: `Session Booked`,
+          message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
+        }),
+        await sendMailNotification(
+          `${user.email}`,
+          "Session Booked",
+          { name: `${user.firstName}`, session: `${updateSession.title}` },
+          "BOOKING"
+        ),
+      ])
+
       try {
         for (let i = 0; i <= 3; i++) {
           const admin = allAdmin[i]
@@ -224,25 +243,6 @@ class SessionService {
             "ADMIN_BOOKING"
           )
         }
-
-        Promise.all([
-          await NotificationRepository.createNotification({
-            userType: "Admin",
-            title: `Session Booked`,
-            message: `Hi, Session - ${updateSession.title} has been booked`,
-          }),
-          await NotificationRepository.createNotification({
-            userType: "User",
-            title: `Session Booked`,
-            message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
-          }),
-          await sendMailNotification(
-            `${user.email}`,
-            "Session Booked",
-            { name: `${user.firstName}`, session: `${updateSession.title}` },
-            "BOOKING"
-          ),
-        ])
       } catch (error) {
         console.log("mail notification error", error.message)
       }

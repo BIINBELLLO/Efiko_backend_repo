@@ -160,7 +160,7 @@ class SessionService {
       session.sessionFor = studentId
       await session.save()
 
-      Promise.all([
+      await Promise.all([
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(studentId),
           userType: "User",
@@ -186,7 +186,7 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(tutorId),
       })
 
-      Promise.all([
+      await Promise.all([
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(tutor._id),
           userType: "User",
@@ -214,7 +214,7 @@ class SessionService {
         _id: new mongoose.Types.ObjectId(params),
       })
 
-      Promise.all([
+      await Promise.all([
         await NotificationRepository.createNotification({
           userType: "Admin",
           title: `Session Booked`,

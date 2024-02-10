@@ -109,6 +109,7 @@ class SessionService {
         await SubscriptionOrderRepository.findSingleSubscriptionOrderWithParams(
           {
             userId: new mongoose.Types.ObjectId(params),
+            expiresAt: { $gte: currentDate },
           }
         )
 

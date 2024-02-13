@@ -24,7 +24,7 @@ class ZoomAPiServiceProvider {
         settings: {
           host_video: true,
           participant_video: true,
-          join_before_host: false,
+          join_before_host: true,
           mute_upon_entry: true,
           watermark: false,
           use_pm: false,

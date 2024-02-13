@@ -88,6 +88,16 @@ class SessionService {
   static async updateSessionService(id, payload, params) {
     const { status, tutorId, book } = payload
 
+      const user = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(params),
+      })
+      
+      if (user.accountType === "student" && user.status === "Inactive")
+        return {
+          success: true,
+          msg: `you cannot perform this action. Your account is Inactive`,
+        }
+
     const confirmSession = await SessionRepository.findSingleSessionWithParams({
       _id: new mongoose.Types.ObjectId(id),
     })
@@ -252,7 +262,7 @@ class SessionService {
     return { success: true, msg: SessionSuccess.UPDATE }
   }
 
-  static async getSessionService(sessionPayload) {
+  static async getSessionService(sessionPayload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       sessionPayload,
       "createdAt",
@@ -260,6 +270,14 @@ class SessionService {
     )
     if (error) return { success: false, msg: error }
 
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(locals._id),
+    })
+    if (user.accountType === "student" && user.status === "Inactive")
+      return {
+        success: true,
+        msg: `you cannot perform this action. Your account is Inactive`,
+      }
     const total = await SessionRepository.findSessionWithParams()
 
     const sessions = await SessionRepository.findAllSessionParams({

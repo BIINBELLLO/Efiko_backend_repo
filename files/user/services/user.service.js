@@ -18,9 +18,9 @@ const {
 class UserService {
   static async createUser(payload, locals) {
     const { firstName, email, accountType, fullName } = payload
-    let status
+    let studentStatus
     if (accountType === "student") {
-      status = "Active"
+      studentStatus = "Active"
     }
 
     const userExist = await UserRepository.validateUser({
@@ -35,10 +35,12 @@ class UserService {
     let approvalStatus = ""
 
     if (locals?.accountType === "superAdmin") {
+      console.log("working here one")
       const generatePassword = await AlphaNumeric(8)
 
       const user = await UserRepository.create({
         ...payload,
+        status: studentStatus,
         isVerified: true,
         password: await hashPassword(generatePassword),
       })
@@ -49,7 +51,6 @@ class UserService {
         name: firstName,
         password: generatePassword,
         email,
-        status,
       }
 
       try {
@@ -84,6 +85,7 @@ class UserService {
     const user = await UserRepository.create({
       ...payload,
       verificationOtp,
+      status: studentStatus,
       password: await hashPassword(payload.password),
     })
 

@@ -18,6 +18,10 @@ const {
 class UserService {
   static async createUser(payload, locals) {
     const { firstName, email, accountType, fullName } = payload
+    let status
+    if (accountType === "student") {
+      status = "Active"
+    }
 
     const userExist = await UserRepository.validateUser({
       email,
@@ -45,7 +49,7 @@ class UserService {
         name: firstName,
         password: generatePassword,
         email,
-        accountType: "student" ? "Active" : "Inactive",
+        status,
       }
 
       try {

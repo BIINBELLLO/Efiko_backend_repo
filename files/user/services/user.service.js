@@ -45,6 +45,7 @@ class UserService {
         name: firstName,
         password: generatePassword,
         email,
+        accountType: "student" ? "Active" : "Inactive",
       }
 
       try {

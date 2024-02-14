@@ -22,13 +22,15 @@ class ZoomAPiServiceProvider {
         timezone: body.timezone,
         agenda: body.description,
         settings: {
-          host_video: true,
-          participant_video: true,
-          join_before_host: true,
+          host_video: false,
+          participant_video: false,
+          join_before_host: true, // Allow participants to join before the host
+          waiting_room: false,
           mute_upon_entry: true,
           watermark: false,
           use_pm: false,
           audio: "both",
+          allow_multiple_devices: true,
           auto_recording: "cloud",
         },
       }

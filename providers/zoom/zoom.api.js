@@ -17,21 +17,20 @@ class ZoomAPiServiceProvider {
       const payload = {
         topic: body.title,
         start_time: timeAndDate,
-        type: 2,
+        type: 8,
         duration: body.duration,
         timezone: body.timezone,
         agenda: body.description,
+        recurrence: { type: 1, repeat_interval: 90 },
         settings: {
           host_video: false,
-          participant_video: false,
+          participant_video: true,
           join_before_host: true, // Allow participants to join before the host
-          waiting_room: false,
-          mute_upon_entry: true,
-          watermark: false,
-          use_pm: false,
-          audio: "both",
+          approval_type: 2,
+          audio: true,
           allow_multiple_devices: true,
           auto_recording: "cloud",
+          waiting_room: false,
         },
       }
 

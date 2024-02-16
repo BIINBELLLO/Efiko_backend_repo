@@ -51,6 +51,10 @@ const sessionSchema = new mongoose.Schema(
       type: Boolean,
       default: "false",
     },
+    studentNumber: {
+      type: Number,
+      default: 0,
+    },
     rating: [
       {
         rate: { type: Number, default: 0 },

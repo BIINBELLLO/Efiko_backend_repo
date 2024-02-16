@@ -3,6 +3,7 @@ const { PAGE_LENGTH } = require("../constants/index")
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
+const { UserRepository } = require("../files/user/user.repository")
 // const { RedisClient } = require("./redis")
 
 const COUNTRY_CODE = "234"
@@ -55,7 +56,7 @@ const queryConstructor = (query, sortBy, item) => {
     if (Object.keys(query)[i] === "id") {
       params["_id"] = mongoose.Types.ObjectId(Object.values(query)[i])
     } else if (Object.keys(query)[i] === "userId") {
-      params[Object.keys(query)[i]] =  new mongoose.Types.ObjectId(
+      params[Object.keys(query)[i]] = new mongoose.Types.ObjectId(
         Object.values(query)[i]
       )
     } else {
@@ -222,6 +223,23 @@ const generateOtp = () => {
   expiry.setTime(new Date().getTime() + 30 * 60 * 1000)
 
   return { otp, expiry }
+}
+
+const statusVerifier = async (payload) => {
+  if (payload.accountType === "student") {
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(payload._id),
+      status: "Inactive",
+    })
+
+    if (user) {
+      return {
+        success: true,
+        msg: `Your account is inactive, you cannot perform this task`,
+      }
+    }
+    next()
+  }
 }
 
 module.exports = {

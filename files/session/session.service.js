@@ -63,6 +63,7 @@ class SessionService {
       curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
       date: payload.date,
       time: payload.time,
+      passCode: "123456",
       meetingPassword: password,
     })
 

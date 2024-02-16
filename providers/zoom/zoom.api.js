@@ -17,14 +17,14 @@ class ZoomAPiServiceProvider {
       const payload = {
         topic: body.title,
         start_time: timeAndDate,
-        type: 8,
+        type: 2,
         duration: body.duration,
         timezone: body.timezone,
         agenda: body.description,
-        recurrence: { type: 1, repeat_interval: 90 },
         settings: {
+          use_pmi: true,
           host_video: false,
-          participant_video: true,
+          participant_video: false,
           join_before_host: true, // Allow participants to join before the host
           approval_type: 2,
           audio: true,
@@ -56,6 +56,7 @@ class ZoomAPiServiceProvider {
         message: "Success",
         status: 1,
       }
+      console.log("response", response_data)
 
       return content
     } catch (error) {

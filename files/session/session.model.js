@@ -37,6 +37,9 @@ const sessionSchema = new mongoose.Schema(
     time: {
       type: String,
     },
+    passCode: {
+      type: String,
+    },
     date: {
       type: Date,
     },

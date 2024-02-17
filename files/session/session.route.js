@@ -1,7 +1,7 @@
 const { uploadManager } = require("../../utils/multer")
 const { checkSchema } = require("express-validator")
 const sessionRoute = require("express").Router()
-const { isAuthenticated } = require("../../utils")
+const { isAuthenticated, statusVerifier } = require("../../utils")
 const { validate } = require("../../validations/validate")
 const {
   sessionValidation,
@@ -21,11 +21,11 @@ sessionRoute.route("/zoom/webhook").post(zoomWebhookController)
 sessionRoute.use(isAuthenticated)
 
 //routes
-sessionRoute.route("/").post(createSessionController)
+sessionRoute.route("/").post(statusVerifier, createSessionController)
 
-sessionRoute.route("/:id").patch(updateSessionController)
+sessionRoute.route("/:id").patch(statusVerifier, updateSessionController)
 
-sessionRoute.route("/").get(getSessionController)
+sessionRoute.route("/").get(statusVerifier, getSessionController)
 sessionRoute.route("/rating/:id").patch(rateSessionController)
 sessionRoute.route("/rating/:id").get(getReviewServiceController)
 sessionRoute.route("/zoom").get(getZoomSessionController)

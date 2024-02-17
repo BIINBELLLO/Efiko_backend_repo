@@ -225,19 +225,14 @@ const generateOtp = () => {
   return { otp, expiry }
 }
 
-const statusVerifier = async (payload) => {
-  if (payload.accountType === "student") {
-    const user = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(payload._id),
-      status: "Inactive",
+const statusVerifier = (req, res, next) => {
+  if (res.locals.jwt.status === "Inactive") {
+    //res.locals.jwt is got from the isAuthenticated middleware
+    return res.status(401).json({
+      msg: "Unauthorized, your account is currently inactive",
+      status: 401,
     })
-
-    if (user) {
-      return {
-        success: true,
-        msg: `Your account is inactive, you cannot perform this task`,
-      }
-    }
+  } else {
     next()
   }
 }
@@ -257,4 +252,5 @@ module.exports = {
   manageAsyncOps,
   verifyWhoAmI,
   generateOtp,
+  statusVerifier,
 }

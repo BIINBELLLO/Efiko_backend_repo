@@ -239,6 +239,7 @@ class UserService {
       profileImage: userProfile.profileImage,
       email: userProfile.email,
       accountType: userProfile.accountType,
+      status: userProfile.status,
       isAdmin: false,
     })
 

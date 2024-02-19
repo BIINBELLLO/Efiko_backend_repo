@@ -43,6 +43,7 @@ class AdminRepository {
     const admin = await Admin.find(
       {
         ...query, // Spread the query object to include its properties
+        accountType: "normalAdmin",
       },
       { password: 0 }
     )

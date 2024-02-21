@@ -219,7 +219,7 @@ class SessionService {
       updateSession.studentNumber = 1
       await updateSession.save()
 
-      await Promise.all([
+      Promise.all([
         await NotificationRepository.createNotification({
           userType: "Admin",
           title: `Session Booked`,
@@ -227,6 +227,7 @@ class SessionService {
         }),
         await NotificationRepository.createNotification({
           userType: "User",
+          recipientId: new mongoose.Types.ObjectId(user._id),
           title: `Session Booked`,
           message: `Hi, you have booked - ${updateSession.title} session. Thank you`,
         }),

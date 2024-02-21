@@ -13,8 +13,8 @@ const userSchema = new mongoose.Schema(
     loginCode: {
       type: String,
     },
-    age: {
-      type: Number,
+    dateOfBirth: {
+      type: Date,
     },
     phone: {
       type: String,

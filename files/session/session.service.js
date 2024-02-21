@@ -183,6 +183,49 @@ class SessionService {
       ])
     }
 
+    if (status === "unapproved") {
+      const session = await SessionRepository.findSingleSessionWithParams({
+        _id: new mongoose.Types.ObjectId(id),
+      })
+
+      if (!session.studentId) {
+        session.status = "unapproved"
+        await session.save()
+        return {
+          success: false,
+          msg: `Unable to unapproved a pending session.`,
+        }
+      }
+
+      const studentId = session.studentId._id
+      const studentEmail = session.studentId.email
+      const studentName = session.studentId.firstName
+
+      session.sessionFor = ""
+      delete session.studentId
+      await session.save()
+
+      await Promise.all([
+        await NotificationRepository.createNotification({
+          recipientId: new mongoose.Types.ObjectId(studentId),
+          userType: "User",
+          title: `Session Unapproved`,
+          message: `Hi, Your session - ${session.title} has been unapproved`,
+        }),
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Unapproved`,
+          message: `Hi, session - ${session.title} has been unapproved`,
+        }),
+        await sendMailNotification(
+          `${studentEmail}`,
+          "Session Unapproved",
+          { name: `${studentName}`, session: `${session.title}` },
+          "SESSION_UNAPPROVED"
+        ),
+      ])
+    }
+
     if (tutorId) {
       const tutor = await UserRepository.findSingleUserWithParams({
         _id: new mongoose.Types.ObjectId(tutorId),
@@ -257,7 +300,7 @@ class SessionService {
     return { success: true, msg: SessionSuccess.UPDATE }
   }
 
-  static async getSessionService(sessionPayload) {
+  static async getSessionService(sessionPayload, locals) {
     const { error, params, limit, skip, sort } = queryConstructor(
       sessionPayload,
       "createdAt",
@@ -267,8 +310,14 @@ class SessionService {
 
     const total = await SessionRepository.findSessionWithParams()
 
+    let extras = {}
+    if (locals.accountType === "student" || locals.accountType === "tutor") {
+      extras = { date: { $gte: new Date() } }
+    }
+
     const sessions = await SessionRepository.findAllSessionParams({
       ...params,
+      ...extras,
       limit,
       skip,
       sort,

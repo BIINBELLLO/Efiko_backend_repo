@@ -97,6 +97,8 @@ class SessionService {
     let extra = {}
 
     if (book) {
+      if (confirmSession.book)
+        return { success: false, msg: "Current session already booked" }
       // Get subscription orders where the current date is not greater than expiresAt
       const currentDate = new Date()
 
@@ -346,6 +348,19 @@ class SessionService {
       success: true,
       msg: SessionSuccess.FETCH,
       data: session,
+    }
+  }
+
+  static async deleteSession(payload) {
+    const session = await SessionRepository.deleteSessionDetails({
+      _id: new mongoose.Types.ObjectId(payload),
+    })
+
+    if (!session) return { success: false, msg: SessionFailure.DELETE }
+
+    return {
+      success: true,
+      msg: SessionSuccess.DELETE,
     }
   }
 

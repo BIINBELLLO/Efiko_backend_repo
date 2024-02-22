@@ -43,6 +43,17 @@ const getSessionController = async (req, res, next) => {
   return responseHandler(res, SUCCESS, data)
 }
 
+const deleteSessionController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    SessionService.deleteSession(req.params.id)
+  )
+
+  if (error) return next(error)
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
+
 const rateSessionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     SessionService.rateSessionService(req.params.id, req.body, res.locals.jwt)
@@ -145,6 +156,7 @@ module.exports = {
   createSessionController,
   updateSessionController,
   getSessionController,
+  deleteSessionController,
   rateSessionController,
   getReviewServiceController,
   getZoomSessionController,

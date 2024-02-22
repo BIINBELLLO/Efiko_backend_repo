@@ -82,6 +82,10 @@ class SessionRepository {
       { ...params } //returns details about the update
     )
   }
+
+  static async deleteSessionDetails(id, params) {
+    return Session.findOneAndDelete({ ...id })
+  }
 }
 
 module.exports = { SessionRepository }

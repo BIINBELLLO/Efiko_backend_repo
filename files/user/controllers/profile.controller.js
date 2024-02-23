@@ -116,17 +116,7 @@ const nationalIdController = async (req, res, next) => {
   return responseHandler(res, 200, data)
 }
 
-const activateAndDeactivateController = async (req, res, next) => {
-  const [error, data] = await manageAsyncOps(
-    ProfileService.activateAndDeactivateService(req.params.id, req.body)
-  )
 
-  if (error) return next(error)
-
-  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
-
-  return responseHandler(res, 200, data)
-}
 const updateTutorController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     ProfileService.updateTutorService(req.params.id, req.body)
@@ -149,6 +139,5 @@ module.exports = {
   getProfileSessionController,
   educationDocController,
   nationalIdController,
-  activateAndDeactivateController,
   updateTutorController,
 }

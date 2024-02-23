@@ -14,8 +14,8 @@ const {
 const { createUserController } = require("../user/controllers/user.controller")
 const {
   getUserController,
-  activateAndDeactivateController,
   updateTutorController,
+  updateUserProfileController,
 } = require("../user/controllers/profile.controller")
 
 //admin route
@@ -35,7 +35,7 @@ adminRoute.route("/update/:id").patch(updateAdminController)
 //user admin routes
 adminRoute.route("/student").post(createUserController)
 adminRoute.route("/student").get(getUserController)
-adminRoute.route("/student/:id").patch(activateAndDeactivateController)
+adminRoute.route("/student/:id").patch(updateUserProfileController)
 adminRoute.route("/tutor").get(getUserController)
 adminRoute.route("/tutor/:id").patch(updateTutorController)
 

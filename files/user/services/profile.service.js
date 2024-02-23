@@ -10,12 +10,10 @@ const {
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
 const { SessionRepository } = require("../../session/session.repository")
-const { LIMIT, SKIP, SORT } = require("../../../constants")
-const {
-  ProfileFailure,
-  ProfileSuccess,
-} = require("../messages/profile.messages")
 const { sendMailNotification } = require("../../../utils/email")
+const {
+  NotificationRepository,
+} = require("../../notification/notification.repository")
 
 class ProfileService {
   static async updateProfileService(id, payload) {
@@ -23,7 +21,9 @@ class ProfileService {
     delete body.email
     delete body.password
 
-    const userprofile = await UserRepository.updateUserDetails(
+    const { status } = body
+
+    const userProfile = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
@@ -33,7 +33,46 @@ class ProfileService {
       }
     )
 
-    if (!userprofile) return { success: false, msg: UserFailure.UPDATE }
+    if (!userProfile) return { success: false, msg: UserFailure.UPDATE }
+
+    if (status === "Inactive") {
+      const substitutional_parameters = {
+        name: userProfile.firstName,
+      }
+
+      await sendMailNotification(
+        userProfile.email,
+        "Status Deactivated",
+        substitutional_parameters,
+        "INACTIVE"
+      )
+
+      await NotificationRepository.createNotification({
+        userTYpe: "User",
+        recipientId: new mongoose.Types.ObjectId(userProfile._id),
+        title: "Status Deactivated",
+        message: `Hi, your Efiko account has been deactivated`,
+      })
+    }
+    if (status === "Active") {
+      const substitutional_parameters = {
+        name: userProfile.firstName,
+      }
+
+      await sendMailNotification(
+        userProfile.email,
+        "Status Activated",
+        substitutional_parameters,
+        "ACTIVE"
+      )
+
+      await NotificationRepository.createNotification({
+        userTYpe: "User",
+        recipientId: new mongoose.Types.ObjectId(userProfile._id),
+        title: "Status Activated",
+        message: `Hi, your Efiko account has been activated`,
+      })
+    }
 
     return {
       success: true,
@@ -208,29 +247,6 @@ class ProfileService {
       success: true,
       msg: UserSuccess.UPDATE,
     }
-  }
-
-  static async activateAndDeactivateService(params, body) {
-    const { action } = body
-    let query = {}
-    if (action === "Deactivate") {
-      query = { status: "Inactive", action: "Activate" }
-    }
-
-    if (action === "Activate") {
-      query = { status: "Active", action: "Deactivate" }
-    }
-
-    const updateUser = await UserRepository.updateUserDetails(
-      { _id: new mongoose.Types.ObjectId(params) },
-      {
-        ...query,
-      }
-    )
-
-    if (!updateUser) return { success: false, msg: UserFailure.UPDATE }
-
-    return { success: true, msg: UserSuccess.UPDATE }
   }
 
   static async updateTutorService(params, body) {

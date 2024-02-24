@@ -36,7 +36,7 @@ class SessionService {
   }
 
   static async createSession(payload) {
-    const { title, category } = payload
+    const { title, category, tutorId } = payload
 
     const sessionExist = await SessionRepository.validateSession({
       title,
@@ -68,6 +68,32 @@ class SessionService {
     })
 
     if (!session._id) return { success: false, msg: SessionFailure.CREATE }
+
+    if (tutorId) {
+      const tutor = await UserRepository.findSingleUserWithParams({
+        _id: new mongoose.Types.ObjectId(tutorId),
+      })
+
+      await Promise.all([
+        await NotificationRepository.createNotification({
+          recipientId: new mongoose.Types.ObjectId(tutor._id),
+          userType: "User",
+          title: `Assigned Session`,
+          message: `Hi, You been assigned to - ${session.title} session`,
+        }),
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Approved`,
+          message: `Hi, You have assigned session - ${session.title} to a tutor`,
+        }),
+        await sendMailNotification(
+          `${tutor.email}`,
+          "Assigned Session",
+          { name: `${tutor.fullName}`, session: `${session.title}` },
+          "SESSION"
+        ),
+      ])
+    }
 
     return {
       success: true,
@@ -174,28 +200,29 @@ class SessionService {
         await NotificationRepository.createNotification({
           userType: "Admin",
           title: `Session Approved`,
-          message: `Hi, You have approved session - ${session.title} has been approved`,
+          message: `Hi, You have approved session - ${session.title} has been approved. 
+          Note: Approval or Disapproval of the session will be done by Efiko Admin`,
         }),
         await sendMailNotification(
           `${studentEmail}`,
           "Session Approved",
-          { name: `${studentName}`, session: `${session.title}` },
+          { name: `${studentName}`, session: `${session.title}.` },
           "SESSION_APPROVED"
         ),
       ])
     }
 
-    if (status === "unapproved") {
+    if (status === "disapproved") {
       const session = await SessionRepository.findSingleSessionWithParams({
         _id: new mongoose.Types.ObjectId(id),
       })
 
       if (!session.studentId) {
-        session.status = "unapproved"
+        session.status = "disapproved"
         await session.save()
         return {
           success: false,
-          msg: `Unable to unapproved a pending session.`,
+          msg: `Unable to disapprove a pending session.`,
         }
       }
 
@@ -211,19 +238,19 @@ class SessionService {
         await NotificationRepository.createNotification({
           recipientId: new mongoose.Types.ObjectId(studentId),
           userType: "User",
-          title: `Session Unapproved`,
-          message: `Hi, Your session - ${session.title} has been unapproved`,
+          title: `Session Disapproved`,
+          message: `Hi, Your session - ${session.title} has been disapproved`,
         }),
         await NotificationRepository.createNotification({
           userType: "Admin",
-          title: `Session Unapproved`,
-          message: `Hi, session - ${session.title} has been unapproved`,
+          title: `Session Disapproved`,
+          message: `Hi, session - ${session.title} has been disapproved`,
         }),
         await sendMailNotification(
           `${studentEmail}`,
-          "Session Unapproved",
+          "Session Disapproved",
           { name: `${studentName}`, session: `${session.title}` },
-          "SESSION_UNAPPROVED"
+          "SESSION_DISAPPROVED"
         ),
       ])
     }

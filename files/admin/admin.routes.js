@@ -1,6 +1,10 @@
 const adminRoute = require("express").Router()
 const { checkSchema } = require("express-validator")
-const { isAuthenticated, adminVerifier } = require("../../utils/index")
+const {
+  isAuthenticated,
+  adminVerifier,
+  adminStatusVerifier,
+} = require("../../utils/index")
 const { uploadManager } = require("../../utils/multer")
 const { validate } = require("../../validations/validate")
 
@@ -19,7 +23,7 @@ const {
 } = require("../user/controllers/profile.controller")
 
 //admin route
-adminRoute.route("/login").post(adminLogin)
+adminRoute.route("/login").post(adminStatusVerifier, adminLogin)
 
 adminRoute.use(isAuthenticated)
 adminRoute.route("/profile").get(getAdminController)

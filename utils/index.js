@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
 const { UserRepository } = require("../files/user/user.repository")
+const { AdminRepository } = require("../files/admin/admin.repository")
 // const { RedisClient } = require("./redis")
 
 const COUNTRY_CODE = "234"
@@ -237,6 +238,19 @@ const statusVerifier = (req, res, next) => {
   }
 }
 
+const adminStatusVerifier = async (req, res, next) => {
+  const admin = await AdminRepository.fetchAdmin({ email: req.body.email })
+  if (admin.status === "Inactive") {
+    //res.locals.jwt is got from the isAuthenticated middleware
+    return res.status(401).json({
+      msg: "Unauthorized, your account is currently inactive",
+      status: 401,
+    })
+  } else {
+    next()
+  }
+}
+
 module.exports = {
   tokenHandler,
   adminVerifier,
@@ -253,4 +267,5 @@ module.exports = {
   verifyWhoAmI,
   generateOtp,
   statusVerifier,
+  adminStatusVerifier,
 }

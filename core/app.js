@@ -22,7 +22,7 @@ const application = () => {
   app.use(compression())
   app.use(cors())
   app.use(emailValidation)
-  app.use(fileUpload({ useTempFiles: true }))
+  app.use(fileUpload({ useTempFiles: false }))
 
   app.use((req, res, next) => {
     next()

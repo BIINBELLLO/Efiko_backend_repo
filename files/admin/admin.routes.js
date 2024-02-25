@@ -5,8 +5,6 @@ const {
   adminVerifier,
   adminStatusVerifier,
 } = require("../../utils/index")
-const { uploadManager } = require("../../utils/multer")
-const { validate } = require("../../validations/validate")
 
 const {
   adminSignUpController,

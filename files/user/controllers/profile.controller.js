@@ -53,9 +53,8 @@ const getUserProfileController = async (req, res, next) => {
 }
 
 const updateUserProfileController = async (req, res, next) => {
-  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    ProfileService.updateProfileService(req.params.id, value)
+    ProfileService.updateProfileService(req.params.id, req)
   )
   if (error) return next(error)
 
@@ -65,10 +64,8 @@ const updateUserProfileController = async (req, res, next) => {
 }
 
 const profileImageController = async (req, res, next) => {
-  let value = await fileModifier(req)
-
   const [error, data] = await manageAsyncOps(
-    ProfileService.profileImageService(value, res.locals.jwt._id)
+    ProfileService.profileImageService(req, res.locals.jwt._id)
   )
 
   if (error) return next(error)
@@ -104,9 +101,8 @@ const educationDocController = async (req, res, next) => {
 }
 
 const nationalIdController = async (req, res, next) => {
-  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    ProfileService.nationIdService(value, res.locals.jwt._id)
+    ProfileService.nationIdService(req)
   )
 
   if (error) return next(error)
@@ -115,7 +111,6 @@ const nationalIdController = async (req, res, next) => {
 
   return responseHandler(res, 200, data)
 }
-
 
 const updateTutorController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(

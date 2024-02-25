@@ -1,4 +1,3 @@
-const { uploadManager } = require("../../utils/multer")
 const { checkSchema } = require("express-validator")
 const sessionRoute = require("express").Router()
 const { isAuthenticated, statusVerifier } = require("../../utils")

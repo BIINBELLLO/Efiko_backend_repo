@@ -1,5 +1,9 @@
 const { default: mongoose } = require("mongoose")
 const { queryConstructor } = require("../../utils")
+const fs = require("fs")
+const { v4: uuidv4 } = require("uuid")
+const path = require("path")
+const { uploadManager } = require("../../utils/multer")
 const {
   CurriculumSuccess,
   CurriculumFailure,
@@ -9,19 +13,45 @@ const { CurriculumRepository } = require("./curriculum.repository")
 const { LIMIT, SKIP, SORT } = require("../../constants")
 
 class CurriculumService {
-  static async createCurriculum(payload, jwt) {
-    const { image, body } = payload
+  static async createCurriculum(data, jwt) {
+    if (!data.files || !data.files.image)
+      return { success: false, msg: `Please upload a pdf file` }
+
+    const pdfFile = data.files.image
+
+    if (!pdfFile.name.endsWith("pdf"))
+      return { success: false, msg: `Please upload a pdf file format` }
 
     const curriculumExist =
       await CurriculumRepository.findSingleCurriculumWithParams({
-        title: body.title,
+        title: data.body.title,
       })
 
     if (curriculumExist) return { success: false, msg: CurriculumFailure.EXIST }
 
+    let randomId
+    let validateCurriculum
+    do {
+      randomId = uuidv4()
+      validateCurriculum =
+        await CurriculumRepository.findSingleCurriculumWithParams({
+          uniqueId: randomId,
+        })
+    } while (validateCurriculum)
+
+    const pdfFilename = `${randomId}_curriculum.pdf`
+
+    const pdfFilePath = path.join(
+      __dirname,
+      "../../utils/public/pdf/" + `${pdfFilename}`
+    )
+    await pdfFile.mv(pdfFilePath)
+
+    const { body } = data
+
     const curriculum = await CurriculumRepository.create({
       createdBy: new mongoose.Types.ObjectId(jwt._id),
-      pdfFile: image,
+      uniqueId: randomId,
       ...body,
     })
 

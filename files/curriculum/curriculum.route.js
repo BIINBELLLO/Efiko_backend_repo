@@ -1,6 +1,5 @@
 const curriculumRoute = require("express").Router()
 const { isAuthenticated } = require("../../utils")
-const { uploadManager } = require("../../utils/multer")
 const {
   createCurriculumController,
   getCurriculumController,
@@ -11,15 +10,11 @@ const {
 curriculumRoute.use(isAuthenticated)
 
 //routes
-curriculumRoute
-  .route("/")
-  .post(uploadManager("pdfFile").single("pdf"), createCurriculumController)
+curriculumRoute.route("/").post(createCurriculumController)
 
 curriculumRoute.route("/").get(getCurriculumController)
 
-curriculumRoute
-  .route("/:id")
-  .patch(uploadManager("pdfFile").single("pdf"), updateCurriculumController)
+curriculumRoute.route("/:id").patch(updateCurriculumController)
 
 curriculumRoute.route("/:id").delete(deleteCurriculumController)
 

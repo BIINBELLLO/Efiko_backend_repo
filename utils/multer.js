@@ -1,7 +1,6 @@
-const multer = require("multer")
 const cloudinary = require("cloudinary").v2
-const { CloudinaryStorage } = require("multer-storage-cloudinary")
 const { config } = require("../core/config")
+const fs = require("fs")
 
 cloudinary.config({
   cloud_name: config.CLOUDINARY_NAME,
@@ -9,15 +8,16 @@ cloudinary.config({
   api_secret: config.CLOUDINARY_API_SECRET,
 })
 
-const uploadManager = (destination) => {
-  return multer({
-    storage: new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: `efiko/${destination}`,
-      },
-    }),
-  })
-}
+const uploadManager = async (req, destination) => {
+  const result = await cloudinary.uploader.upload(
+    req.files.image.tempFilePath,
+    {
+      use_filename: true,
+      folder: `efiko/${destination}`,
+    }
+  )
+  fs.unlinkSync(req.files.image.tempFilePath)
 
+  return result
+}
 module.exports = { uploadManager }

@@ -8,7 +8,7 @@ const curriculumSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    pdfFile: {
+    uniqueId: {
       type: String,
     },
     createdBy: { type: mongoose.Types.ObjectId, ref: "Admin" },

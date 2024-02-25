@@ -1,4 +1,3 @@
-const { uploadManager } = require("../../utils/multer")
 const { checkSchema } = require("express-validator")
 const userRoute = require("express").Router()
 const { isAuthenticated } = require("../../utils")
@@ -12,7 +11,6 @@ const {
 } = require("../user/controllers/user.controller")
 const {
   updateUserProfileController,
-  getUserProfileController,
   profileImageController,
   getProfileSessionController,
   educationDocController,
@@ -37,29 +35,17 @@ userRoute.route("/").get(getUserController)
 
 userRoute.use(isAuthenticated)
 
-userRoute.patch(
-  "/update/:id",
-  uploadManager("image").single("profileImage"),
-  updateUserProfileController
-)
+userRoute.patch("/update/:id", updateUserProfileController)
 
-userRoute.patch(
-  "/education-doc/:id",
-  uploadManager("image").array("educationImage"),
-  educationDocController
-)
+// userRoute.patch(
+//   "/education-doc/:id",
+//   uploadManager("image").array("educationImage"),
+//   educationDocController
+// )
 
-userRoute.patch(
-  "/national-id/:id",
-  uploadManager("image").single("nationalId"),
-  nationalIdController
-)
+userRoute.patch("/national-id/:id", nationalIdController)
 
-userRoute.patch(
-  "/profile-image",
-  uploadManager("profile").single("image"),
-  profileImageController
-)
+userRoute.patch("/profile-image", profileImageController)
 
 userRoute.get("/profile-session/:id", getProfileSessionController)
 

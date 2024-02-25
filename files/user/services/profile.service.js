@@ -1,12 +1,10 @@
 const { default: mongoose } = require("mongoose")
 const {
   hashPassword,
-  tokenHandler,
   verifyPassword,
   queryConstructor,
-  sanitizePhoneNumber,
-  generateOtp,
 } = require("../../../utils")
+const { uploadManager } = require("../../../utils/multer")
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
 const { SessionRepository } = require("../../session/session.repository")
@@ -17,7 +15,8 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
-    const { body, image } = payload
+    const image = await uploadManager(payload, "image")
+    const { body } = payload
     delete body.email
     delete body.password
 
@@ -27,7 +26,7 @@ class ProfileService {
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
-          profileImage: image,
+          profileImage: image.secure_url,
           ...body,
         },
       }
@@ -80,14 +79,17 @@ class ProfileService {
     }
   }
 
-  static async profileImageService(payload, id) {
-    const { image } = payload
+  static async profileImageService(data, id) {
+    if (!data.files || !data.files.image)
+      return { success: false, msg: `No image upload found` }
+
+    const image = await uploadManager(data, "profileImage")
 
     const userprofile = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
-          profileImage: image,
+          profileImage: image.secure_url,
         },
       }
     )
@@ -229,14 +231,16 @@ class ProfileService {
     }
   }
 
-  static async nationIdService(payload, id) {
-    const { image } = payload
+  static async nationIdService(data, id) {
+    if (!data.files || !data.files.image)
+      return { success: false, msg: `No image upload found` }
 
+    const image = await uploadManager(data, "nationalId")
     const userprofile = await UserRepository.updateUserDetails(
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
-          "tutorEducationDetails.nationalId": image,
+          "tutorEducationDetails.nationalId": image.secure_url,
         },
       }
     )

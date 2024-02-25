@@ -5,9 +5,8 @@ const { CustomError } = require("../../utils/errors")
 const { CurriculumService } = require("./curriculum.service")
 
 const createCurriculumController = async (req, res, next) => {
-  const value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    CurriculumService.createCurriculum(value, res.locals.jwt)
+    CurriculumService.createCurriculum(req, res.locals.jwt)
   )
 
   if (error) return next(error)

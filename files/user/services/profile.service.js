@@ -211,14 +211,14 @@ class ProfileService {
     }
   }
 
-  static async educationDocService(payload, id) {
-    const { image } = payload
-
+  static async educationDocService(payload, locals) {
+    const image = await uploadManager(payload)
+    const imageLink = image.secure_url
     const userprofile = await UserRepository.updateUserDetails(
-      { _id: new mongoose.Types.ObjectId(id) },
+      { _id: new mongoose.Types.ObjectId(locals) },
       {
         $push: {
-          "tutorEducationDetails.educationDoc": [...image],
+          "tutorEducationDetails.educationDoc": [imageLink],
         },
       }
     )

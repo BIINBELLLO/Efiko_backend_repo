@@ -37,11 +37,7 @@ userRoute.use(isAuthenticated)
 
 userRoute.patch("/update/:id", updateUserProfileController)
 
-// userRoute.patch(
-//   "/education-doc/:id",
-//   uploadManager("image").array("educationImage"),
-//   educationDocController
-// )
+userRoute.patch("/education-doc/:id", educationDocController)
 
 userRoute.patch("/national-id/:id", nationalIdController)
 

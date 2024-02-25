@@ -88,9 +88,8 @@ const getProfileSessionController = async (req, res, next) => {
 }
 
 const educationDocController = async (req, res, next) => {
-  let value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    ProfileService.educationDocService(value, res.locals.jwt._id)
+    ProfileService.educationDocService(req, res.locals.jwt._id)
   )
 
   if (error) return next(error)

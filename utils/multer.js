@@ -16,7 +16,7 @@ const uploadManager = async (req, destination) => {
       folder: `efiko/${destination}`,
     }
   )
-  fs.unlinkSync(req.files.image.tempFilePath)
+  fs.unlinkSync(req.files?.image.tempFilePath)
 
   return result
 }

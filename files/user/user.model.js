@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
     country: {
       type: String,
     },
+    age: {
+      type: String,
+    },
     profileImage: {
       type: String,
     },

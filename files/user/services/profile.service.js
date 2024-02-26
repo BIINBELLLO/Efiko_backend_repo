@@ -15,7 +15,10 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
+    if (!payload.files || !payload.files.image)
+      return { success: false, msg: `No image upload found` }
     const image = await uploadManager(payload, "image")
+
     const { body } = payload
     delete body.email
     delete body.password

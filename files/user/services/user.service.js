@@ -32,7 +32,6 @@ class UserService {
     const { otp, expiry } = generateOtp()
 
     let verificationOtp = ""
-    let approvalStatus = ""
 
     if (locals?.accountType === "superAdmin") {
       console.log("working here one")

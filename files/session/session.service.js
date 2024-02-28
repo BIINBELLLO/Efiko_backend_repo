@@ -47,7 +47,7 @@ class SessionService {
 
     const initiateSession = await this.initiateSessionService(payload)
 
-    const { meeting_url, password, purpose, duration, meetingId } =
+    const { meeting_url, password, purpose, duration, meetingId, meetingTime } =
       initiateSession
 
     const session = await SessionRepository.create({
@@ -61,7 +61,7 @@ class SessionService {
       duration,
       meetingLink: meeting_url,
       curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
-      date: payload.date,
+      date: meetingTime,
       time: payload.time,
       passCode: "123456",
       meetingPassword: password,
@@ -339,9 +339,12 @@ class SessionService {
 
     const total = await SessionRepository.findSessionWithParams()
 
+    const currentDatePlus24Hours = new Date()
+    currentDatePlus24Hours.setHours(currentDatePlus24Hours.getHours() + 24)
+
     let extras = {}
     // if (locals.accountType === "student" || locals.accountType === "tutor") {
-      extras = { date: { $gte: new Date() } }
+    extras = { date: { $gte: currentDatePlus24Hours } }
     // }
 
     const sessions = await SessionRepository.findAllSessionParams({

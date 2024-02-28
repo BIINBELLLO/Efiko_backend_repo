@@ -56,7 +56,6 @@ class ZoomAPiServiceProvider {
         message: "Success",
         status: 1,
       }
-      console.log("response", response_data)
 
       return content
     } catch (error) {

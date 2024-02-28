@@ -341,15 +341,19 @@ class SessionService {
 
     const currentDatePlus24Hours = new Date()
     currentDatePlus24Hours.setHours(currentDatePlus24Hours.getHours() + 24)
-
+    let recorded = { type: "not-recorded" }
     let extras = {}
     // if (locals.accountType === "student" || locals.accountType === "tutor") {
     extras = { date: { $gte: currentDatePlus24Hours } }
     // }
+    if (params.type && params.type === "recorded") {
+      recorded = {}
+    }
 
     const sessions = await SessionRepository.findAllSessionParams({
       ...params,
       ...extras,
+      ...recorded,
       limit,
       skip,
       sort,

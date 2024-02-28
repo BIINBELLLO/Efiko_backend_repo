@@ -340,9 +340,9 @@ class SessionService {
     const total = await SessionRepository.findSessionWithParams()
 
     let extras = {}
-    if (locals.accountType === "student" || locals.accountType === "tutor") {
+    // if (locals.accountType === "student" || locals.accountType === "tutor") {
       extras = { date: { $gte: new Date() } }
-    }
+    // }
 
     const sessions = await SessionRepository.findAllSessionParams({
       ...params,

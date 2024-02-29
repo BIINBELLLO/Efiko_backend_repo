@@ -118,7 +118,7 @@ class SessionService {
   }
 
   static async updateSessionService(id, payload, params) {
-    const { status, tutorId, book } = payload
+    const { status, tutorId, book, time } = payload
 
     const confirmSession = await SessionRepository.findSingleSessionWithParams({
       _id: new mongoose.Types.ObjectId(id),
@@ -162,6 +162,14 @@ class SessionService {
         }
 
       extra = { studentId: new mongoose.Types.ObjectId(params) }
+    }
+
+    if (time) {
+      let currentISODate = confirmSession.date.toISOString()
+      let result = currentISODate.slice(0, 11)
+
+      let newISODate = `${result}${time}:00.000Z`
+      extra = { date: newISODate }
     }
 
     const updateSession = await SessionRepository.updateSessionDetails(
@@ -344,8 +352,6 @@ class SessionService {
 
     const total = await SessionRepository.findSessionWithParams()
 
-    const currentDatePlus24Hours = new Date()
-    currentDatePlus24Hours.setHours(currentDatePlus24Hours.getHours() + 24)
     let recorded = { type: "not-recorded" }
     let extras = {}
     // if (locals.accountType === "student" || locals.accountType === "tutor") {
@@ -354,7 +360,7 @@ class SessionService {
     if (params.type && params.type === "recorded") {
       recorded = {}
     }
-    console.log("extras", extras)
+
     const sessions = await SessionRepository.findAllSessionParams({
       ...params,
       ...recorded,

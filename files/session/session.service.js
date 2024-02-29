@@ -54,6 +54,7 @@ class SessionService {
       title: purpose,
       free: payload.free,
       meetingId,
+      tutorId: payload.tutorId,
       category: payload.category,
       outcome: payload.outcome,
       description: payload.description,
@@ -69,30 +70,34 @@ class SessionService {
 
     if (!session._id) return { success: false, msg: SessionFailure.CREATE }
 
-    if (tutorId) {
-      const tutor = await UserRepository.findSingleUserWithParams({
-        _id: new mongoose.Types.ObjectId(tutorId),
-      })
+    try {
+      if (tutorId) {
+        const tutor = await UserRepository.findSingleUserWithParams({
+          _id: new mongoose.Types.ObjectId(tutorId),
+        })
 
-      await Promise.all([
-        await NotificationRepository.createNotification({
-          recipientId: new mongoose.Types.ObjectId(tutor._id),
-          userType: "User",
-          title: `Assigned Session`,
-          message: `Hi, You been assigned to - ${session.title} session`,
-        }),
-        await NotificationRepository.createNotification({
-          userType: "Admin",
-          title: `Session Approved`,
-          message: `Hi, You have assigned session - ${session.title} to a tutor`,
-        }),
-        await sendMailNotification(
-          `${tutor.email}`,
-          "Assigned Session",
-          { name: `${tutor.fullName}`, session: `${session.title}` },
-          "SESSION"
-        ),
-      ])
+        await Promise.all([
+          await NotificationRepository.createNotification({
+            recipientId: new mongoose.Types.ObjectId(tutor._id),
+            userType: "User",
+            title: `Assigned Session`,
+            message: `Hi, You been assigned to - ${session.title} session`,
+          }),
+          await NotificationRepository.createNotification({
+            userType: "Admin",
+            title: `Session Approved`,
+            message: `Hi, You have assigned session - ${session.title} to a tutor`,
+          }),
+          await sendMailNotification(
+            `${tutor.email}`,
+            "Assigned Session",
+            { name: `${tutor.fullName}`, session: `${session.title}` },
+            "SESSION"
+          ),
+        ])
+      }
+    } catch (error) {
+      console.log("tutor mail error", error)
     }
 
     return {
@@ -343,8 +348,8 @@ class SessionService {
     currentDatePlus24Hours.setHours(currentDatePlus24Hours.getHours() + 24)
     let recorded = { type: "not-recorded" }
     let extras = {}
-    extras = { date: { $gte: new Date().toISOString() } }
     // if (locals.accountType === "student" || locals.accountType === "tutor") {
+    extras = { date: { $gte: new Date().toISOString() } }
     // }
     if (params.type && params.type === "recorded") {
       recorded = {}

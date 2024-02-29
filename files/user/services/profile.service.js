@@ -15,7 +15,10 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
-    const image = await uploadManager(payload, "image")
+    let image
+    if (payload.files.image) {
+      image = await uploadManager(payload, "image")
+    }
 
     const { body } = payload
     delete body.email
@@ -27,7 +30,7 @@ class ProfileService {
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
-          profileImage: image.secure_url,
+          profileImage: image?.secure_url,
           ...body,
         },
       }

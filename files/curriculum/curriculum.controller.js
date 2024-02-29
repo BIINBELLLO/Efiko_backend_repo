@@ -30,9 +30,8 @@ const getCurriculumController = async (req, res, next) => {
 }
 
 const updateCurriculumController = async (req, res, next) => {
-  const value = await fileModifier(req)
   const [error, data] = await manageAsyncOps(
-    CurriculumService.updateCurriculumService(value, req.params)
+    CurriculumService.updateCurriculumService(req, req.params)
   )
 
   if (error) return next(error)
@@ -57,11 +56,7 @@ const deleteCurriculumController = async (req, res, next) => {
 const downloadCurriculumController = async (req, res, next) => {
   try {
     const fileName = `${req.params.uuid}_curriculum.pdf`
-    const filePath = path.join(
-      __dirname,
-      "../../utils/public/pdf/",
-      fileName
-    )
+    const filePath = path.join(__dirname, "../../utils/public/pdf/", fileName)
 
     // Set the appropriate content type for a PDF file
     res.setHeader("Content-Type", "application/pdf")

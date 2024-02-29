@@ -94,11 +94,16 @@ class CurriculumService {
   }
 
   static async updateCurriculumService(data, params) {
-    const { image, body } = data
+    let pdfFile = data.files.image
+
+    const { body } = data
+
+    if (pdfFile && !pdfFile.name.endsWith("pdf"))
+      return { success: false, msg: `Please upload a pdf file format` }
+
     const curriculum = await CurriculumRepository.updateCurriculumDetails(
       { _id: new mongoose.Types.ObjectId(params.id) },
       {
-        pdfFile: image,
         ...body,
       }
     )
@@ -108,6 +113,24 @@ class CurriculumService {
         success: false,
         msg: CurriculumFailure.CREATE,
       }
+
+    const pdfFileName = `${curriculum.uniqueId}_curriculum.pdf`
+    console.log("pdfFileName", pdfFileName)
+
+    const pdfFilePath = path.join(
+      __dirname,
+      "../../utils/public/pdf/" + `${pdfFileName}`
+    )
+
+    if (pdfFile) {
+      try {
+        // Move the uploaded PDF file to the destination
+        await pdfFile.mv(pdfFilePath)
+      } catch (error) {
+        console.error("Error moving PDF file:", error)
+        return { success: false, msg: "Error updating PDF file." }
+      }
+    }
 
     return {
       success: true,

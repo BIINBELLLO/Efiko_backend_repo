@@ -251,6 +251,13 @@ const adminStatusVerifier = async (req, res, next) => {
   }
 }
 
+const pagination = (page, limit) => {
+  let currentPage = page * 1 || 1
+  let currentLimit = limit * 1 || 10
+  let currentSkip = (currentPage - 1) * currentLimit
+  return { currentSkip, currentLimit }
+}
+
 module.exports = {
   tokenHandler,
   adminVerifier,
@@ -268,4 +275,5 @@ module.exports = {
   generateOtp,
   statusVerifier,
   adminStatusVerifier,
+  pagination,
 }

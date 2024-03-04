@@ -16,7 +16,7 @@ const {
 class ProfileService {
   static async updateProfileService(id, payload) {
     let image
-    if (payload.files.image) {
+    if (payload.files && payload.files.image) {
       image = await uploadManager(payload, "image")
     }
 
@@ -30,7 +30,7 @@ class ProfileService {
       { _id: new mongoose.Types.ObjectId(id) },
       {
         $set: {
-          profileImage: image?.secure_url,
+          profileImage: image ? image?.secure_url : null,
           ...body,
         },
       }

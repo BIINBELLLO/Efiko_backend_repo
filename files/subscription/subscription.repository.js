@@ -1,3 +1,4 @@
+const { pagination } = require("../../utils")
 const { Subscription } = require("./subscription.model")
 const mongoose = require("mongoose")
 
@@ -33,10 +34,12 @@ class SubscriptionRepository {
       }
     }
 
+    const { currentSkip, currentLimit } = pagination(skip, limit)
+
     const subscription = await Subscription.find({ ...restOfPayload, ...query })
       .sort(sort)
-      .skip(skip)
-      .limit(limit)
+      .skip(currentSkip)
+      .limit(currentLimit)
 
     return subscription
   }

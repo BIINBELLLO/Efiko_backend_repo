@@ -1,3 +1,4 @@
+const { pagination } = require("../../utils")
 const { Session } = require("./session.model")
 const mongoose = require("mongoose")
 
@@ -42,6 +43,7 @@ class SessionRepository {
       }
     }
 
+    const { currentSkip, currentLimit } = pagination(skip, limit)
     const session = await Session.find({ ...restOfPayload, ...query })
       .populate({
         path: "curriculumId",
@@ -60,8 +62,8 @@ class SessionRepository {
         select: "userName fullName firstName lastName profileImage email", // Select the fields you want to include from the User model
       })
       .sort({ timeAndDate: -1 })
-      .skip(skip)
-      .limit(limit)
+      .skip(currentSkip)
+      .limit(currentLimit)
 
     return session
   }

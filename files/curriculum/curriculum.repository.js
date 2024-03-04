@@ -19,7 +19,7 @@ class CurriculumRepository {
 
   //get curriculum
   static async findAllCurriculumParams(payload) {
-    const { limit, page, skip, sort, search, ...restOfPayload } = payload
+    const { limit, skip, sort, search, ...restOfPayload } = payload
 
     let query = {}
 
@@ -38,7 +38,7 @@ class CurriculumRepository {
         ...restOfPayload,
       }
     }
-    const { currentSkip, currentLimit } = pagination(page, limit)
+    const { currentSkip, currentLimit } = pagination(skip, limit)
     const curriculum = await Curriculum.find({ ...query })
       .sort(sort)
       .skip(currentSkip)

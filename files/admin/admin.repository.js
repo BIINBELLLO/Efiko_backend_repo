@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const { Admin } = require("../admin/admin.model")
+const { pagination } = require("../../utils")
 
 class AdminRepository {
   static async create(body) {
@@ -40,6 +41,8 @@ class AdminRepository {
       }
     }
 
+    const { currentSkip, currentLimit } = pagination(skip, limit)
+
     const admin = await Admin.find(
       {
         ...query, // Spread the query object to include its properties
@@ -48,8 +51,8 @@ class AdminRepository {
       { password: 0 }
     )
       .sort(sort)
-      .skip(skip)
-      .limit(limit)
+      .skip(currentSkip)
+      .limit(currentLimit)
 
     return admin
   }

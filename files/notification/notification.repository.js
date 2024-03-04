@@ -1,3 +1,4 @@
+const { pagination } = require("../../utils")
 const { Notification } = require("./notification.model")
 
 class NotificationRepository {
@@ -12,12 +13,14 @@ class NotificationRepository {
   static async fetchNotificationsByParams(userPayload) {
     let { limit, skip, sort, ...restOfPayload } = userPayload
 
+    const { currentSkip, currentLimit } = pagination(skip, limit)
+
     const notification = await Notification.find({
       ...restOfPayload,
     })
       .sort(sort)
-      .skip(skip)
-      .limit(limit)
+      .skip(currentSkip)
+      .limit(currentLimit)
 
     return notification
   }

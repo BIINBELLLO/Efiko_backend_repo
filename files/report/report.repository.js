@@ -1,5 +1,6 @@
 const { Report } = require("./report.model")
 const mongoose = require("mongoose")
+const { pagination } = require("../../utils")
 
 class ReportRepository {
   static async create(reportPayload) {
@@ -37,15 +38,15 @@ class ReportRepository {
         ...restOfPayload,
       }
     }
-
+    const { currentSkip, currentLimit } = pagination(skip, limit)
     const report = await Report.find({ ...query })
       .populate({
         path: "reportedBy",
         select: "firstName lastName fullName email",
       })
       .sort(sort)
-      .skip(skip)
-      .limit(limit)
+      .skip(currentSkip)
+      .limit(currentLimit)
 
     return report
   }

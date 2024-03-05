@@ -38,8 +38,8 @@ class SubscriptionRepository {
 
     const subscription = await Subscription.find({ ...restOfPayload, ...query })
       .sort(sort)
-      .skip(currentSkip)
-      .limit(currentLimit)
+      .skip(skip)
+      .limit(limit)
 
     return subscription
   }

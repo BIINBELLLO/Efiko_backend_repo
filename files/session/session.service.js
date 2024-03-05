@@ -54,7 +54,7 @@ class SessionService {
       title: purpose,
       free: payload.free,
       meetingId,
-      tutorId: payload.tutorId,
+      tutorId: payload?.tutorId,
       category: payload.category,
       outcome: payload.outcome,
       description: payload.description,

@@ -34,7 +34,7 @@ class SubscriptionRepository {
       }
     }
 
-    const { currentSkip, currentLimit } = pagination(skip, limit)
+    // const { currentSkip, currentLimit } = pagination(skip, limit)
 
     const subscription = await Subscription.find({ ...restOfPayload, ...query })
       .sort(sort)

@@ -36,7 +36,7 @@ class UserRepository {
       }
     }
 
-    const { currentSkip, currentLimit } = pagination(skip, limit)
+    // const { currentSkip, currentLimit } = pagination(skip, limit)
     const user = await User.find(
       { ...restOfPayload, ...query },
       { password: 0 }

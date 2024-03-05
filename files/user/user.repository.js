@@ -1,4 +1,4 @@
-const { pagination } = require("../../utils")
+
 const { User } = require("./user.model")
 
 class UserRepository {
@@ -36,11 +36,17 @@ class UserRepository {
       }
     }
 
-    // const { currentSkip, currentLimit } = pagination(skip, limit)
-    const user = await User.find(
-      { ...restOfPayload, ...query },
-      { password: 0 }
-    )
+    let {
+      currentSkip,
+      currentLimit,
+    } = (page, limit) => {
+      let currentPage = page * 1 || 1
+      let currentLimit = limit * 1 || 10
+      let currentSkip = (currentPage - 1) * currentLimit
+      return { currentSkip, currentLimit }
+    }
+
+    const user = await User.find({ ...restOfPayload, ...query })
       .sort(sort)
       .skip(currentSkip)
       .limit(currentLimit)

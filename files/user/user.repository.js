@@ -1,6 +1,4 @@
-
 const { User } = require("./user.model")
-
 class UserRepository {
   static async create(payload) {
     return await User.create(payload)

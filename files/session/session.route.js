@@ -25,7 +25,7 @@ sessionRoute.route("/").post(statusVerifier, createSessionController)
 
 sessionRoute.route("/:id").patch(statusVerifier, updateSessionController)
 
-sessionRoute.route("/").get(statusVerifier, getSessionController)
+sessionRoute.route("/").get(getSessionController)
 sessionRoute.route("/:id").delete(deleteSessionController)
 sessionRoute.route("/rating/:id").patch(rateSessionController)
 sessionRoute.route("/rating/:id").get(getReviewServiceController)

@@ -1,4 +1,5 @@
 const { pagination } = require("../../utils")
+const { Admin } = require("../admin/admin.model")
 const { User } = require("../user/user.model")
 const { Curriculum } = require("./curriculum.model")
 const mongoose = require("mongoose")
@@ -72,6 +73,42 @@ class CurriculumRepository {
       .limit(currentLimit)
 
     return user
+  }
+
+  static async findAdminParams(payload) {
+    const { limit, skip, sort, search, ...restOfPayload } = payload
+
+    let query = {}
+    if (search) {
+      query = {
+        $or: [
+          { fullName: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+        ...restOfPayload,
+      }
+    }
+
+    if (search === null || search === undefined) {
+      query = {
+        ...restOfPayload,
+      }
+    }
+
+    const { currentSkip, currentLimit } = pagination(skip, limit)
+
+    const admin = await Admin.find(
+      {
+        ...query, // Spread the query object to include its properties
+        accountType: "normalAdmin",
+      },
+      { password: 0 }
+    )
+      .sort(sort)
+      .skip(currentSkip)
+      .limit(currentLimit)
+
+    return admin
   }
 
   static async updateCurriculumDetails(id, params) {

@@ -14,6 +14,7 @@ const {
   NotificationRepository,
 } = require("../notification/notification.repository")
 const { sendMailNotification } = require("../../utils/email")
+const { CurriculumRepository } = require("../curriculum/curriculum.repository")
 
 class AdminAuthService {
   static async adminSignUpService(data, locals) {
@@ -119,7 +120,7 @@ class AdminAuthService {
 
     const total = await AdminRepository.fetchAdminParams()
 
-    const getAdmin = await AdminRepository.findAdminParams({
+    const getAdmin = await CurriculumRepository.findAdminParams({
       ...params,
       limit,
       skip,

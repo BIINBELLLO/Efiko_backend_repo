@@ -9,7 +9,7 @@ const {
 } = require("../../utils/index")
 const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")
-const { uploadImageManager } = require("../../utils/multer")
+
 const {
   NotificationRepository,
 } = require("../notification/notification.repository")

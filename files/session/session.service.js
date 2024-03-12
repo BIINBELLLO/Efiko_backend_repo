@@ -125,8 +125,8 @@ class SessionService {
     })
 
     if (
-      inactiveUser.accountType === "student" &&
-      inactiveUser.status == "Inactive"
+      inactiveUser?.accountType === "student" &&
+      inactiveUser?.status == "Inactive"
     )
       return {
         success: true,

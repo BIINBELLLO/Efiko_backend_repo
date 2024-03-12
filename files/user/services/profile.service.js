@@ -12,6 +12,9 @@ const { sendMailNotification } = require("../../../utils/email")
 const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
+const {
+  CurriculumRepository,
+} = require("../../curriculum/curriculum.repository")
 
 class ProfileService {
   static async updateProfileService(id, payload) {
@@ -117,7 +120,7 @@ class ProfileService {
 
     const total = await UserRepository.findUserWithParams()
 
-    const allUsers = await UserRepository.findAllUsersParams({
+    const allUsers = await CurriculumRepository.findAllUserParams({
       ...params,
       limit,
       skip,

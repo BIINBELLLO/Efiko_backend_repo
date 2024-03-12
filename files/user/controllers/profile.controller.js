@@ -3,12 +3,12 @@ const { responseHandler } = require("../../../core/response")
 const { manageAsyncOps, fileModifier } = require("../../../utils")
 const { CustomError } = require("../../../utils/errors")
 const { ProfileService } = require("../services/profile.service")
-const { UserService } = require("../services/user.service")
 
 const getUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     ProfileService.getUserService(req.query)
   )
+  console.log("new update")
 
   if (error) return next(error)
 

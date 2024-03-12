@@ -1,4 +1,5 @@
 const { pagination } = require("../../utils")
+const { User } = require("../user/user.model")
 const { Curriculum } = require("./curriculum.model")
 const mongoose = require("mongoose")
 
@@ -45,6 +46,32 @@ class CurriculumRepository {
       .limit(currentLimit)
 
     return curriculum
+  }
+
+  static async findAllUserParams(payload) {
+    const { limit, skip, sort, search, ...restOfPayload } = payload
+
+    let query = {}
+
+    if (search) {
+      query = {
+        $or: [
+          { firstName: { $regex: search, $options: "i" } },
+          { lastName: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+          { fullName: { $regex: search, $options: "i" } },
+        ],
+      }
+    }
+
+    const { currentSkip, currentLimit } = pagination(skip, limit)
+
+    const user = await User.find({ ...restOfPayload, ...query })
+      .sort(sort)
+      .skip(currentSkip)
+      .limit(currentLimit)
+
+    return user
   }
 
   static async updateCurriculumDetails(id, params) {

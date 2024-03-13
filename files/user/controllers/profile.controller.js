@@ -8,7 +8,6 @@ const getUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     ProfileService.getUserService(req.query)
   )
-  console.log("new update")
 
   if (error) return next(error)
 

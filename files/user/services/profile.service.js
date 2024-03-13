@@ -118,8 +118,6 @@ class ProfileService {
     )
     if (error) return { success: false, msg: error }
 
-    const total = await UserRepository.findUserWithParams()
-
     const allUsers = await CurriculumRepository.findAllUserParams({
       ...params,
       limit,
@@ -135,7 +133,7 @@ class ProfileService {
       msg: UserSuccess.FETCH,
       data: allUsers,
       length: allUsers.length,
-      total: total.length,
+      total: allUsers.length,
     }
   }
 

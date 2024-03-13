@@ -2,7 +2,6 @@ const { pagination } = require("../../utils")
 const { Admin } = require("../admin/admin.model")
 const { User } = require("../user/user.model")
 const { Curriculum } = require("./curriculum.model")
-const mongoose = require("mongoose")
 
 class CurriculumRepository {
   static async create(payload) {

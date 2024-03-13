@@ -118,7 +118,7 @@ class AdminAuthService {
     )
     if (error) return { success: false, msg: error }
 
-    const total = await AdminRepository.fetchAdminParams()
+    const total = await AdminRepository.fetchAdminParams({ ...params })
 
     const getAdmin = await CurriculumRepository.findAdminParams({
       ...params,

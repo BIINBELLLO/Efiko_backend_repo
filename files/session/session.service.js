@@ -373,6 +373,12 @@ class SessionService {
       recorded = {}
     }
 
+    const total = await SessionRepository.findSessionWithParams({
+      ...params,
+      ...recorded,
+      ...extras,
+    })
+
     const sessions = await SessionRepository.findAllSessionParams({
       ...params,
       ...recorded,
@@ -390,7 +396,7 @@ class SessionService {
       msg: SessionSuccess.FETCH,
       data: sessions,
       length: sessions.length,
-      total: sessions.length,
+      total: total.length,
     }
   }
 

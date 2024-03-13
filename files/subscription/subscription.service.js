@@ -64,6 +64,7 @@ class SubscriptionService {
 
     const total = await SubscriptionRepository.findSubscriptionWithParams({
       ...type,
+      ...params,
     })
 
     const subscription = await SubscriptionRepository.findAllSubscriptionParams(

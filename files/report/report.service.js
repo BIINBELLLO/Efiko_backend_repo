@@ -38,7 +38,9 @@ class ReportService {
     )
     if (error) return { success: false, msg: error }
 
-    const total = await await ReportRepository.findReportWithParams()
+    const total = await await ReportRepository.findReportWithParams({
+      ...params,
+    })
 
     const reports = await ReportRepository.findAllReportParams({
       ...params,

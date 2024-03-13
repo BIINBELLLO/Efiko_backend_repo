@@ -364,8 +364,6 @@ class SessionService {
     )
     if (error) return { success: false, msg: error }
 
-    const total = await SessionRepository.findSessionWithParams()
-
     let recorded = { type: "not-recorded" }
     let extras = {}
     // if (locals.accountType === "student" || locals.accountType === "tutor") {
@@ -392,7 +390,7 @@ class SessionService {
       msg: SessionSuccess.FETCH,
       data: sessions,
       length: sessions.length,
-      total: total.length,
+      total: sessions.length,
     }
   }
 

@@ -41,6 +41,7 @@ class CurriculumRepository {
       }
     }
     const { currentSkip, currentLimit } = pagination(skip, limit)
+
     const curriculum = await Curriculum.find({ ...query })
       .sort(sort)
       .skip(currentSkip)

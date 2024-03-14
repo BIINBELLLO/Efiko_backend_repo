@@ -31,7 +31,7 @@ const getAdminController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     AdminAuthService.getAdminService(req.query)
   )
-
+  console.log("error", error)
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, 400, data))
@@ -87,6 +87,17 @@ const imageUpload = async (req, res, next) => {
 
   return responseHandler(res, 200, data)
 }
+const resetAdminPasswordController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    AdminAuthService.resetAdminPassword(req.params.id, req.body)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, 400, data))
+
+  return responseHandler(res, 200, data)
+}
 
 module.exports = {
   adminSignUpController,
@@ -96,4 +107,5 @@ module.exports = {
   imageUpload,
   getAdminController,
   getLoggedInAdminController,
+  resetAdminPasswordController,
 }

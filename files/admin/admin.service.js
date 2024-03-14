@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 const { AdminRepository } = require("./admin.repository")
 const {
-  hashPassword,
   verifyPassword,
   tokenHandler,
   queryConstructor,
   AlphaNumeric,
+  hashPassword,
 } = require("../../utils/index")
 const { authMessages } = require("./messages/auth.messages")
 const { adminMessages } = require("./messages/admin.messages")
@@ -234,6 +234,31 @@ class AdminAuthService {
     if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
+  }
+
+  static async resetAdminPassword(params, body) {
+    const getAdmin = await AdminRepository.fetchAdmin({
+      _id: new mongoose.Types.ObjectId(params),
+    })
+
+    if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
+
+    const { password } = body
+    if (!password)
+      return { success: false, msg: `Password field cannot be missing ` }
+    const hashedPassword = await hashPassword(password)
+
+    const updateAdminPassword = await AdminRepository.updateAdminDetails(
+      {
+        _id: new mongoose.Types.ObjectId(params),
+      },
+      { password: hashedPassword }
+    )
+
+    if (!updateAdminPassword)
+      return { success: false, msg: `Unable to update admin password` }
+
+    return { success: true, msg: authMessages.PASSWORD_RESET_SUCCESS }
   }
 }
 

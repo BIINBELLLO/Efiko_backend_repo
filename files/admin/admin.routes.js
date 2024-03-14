@@ -12,6 +12,7 @@ const {
   getAdminController,
   updateAdminController,
   getLoggedInAdminController,
+  resetAdminPasswordController,
 } = require("./admin.controller")
 const { createUserController } = require("../user/controllers/user.controller")
 const {
@@ -33,6 +34,7 @@ adminRoute.route("/").get(getAdminController)
 
 //update admin
 adminRoute.route("/update/:id").patch(updateAdminController)
+adminRoute.route("/reset-password/:id").patch(resetAdminPasswordController)
 
 //user admin routes
 adminRoute.route("/student").post(createUserController)

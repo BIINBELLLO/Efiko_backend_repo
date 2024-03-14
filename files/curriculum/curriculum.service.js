@@ -72,8 +72,14 @@ class CurriculumService {
     )
     if (error) return { success: false, msg: error }
 
+      let allData
+      if (params.search) {
+        const { search, ...restOfData } = params
+        allData = { ...restOfData }
+      }
+
     const total = await CurriculumRepository.findCurriculumWithParams({
-      ...params,
+      ...allData,
     })
 
     const curriculum = await CurriculumRepository.findAllCurriculumParams({

@@ -31,7 +31,7 @@ const getAdminController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     AdminAuthService.getAdminService(req.query)
   )
-  console.log("error", error)
+
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, 400, data))

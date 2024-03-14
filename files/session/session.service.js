@@ -373,7 +373,7 @@ class SessionService {
       recorded = {}
     }
 
-    let allData
+    let allData = { ...params }
     if (params.search) {
       const { search, ...restOfData } = params
       allData = { ...restOfData }

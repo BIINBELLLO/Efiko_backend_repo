@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const { Admin } = require("../admin/admin.model")
-const { pagination } = require("../../utils")
 
 class AdminRepository {
   static async create(body) {

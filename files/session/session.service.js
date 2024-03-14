@@ -374,7 +374,7 @@ class SessionService {
     }
 
     let allData = { ...params }
-    if (params.search) {
+    if (params.search || params.search == "") {
       const { search, ...restOfData } = params
       allData = { ...restOfData }
     }

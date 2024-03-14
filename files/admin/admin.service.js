@@ -119,7 +119,7 @@ class AdminAuthService {
     if (error) return { success: false, msg: error }
 
     let allData = { ...params }
-    if (params.search) {
+    if (params.search || params.search == "") {
       const { search, ...restOfData } = params
       allData = { ...restOfData }
     }

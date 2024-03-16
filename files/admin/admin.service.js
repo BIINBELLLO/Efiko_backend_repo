@@ -236,16 +236,16 @@ class AdminAuthService {
     return { success: true, msg: authMessages.ADMIN_FOUND, data: getAdmin }
   }
 
-  static async resetAdminPassword(params, body) {
+  static async resetAdminPassword(params) {
     const getAdmin = await AdminRepository.fetchAdmin({
       _id: new mongoose.Types.ObjectId(params),
     })
 
     if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
-    const { password } = body
-    if (!password)
-      return { success: false, msg: `Password field cannot be missing ` }
+    let password = AlphaNumeric(8, "number")
+    console.log("password", password)
+
     const hashedPassword = await hashPassword(password)
 
     const updateAdminPassword = await AdminRepository.updateAdminDetails(
@@ -257,6 +257,22 @@ class AdminAuthService {
 
     if (!updateAdminPassword)
       return { success: false, msg: `Unable to update admin password` }
+
+    try {
+      const substitutional_parameters = {
+        name: getAdmin?.fullName,
+        password: password,
+      }
+
+      await sendMailNotification(
+        getAdmin.email,
+        "Password Reset",
+        substitutional_parameters,
+        "PASSWORD_RESET"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
 
     return { success: true, msg: authMessages.PASSWORD_RESET_SUCCESS }
   }

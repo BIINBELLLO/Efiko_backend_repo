@@ -89,7 +89,7 @@ const imageUpload = async (req, res, next) => {
 }
 const resetAdminPasswordController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    AdminAuthService.resetAdminPassword(req.params.id, req.body)
+    AdminAuthService.resetAdminPassword(req.params.id)
   )
 
   if (error) return next(error)

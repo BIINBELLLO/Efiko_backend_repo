@@ -67,7 +67,11 @@ class CurriculumRepository {
 
     const { currentSkip, currentLimit } = pagination(skip, limit)
 
-    const user = await User.find({ ...restOfPayload, ...query })
+    const user = await User.find({
+      ...restOfPayload,
+      ...query,
+      profileUpdated: true,
+    })
       .sort(sort)
       .skip(currentSkip)
       .limit(currentLimit)

@@ -373,13 +373,8 @@ class SessionService {
       recorded = {}
     }
 
-    let allData = { ...params }
-    if (params.search || params.search == "") {
-      const { search, ...restOfData } = params
-      allData = { ...restOfData }
-    }
-    const total = await SessionRepository.findSessionWithParams({
-      ...allData,
+    const total = await SessionRepository.findAllSessionParams({
+      ...params,
       ...recorded,
       ...extras,
     })

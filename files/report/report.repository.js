@@ -33,7 +33,7 @@ class ReportRepository {
       }
     }
 
-    if (search === null || search === undefined) {
+    if (search === "" || search === undefined) {
       query = {
         ...restOfPayload,
       }

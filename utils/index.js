@@ -240,6 +240,13 @@ const statusVerifier = (req, res, next) => {
 
 const adminStatusVerifier = async (req, res, next) => {
   const admin = await AdminRepository.fetchAdmin({ email: req.body.email })
+
+  if (!admin) {
+    return res.status(401).json({
+      msg: "One or more details incorrect",
+      status: 401,
+    })
+  }
   if (admin.status === "Inactive") {
     //res.locals.jwt is got from the isAuthenticated middleware
     return res.status(401).json({

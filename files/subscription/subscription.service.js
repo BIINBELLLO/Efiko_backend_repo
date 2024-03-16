@@ -62,19 +62,15 @@ class SubscriptionService {
       type = { status: "Active" }
     }
 
-    let allData = { ...params }
-  if (params.search || params.search == "") {
-    const { search, ...restOfData } = params
-    allData = { ...restOfData }
-  }
-    const total = await SubscriptionRepository.findSubscriptionWithParams({
+    const total = await SubscriptionRepository.findAllSubscriptionParams({
       ...type,
-      ...allData,
+      ...params,
     })
 
     const subscription = await SubscriptionRepository.findAllSubscriptionParams(
       {
         ...params,
+        ...type,
         limit,
         skip,
         sort,

@@ -118,13 +118,7 @@ class ProfileService {
     )
     if (error) return { success: false, msg: error }
 
-    let allData = { ...params }
- if (params.search || params.search == "") {
-   const { search, ...restOfData } = params
-   allData = { ...restOfData }
- }
-
-    const total = await UserRepository.findUserWithParams({ ...allData })
+    const total = await CurriculumRepository.findAllUserParams({ ...params })
     const allUsers = await CurriculumRepository.findAllUserParams({
       ...params,
       limit,

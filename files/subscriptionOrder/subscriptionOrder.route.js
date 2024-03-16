@@ -6,7 +6,7 @@ const {
   updateSubscriptionOrderController,
 } = require("./subscriptionOrder.controller")
 
-// subscriptionOrder.use(isAuthenticated)
+subscriptionOrder.use(isAuthenticated)
 
 //routes
 subscriptionOrder.route("/").post(createSubscriptionOrderController)

@@ -497,6 +497,64 @@ class SessionService {
       console.log("update zoom recording error", error.message)
     }
   }
+
+  static async assignStudentSessionService(id, payload) {
+    const { studentAssignedId } = payload
+
+    const confirmSession = await SessionRepository.findSingleSessionWithParams({
+      _id: new mongoose.Types.ObjectId(id),
+    })
+
+    if (!confirmSession) return { success: false, msg: SessionFailure.FETCH }
+    let extra = {}
+    let updateSession
+    if (studentAssignedId) {
+      if (confirmSession.book)
+        return { success: false, msg: "Current session already booked" }
+
+      extra = { studentId: new mongoose.Types.ObjectId(studentAssignedId) }
+      updateSession = await SessionRepository.updateSessionDetails(
+        { _id: new mongoose.Types.ObjectId(id) },
+        {
+          ...extra,
+          sessionFor: studentAssignedId,
+          book: true,
+        }
+      )
+    }
+
+    if (!updateSession) return { success: false, msg: SessionFailure.UPDATE }
+
+    const user = await UserRepository.findSingleUserWithParams({
+      _id: new mongoose.Types.ObjectId(studentAssignedId),
+    })
+
+    try {
+      Promise.all([
+        await NotificationRepository.createNotification({
+          userType: "Admin",
+          title: `Session Assigned`,
+          message: `Hi, you have assigned ${user.firstName} to a session`,
+        }),
+        await NotificationRepository.createNotification({
+          userType: "User",
+          recipientId: new mongoose.Types.ObjectId(user._id),
+          title: `Session Assigned`,
+          message: `Hi, you have been assigned to session: ${confirmSession.title}. Thank you`,
+        }),
+        await sendMailNotification(
+          `${user.email}`,
+          "Session Assigned",
+          { name: `${user.firstName}`, session: `${updateSession.title}` },
+          "ASSIGNED_SESSION"
+        ),
+      ])
+    } catch (error) {
+      console.log("error", error)
+    }
+
+    return { success: true, msg: SessionSuccess.UPDATE }
+  }
 }
 
 module.exports = { SessionService }

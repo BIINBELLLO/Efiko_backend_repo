@@ -32,6 +32,17 @@ const updateSessionController = async (req, res, next) => {
 
   return responseHandler(res, SUCCESS, data)
 }
+const assignStudentController = async (req, res, next) => {
+  const [error, data] = await manageAsyncOps(
+    SessionService.assignStudentSessionService(req.params.id, req.body)
+  )
+
+  if (error) return next(error)
+
+  if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))
+
+  return responseHandler(res, SUCCESS, data)
+}
 
 const getSessionController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
@@ -160,4 +171,5 @@ module.exports = {
   getReviewServiceController,
   getZoomSessionController,
   zoomWebhookController,
+  assignStudentController,
 }

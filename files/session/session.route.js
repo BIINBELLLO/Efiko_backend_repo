@@ -14,6 +14,7 @@ const {
   getZoomSessionController,
   zoomWebhookController,
   deleteSessionController,
+  assignStudentController,
 } = require("./session.controller")
 
 sessionRoute.route("/zoom/webhook").post(zoomWebhookController)
@@ -24,6 +25,7 @@ sessionRoute.use(isAuthenticated)
 sessionRoute.route("/").post(statusVerifier, createSessionController)
 
 sessionRoute.route("/:id").patch(statusVerifier, updateSessionController)
+sessionRoute.route("/assign/:id").patch(statusVerifier, assignStudentController)
 
 sessionRoute.route("/").get(getSessionController)
 sessionRoute.route("/:id").delete(deleteSessionController)

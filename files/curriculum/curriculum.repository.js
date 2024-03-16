@@ -70,7 +70,7 @@ class CurriculumRepository {
     const user = await User.find({
       ...restOfPayload,
       ...query,
-      profileUpdated: true,
+      // profileUpdated: true,
     })
       .sort(sort)
       .skip(currentSkip)

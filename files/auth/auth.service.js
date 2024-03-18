@@ -134,13 +134,16 @@ class AuthService {
       loginCode: otp,
     }
 
-    await sendMailNotification(
-      email,
-      "Login Code",
-      substitutional_parameters,
-      "LOGIN_CODE"
-    )
-
+    try {
+      await sendMailNotification(
+        email,
+        "Login Code",
+        substitutional_parameters,
+        "LOGIN_CODE"
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
     return { success: true, msg: AuthSuccess.OTP_SENT }
   }
 }

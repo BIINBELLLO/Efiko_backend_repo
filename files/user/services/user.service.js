@@ -141,9 +141,6 @@ class UserService {
       userProfile.tutorEducationDetails.nationalId
     ) {
       updatedProfile = true
-    } else {
-      userProfile.profileUpdated = true
-      await userProfile.save()
     }
 
     if (!userProfile.isVerified)
@@ -226,9 +223,6 @@ class UserService {
       !userProfile.studentEducationDetails.education
     ) {
       updatedProfile = false
-    } else {
-      userProfile.profileUpdated = true
-      await userProfile.save()
     }
 
     let token

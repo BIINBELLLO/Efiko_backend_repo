@@ -41,45 +41,48 @@ class ProfileService {
 
     if (!userProfile) return { success: false, msg: UserFailure.UPDATE }
 
-    if (status === "Inactive") {
-      const substitutional_parameters = {
-        name: userProfile.firstName,
+    try {
+      if (status === "Inactive") {
+        const substitutional_parameters = {
+          name: userProfile.firstName,
+        }
+
+        await sendMailNotification(
+          userProfile.email,
+          "Status Deactivated",
+          substitutional_parameters,
+          "INACTIVE"
+        )
+
+        await NotificationRepository.createNotification({
+          userTYpe: "User",
+          recipientId: new mongoose.Types.ObjectId(userProfile._id),
+          title: "Status Deactivated",
+          message: `Hi, your Efiko account has been deactivated`,
+        })
       }
+      if (status === "Active") {
+        const substitutional_parameters = {
+          name: userProfile.firstName,
+        }
 
-      await sendMailNotification(
-        userProfile.email,
-        "Status Deactivated",
-        substitutional_parameters,
-        "INACTIVE"
-      )
+        await sendMailNotification(
+          userProfile.email,
+          "Status Activated",
+          substitutional_parameters,
+          "ACTIVE"
+        )
 
-      await NotificationRepository.createNotification({
-        userTYpe: "User",
-        recipientId: new mongoose.Types.ObjectId(userProfile._id),
-        title: "Status Deactivated",
-        message: `Hi, your Efiko account has been deactivated`,
-      })
-    }
-    if (status === "Active") {
-      const substitutional_parameters = {
-        name: userProfile.firstName,
+        await NotificationRepository.createNotification({
+          userTYpe: "User",
+          recipientId: new mongoose.Types.ObjectId(userProfile._id),
+          title: "Status Activated",
+          message: `Hi, your Efiko account has been activated`,
+        })
       }
-
-      await sendMailNotification(
-        userProfile.email,
-        "Status Activated",
-        substitutional_parameters,
-        "ACTIVE"
-      )
-
-      await NotificationRepository.createNotification({
-        userTYpe: "User",
-        recipientId: new mongoose.Types.ObjectId(userProfile._id),
-        title: "Status Activated",
-        message: `Hi, your Efiko account has been activated`,
-      })
+    } catch (error) {
+      console.log("error", error)
     }
-
     return {
       success: true,
       msg: UserSuccess.UPDATE,

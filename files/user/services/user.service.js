@@ -34,7 +34,6 @@ class UserService {
     let verificationOtp = ""
 
     if (locals?.accountType === "superAdmin") {
-      console.log("working here one")
       const generatePassword = await AlphaNumeric(8)
 
       const user = await UserRepository.create({

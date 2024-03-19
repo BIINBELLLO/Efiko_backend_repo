@@ -120,20 +120,6 @@ class SessionService {
   static async updateSessionService(id, payload, params) {
     const { status, tutorId, book, time } = payload
 
-    const inactiveUser = await UserRepository.findSingleUserWithParams({
-      _id: new mongoose.Types.ObjectId(params),
-    })
-
-    if (
-      inactiveUser?.accountType === "student" &&
-      inactiveUser?.status == "Inactive"
-    )
-      return {
-        success: true,
-        msg: `Your account is currently Inactive`,
-        data: [],
-      }
-
     const confirmSession = await SessionRepository.findSingleSessionWithParams({
       _id: new mongoose.Types.ObjectId(id),
     })

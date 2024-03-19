@@ -1,6 +1,6 @@
 const { checkSchema } = require("express-validator")
 const userRoute = require("express").Router()
-const { isAuthenticated } = require("../../utils")
+const { isAuthenticated, userStatusVerifier } = require("../../utils")
 const { validate } = require("../../validations/validate")
 
 //controller files
@@ -27,9 +27,15 @@ userRoute
 
 userRoute
   .route("/login")
-  .post(validate(checkSchema(loginValidation)), userLoginController)
+  .post(
+    validate(checkSchema(loginValidation)),
+    userStatusVerifier,
+    userLoginController
+  )
 
-userRoute.route("/student-login").post(studentLoginCodeController)
+userRoute
+  .route("/student-login")
+  .post(userStatusVerifier, studentLoginCodeController)
 
 userRoute.route("/").get(getUserController)
 

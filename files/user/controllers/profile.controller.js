@@ -8,7 +8,7 @@ const getUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
     ProfileService.getUserService(req.query)
   )
-  console.log("user error", error)
+ 
   if (error) return next(error)
 
   if (!data.success) return next(new CustomError(data.msg, BAD_REQUEST, data))

@@ -228,18 +228,6 @@ const generateOtp = () => {
   return { otp, expiry }
 }
 
-const statusVerifier = (req, res, next) => {
-  if (res.locals.jwt.status === "Inactive") {
-    //res.locals.jwt is got from the isAuthenticated middleware
-    return res.status(401).json({
-      msg: "Unauthorized, your account is currently inactive",
-      status: 401,
-    })
-  } else {
-    next()
-  }
-}
-
 const adminStatusVerifier = async (req, res, next) => {
   const admin = await AdminRepository.fetchAdmin({ email: req.body.email })
 
@@ -254,6 +242,43 @@ const adminStatusVerifier = async (req, res, next) => {
     })
   }
   if (admin.status === "Inactive") {
+    //res.locals.jwt is got from the isAuthenticated middleware
+    return res.status(401).json({
+      message: "Unauthorized, your account is currently inactive",
+      errors: {
+        success: false,
+        msg: "Unauthorized, your account is currently inactive",
+      },
+      status: 401,
+    })
+  } else {
+    next()
+  }
+}
+
+const userStatusVerifier = async (req, res, next) => {
+  const user = await UserRepository.findSingleUserWithParams({
+    $or: [
+      {
+        email: req.body.email,
+      },
+      {
+        loginCode: req.body.loginCode,
+      },
+    ],
+  })
+
+  if (!user) {
+    return res.status(401).json({
+      message: "One or more details incorrect",
+      errors: {
+        success: false,
+        msg: "One or more details incorrect",
+      },
+      status: 401,
+    })
+  }
+  if (user.status === "Inactive") {
     //res.locals.jwt is got from the isAuthenticated middleware
     return res.status(401).json({
       message: "Unauthorized, your account is currently inactive",
@@ -290,7 +315,7 @@ module.exports = {
   manageAsyncOps,
   verifyWhoAmI,
   generateOtp,
-  statusVerifier,
   adminStatusVerifier,
   pagination,
+  userStatusVerifier,
 }

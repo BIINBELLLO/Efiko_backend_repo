@@ -117,7 +117,6 @@ class CurriculumService {
       }
 
     const pdfFileName = `${curriculum.uniqueId}_curriculum.pdf`
-    console.log("pdfFileName", pdfFileName)
 
     const pdfFilePath = path.join(
       __dirname,

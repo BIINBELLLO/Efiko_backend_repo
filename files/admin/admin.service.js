@@ -143,7 +143,7 @@ class AdminAuthService {
   static async updateAdminService(data, params) {
     const { status } = data
 
-    if (status !== "Active" || status !== "Inactive")
+    if (!status === "Active" || !status === "Inactive")
       return { success: false, msg: `status is either Active or Inactive` }
 
     const admin = await AdminRepository.updateAdminById(params.id, {
@@ -249,7 +249,6 @@ class AdminAuthService {
     if (!getAdmin) return { success: false, msg: authMessages.ADMIN_NOT_FOUND }
 
     let password = AlphaNumeric(8, "number")
-    console.log("password", password)
 
     const hashedPassword = await hashPassword(password)
 

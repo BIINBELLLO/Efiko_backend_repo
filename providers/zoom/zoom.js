@@ -48,7 +48,6 @@ class ZoomProviderService {
       })
       const accessToken = zoomMeetingResponse.data.access_token
       res.send(`Access Token: ${accessToken}`)
-      console.log("zoom response", zoomMeetingResponse.data)
     } catch (error) {
       console.log("new error", error)
     }

@@ -140,7 +140,6 @@ class TransactionService {
     await transaction.save()
 
     if (status === "complete") {
-      console.log("status1", status)
       const subscription =
         await SubscriptionRepository.findSingleSubscriptionWithParams({
           priceId,

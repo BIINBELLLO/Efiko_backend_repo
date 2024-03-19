@@ -32,7 +32,7 @@ class SubscriptionService {
       currency,
       amount
     )
-    console.log("product", product)
+
     const subscription = await SubscriptionRepository.create({
       priceId: product,
       currency,

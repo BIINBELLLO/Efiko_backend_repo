@@ -25,9 +25,11 @@ const adminVerifier = (req, res, next) => {
     //res.locals.jwt is got from the isAuthenticated middleware
     next()
   } else {
-    return res
-      .status(401)
-      .json({ result: "Unauthorized, Access Denied", status: 401 })
+    return res.status(401).json({
+      message: "Unauthorized Access Denied",
+      errors: { success: false, msg: "Unauthorized Access Denied" },
+      status: 401,
+    })
   }
 }
 
@@ -243,14 +245,22 @@ const adminStatusVerifier = async (req, res, next) => {
 
   if (!admin) {
     return res.status(401).json({
-      msg: "One or more details incorrect",
+      message: "One or more details incorrect",
+      errors: {
+        success: false,
+        msg: "One or more details incorrect",
+      },
       status: 401,
     })
   }
   if (admin.status === "Inactive") {
     //res.locals.jwt is got from the isAuthenticated middleware
     return res.status(401).json({
-      msg: "Unauthorized, your account is currently inactive",
+      message: "Unauthorized, your account is currently inactive",
+      errors: {
+        success: false,
+        msg: "Unauthorized, your account is currently inactive",
+      },
       status: 401,
     })
   } else {

@@ -28,20 +28,38 @@ class ProfileService {
     delete body.password
 
     const { status } = body
-
-    if (status !== "Active" || status !== "Inactive")
-      return { success: false, msg: `status is either Active or Inactive` }
-
-    const userProfile = await UserRepository.updateUserDetails(
-      { _id: new mongoose.Types.ObjectId(id) },
+    console.log("status", status)
+    let userProfile
+    if ((status && status === "Active") || (status && status === "Inactive")) {
+      userProfile = await UserRepository.updateUserDetails(
+        { _id: new mongoose.Types.ObjectId(id) },
+        {
+          $set: {
+            profileImage: image ? image?.secure_url : null,
+            ...body,
+          },
+        }
+      )
+    } else if (
+      (status && status !== "Active") ||
+      (status && status !== "Inactive")
+    ) {
       {
-        $set: {
-          profileImage: image ? image?.secure_url : null,
-          ...body,
-        },
+        return { success: false, msg: `status is either Active or Inactive` }
       }
-    )
+    }
 
+    if (!status) {
+      userProfile = await UserRepository.updateUserDetails(
+        { _id: new mongoose.Types.ObjectId(id) },
+        {
+          $set: {
+            profileImage: image ? image?.secure_url : null,
+            ...body,
+          },
+        }
+      )
+    }
     if (!userProfile) return { success: false, msg: UserFailure.UPDATE }
 
     try {

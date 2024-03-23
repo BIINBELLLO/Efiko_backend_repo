@@ -88,7 +88,6 @@ class AdminAuthService {
       fullName: admin.fullName,
       email: admin.email,
       status: admin.status,
-      action: admin.action,
       accountType: admin.accountType,
       userType: admin.userType,
       isAdmin: true,
@@ -143,7 +142,7 @@ class AdminAuthService {
   static async updateAdminService(data, params) {
     const { status } = data
 
-    if (!status === "Active" || !status === "Inactive")
+    if (status !== "Active" || status !== "Inactive")
       return { success: false, msg: `status is either Active or Inactive` }
 
     const admin = await AdminRepository.updateAdminById(params.id, {

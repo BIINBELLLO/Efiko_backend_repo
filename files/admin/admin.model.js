@@ -23,11 +23,6 @@ const adminSchema = new mongoose.Schema(
       enum: ["Active", "Inactive"],
       default: "Active",
     },
-    action: {
-      type: String,
-      enum: ["Activate", "Deactivate"],
-      default: "Deactivate",
-    },
     accountType: {
       type: String,
       enum: ["superAdmin", "normalAdmin"],

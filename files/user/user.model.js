@@ -78,11 +78,6 @@ const userSchema = new mongoose.Schema(
       enum: ["Active", "Inactive"],
       default: "Inactive",
     },
-    action: {
-      type: String,
-      enum: ["Activate", "Deactivate"],
-      default: "Deactivate",
-    },
     verificationOtp: {
       type: String,
     },

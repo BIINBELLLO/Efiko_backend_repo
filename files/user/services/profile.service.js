@@ -29,7 +29,7 @@ class ProfileService {
 
     const { status } = body
 
-    if (!status === "Active" || !status === "Inactive")
+    if (status !== "Active" || status !== "Inactive")
       return { success: false, msg: `status is either Active or Inactive` }
 
     const userProfile = await UserRepository.updateUserDetails(

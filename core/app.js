@@ -13,6 +13,7 @@ const routes = require("./routes")
 const app = express()
 
 const application = () => {
+  app.use(cors())
   app.use(express.static("public"))
   app.use(express.json())
   app.use(express.urlencoded({ extended: false }))
@@ -20,7 +21,6 @@ const application = () => {
   app.use(xss())
   app.use(mongoSanitize())
   app.use(compression())
-  app.use(cors())
   app.use(emailValidation)
   app.use(fileUpload({ useTempFiles: true }))
 

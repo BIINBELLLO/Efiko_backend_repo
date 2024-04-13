@@ -76,7 +76,6 @@ class UserService {
 
     if (accountType === "tutor") {
       verificationOtp = otp
-      approvalStatus = "Pending"
     }
 
     //hash password

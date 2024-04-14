@@ -83,6 +83,7 @@ class UserService {
       ...payload,
       verificationOtp,
       status: studentStatus,
+      approvalStatus: "Approved",
       password: await hashPassword(payload.password),
     })
 

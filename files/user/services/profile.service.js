@@ -19,11 +19,10 @@ const {
 class ProfileService {
   static async updateProfileService(id, payload) {
     let uploadImage
-    uploadImage = await uploadMultiple(payload)
-    // if (payload.files && payload.files.image) {
-    // }
+    if (payload.files) {
+      uploadImage = await uploadMultiple(payload)
+    }
     const { nationalId, educationDoc, image } = uploadImage
-    console.log("image", image)
     const { body } = payload
     delete body.email
     delete body.password
@@ -59,15 +58,6 @@ class ProfileService {
       )
     }
 
-    if (!status) {
-      userProfile = await UserRepository.updateUserDetails(
-        { _id: new mongoose.Types.ObjectId(id) },
-        {
-          ...body,
-          profileImage: image?.secure_url,
-        }
-      )
-    }
     if (!userProfile) return { success: false, msg: UserFailure.UPDATE }
 
     try {

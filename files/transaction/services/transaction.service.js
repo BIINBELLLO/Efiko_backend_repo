@@ -59,7 +59,6 @@ class TransactionService {
 
     if (!checkout)
       return { success: false, msg: `unable to successfully checkout` }
-
     const { id } = checkout
 
     if (!id)

@@ -51,7 +51,7 @@ class ProfileService {
         { _id: new mongoose.Types.ObjectId(id) },
         {
           ...body,
-          profileImage: uploadImage.image,
+          profileImage: uploadImage?.image,
           "tutorEducationDetails.nationalId": uploadImage?.nationalId,
           "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
         }

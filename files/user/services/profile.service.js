@@ -34,7 +34,7 @@ class ProfileService {
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
         {
-          profileImage: image ? image?.secure_url : null,
+          profileImage: image?.secure_url,
           ...body,
         }
       )
@@ -47,20 +47,12 @@ class ProfileService {
       }
     }
 
-    if (!status && image) {
+    if (!status) {
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
         {
           ...body,
           profileImage: image,
-        }
-      )
-    }
-    if (!status && nationalId) {
-      userProfile = await UserRepository.updateUserDetails(
-        { _id: new mongoose.Types.ObjectId(id) },
-        {
-          ...body,
           "tutorEducationDetails.nationalId": nationalId,
           "tutorEducationDetails.educationDoc": educationDoc,
         }

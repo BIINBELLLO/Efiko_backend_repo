@@ -19,8 +19,10 @@ class UserService {
   static async createUser(payload, locals) {
     const { firstName, email, accountType, fullName } = payload
     let studentStatus
+    let approval
     if (accountType === "student") {
       studentStatus = "Active"
+      approval = "Approved"
     }
 
     const userExist = await UserRepository.validateUser({
@@ -83,7 +85,7 @@ class UserService {
       ...payload,
       verificationOtp,
       status: studentStatus,
-      approvalStatus: "Approved",
+      approvalStatus: approval,
       password: await hashPassword(payload.password),
     })
 

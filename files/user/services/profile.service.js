@@ -4,7 +4,7 @@ const {
   verifyPassword,
   queryConstructor,
 } = require("../../../utils")
-const { uploadManager } = require("../../../utils/multer")
+const { uploadManager, uploadMultiple } = require("../../../utils/multer")
 const { UserSuccess, UserFailure } = require("../user.messages")
 const { UserRepository } = require("../user.repository")
 const { SessionRepository } = require("../../session/session.repository")
@@ -18,10 +18,12 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
-    let image
-    if (payload.files && payload.files.image) {
-      image = await uploadManager(payload, "image")
-    }
+    let uploadImage
+    uploadImage = await uploadMultiple(payload)
+    // if (payload.files && payload.files.image) {
+    // }
+    const { nationalId, educationDoc, image } = uploadImage
+    console.log("image", image)
     const { body } = payload
     delete body.email
     delete body.password
@@ -32,10 +34,8 @@ class ProfileService {
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
         {
-          $set: {
-            profileImage: image ? image?.secure_url : null,
-            ...body,
-          },
+          profileImage: image ? image?.secure_url : null,
+          ...body,
         }
       )
     } else if (
@@ -45,6 +45,26 @@ class ProfileService {
       {
         return { success: false, msg: `status is either Active or Inactive` }
       }
+    }
+
+    if (!status && image) {
+      userProfile = await UserRepository.updateUserDetails(
+        { _id: new mongoose.Types.ObjectId(id) },
+        {
+          ...body,
+          profileImage: image,
+        }
+      )
+    }
+    if (!status && nationalId) {
+      userProfile = await UserRepository.updateUserDetails(
+        { _id: new mongoose.Types.ObjectId(id) },
+        {
+          ...body,
+          "tutorEducationDetails.nationalId": nationalId,
+          "tutorEducationDetails.educationDoc": educationDoc,
+        }
+      )
     }
 
     if (!status) {

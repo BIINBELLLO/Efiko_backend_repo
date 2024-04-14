@@ -22,13 +22,11 @@ class ProfileService {
     if (payload.files && payload.files.image) {
       image = await uploadManager(payload, "image")
     }
-
     const { body } = payload
     delete body.email
     delete body.password
 
     const { status } = body
-    console.log("status", status)
     let userProfile
     if ((status && status === "Active") || (status && status === "Inactive")) {
       userProfile = await UserRepository.updateUserDetails(
@@ -53,10 +51,8 @@ class ProfileService {
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
         {
-          $set: {
-            profileImage: image ? image?.secure_url : null,
-            ...body,
-          },
+          ...body,
+          profileImage: image?.secure_url,
         }
       )
     }

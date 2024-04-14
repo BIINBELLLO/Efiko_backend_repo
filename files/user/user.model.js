@@ -42,8 +42,8 @@ const userSchema = new mongoose.Schema(
     },
     studentEducationDetails: {
       education: { type: String },
-      majors: { type: String },
-      subject: [{ type: String }],
+      careerInterest: { type: String },
+      subjectOfInterest: [{ type: String }],
     },
     password: { type: String },
     description: { type: String },

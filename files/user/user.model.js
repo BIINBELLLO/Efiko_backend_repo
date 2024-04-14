@@ -33,7 +33,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    subjectInterest: [{ type: String }],
     tutorEducationDetails: {
       education: { type: String },
       teachingExperience: { type: String },

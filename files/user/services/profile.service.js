@@ -22,7 +22,7 @@ class ProfileService {
     if (payload.files) {
       uploadImage = await uploadMultiple(payload)
     }
-    const { nationalId, educationDoc, image } = uploadImage
+
     const { body } = payload
     delete body.email
     delete body.password
@@ -51,9 +51,9 @@ class ProfileService {
         { _id: new mongoose.Types.ObjectId(id) },
         {
           ...body,
-          profileImage: image,
-          "tutorEducationDetails.nationalId": nationalId,
-          "tutorEducationDetails.educationDoc": educationDoc,
+          profileImage: uploadImage.image,
+          "tutorEducationDetails.nationalId": uploadImage?.nationalId,
+          "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
         }
       )
     }

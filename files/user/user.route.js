@@ -16,6 +16,7 @@ const {
   educationDocController,
   nationalIdController,
   getUserController,
+  changePasswordController,
 } = require("./controllers/profile.controller")
 const { createUser } = require("../../validations/users/createUser.validation")
 const { loginValidation } = require("../../validations/users/loginValidation")
@@ -50,5 +51,7 @@ userRoute.patch("/national-id/:id", nationalIdController)
 userRoute.patch("/profile-image", profileImageController)
 
 userRoute.get("/profile-session/:id", getProfileSessionController)
+
+userRoute.patch("/change-password", changePasswordController)
 
 module.exports = userRoute

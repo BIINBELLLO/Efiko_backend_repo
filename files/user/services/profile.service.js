@@ -190,14 +190,14 @@ class ProfileService {
 
     const isPassword = await verifyPassword(currentPassword, user.password)
 
-    if (!isPassword) return { success: false, msg: UserFailure.UPDATE }
+    if (!isPassword) return { success: false, msg: `Password mismatch` }
 
     user.password = await hashPassword(newPassword)
     const updateUser = await user.save()
 
     if (!updateUser) return { success: false, msg: UserFailure.UPDATE }
 
-    return { success: true, msg: UserSuccess.UPDATE }
+    return { success: true, msg: `Password changed successfully` }
   }
 
   static async getUserProfileService(payload) {

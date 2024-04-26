@@ -50,6 +50,8 @@ class SessionService {
     const { meeting_url, password, purpose, duration, meetingId, meetingTime } =
       initiateSession
 
+    let meetingDate = new Date(meetingTime)
+
     const session = await SessionRepository.create({
       title: purpose,
       free: payload.free,
@@ -62,7 +64,7 @@ class SessionService {
       duration,
       meetingLink: meeting_url,
       curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
-      date: meetingTime,
+      date: meetingDate,
       time: payload.time,
       passCode: "123456",
       meetingPassword: password,
@@ -352,8 +354,15 @@ class SessionService {
 
     let recorded = { type: "not-recorded" }
     let extras = {}
-    // if (locals.accountType === "student" || locals.accountType === "tutor") {
-    extras = { date: { $gte: new Date().toISOString() } }
+    // Get the current date and time
+    const currentDate = new Date().toISOString()
+
+    // Construct the extras object with the current date and time
+    extras = {
+      date: {
+        $gt: currentDate,
+      },
+    }
     // }
     if (params.type && params.type === "recorded") {
       recorded = {}

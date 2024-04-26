@@ -31,7 +31,7 @@ class UserService {
 
     if (userExist) return { success: false, msg: UserFailure.EXIST }
 
-    const { otp, expiry } = generateOtp()
+    const { otp } = generateOtp()
 
     let verificationOtp = ""
 

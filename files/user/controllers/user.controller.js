@@ -6,7 +6,7 @@ const { UserService } = require("../../user/services/user.service")
 
 const createUserController = async (req, res, next) => {
   const [error, data] = await manageAsyncOps(
-    UserService.createUser(req.body, res.locals.jwt)
+    UserService.createUser(req, res.locals.jwt)
   )
 
   if (error) return next(error)

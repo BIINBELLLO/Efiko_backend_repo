@@ -40,10 +40,17 @@ const userSchema = new mongoose.Schema(
       educationDoc: { type: String }, // Make sure to define it as an array of strings
       nationalId: { type: String },
     },
+    studentSubjectInterest: {
+      subjectOne: String,
+      subjectTwo: String,
+      subjectThree: String,
+      subjectFour: String,
+      subjectFive: String,
+      subjectSix: String,
+    },
     studentEducationDetails: {
       education: { type: String },
       careerInterest: { type: String },
-      subjectOfInterest: [{ type: String }],
     },
     password: { type: String },
     description: { type: String },

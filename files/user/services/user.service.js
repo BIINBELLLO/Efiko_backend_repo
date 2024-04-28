@@ -14,10 +14,16 @@ const { sendMailNotification } = require("../../../utils/email")
 const {
   NotificationRepository,
 } = require("../../notification/notification.repository")
+const { uploadManager } = require("../../../utils/multer")
 
 class UserService {
   static async createUser(payload, locals) {
-    const { firstName, email, accountType, fullName } = payload
+    const { body } = payload
+    let image
+    if (payload.files) {
+      image = await uploadManager(payload, "profileImage")
+    }
+    const { firstName, email, accountType, fullName } = body
     let studentStatus
     let approval
     if (accountType === "student") {
@@ -39,7 +45,8 @@ class UserService {
       const generatePassword = await AlphaNumeric(8)
 
       const user = await UserRepository.create({
-        ...payload,
+        ...body,
+        profileImage: image?.secure_url,
         status: studentStatus,
         isVerified: true,
         password: await hashPassword(generatePassword),
@@ -82,11 +89,12 @@ class UserService {
 
     //hash password
     const user = await UserRepository.create({
-      ...payload,
+      ...body,
       verificationOtp,
+      profileImage: image?.secure_url,
       status: studentStatus,
       approvalStatus: approval,
-      password: await hashPassword(payload.password),
+      password: await hashPassword(body.password),
     })
 
     if (!user._id) return { success: false, msg: UserFailure.CREATE }

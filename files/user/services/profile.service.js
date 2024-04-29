@@ -47,8 +47,6 @@ class ProfileService {
     }
 
     if (body.studentSubjectInterest) {
-      console.log("body.studentSubjectInterest", body.studentSubjectInterest)
-      let subjectInterest = [...body.studentSubjectInterest]
       const { studentSubjectInterest, ...restOfBody } = body
       // Parse the JSON string value of studentSubjectInterest into an array
       const parsedStudentSubjectInterest = JSON.parse(studentSubjectInterest)

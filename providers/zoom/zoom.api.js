@@ -12,14 +12,18 @@ class ZoomAPiServiceProvider {
         "Content-Type": "application/json",
       }
 
-      const timeAndDate = `${body.date}T${body.time}:00Z`
+      const timeAndDate = `${body.date}T${body.time}:00.000Z`
+
+      const currentDate = new Date(timeAndDate)
+
+      currentDate.toLocaleString()
 
       const payload = {
         topic: body.title,
-        start_time: timeAndDate,
+        start_time: currentDate,
         type: 2,
         duration: body.duration,
-        timezone: body.timezone,
+        timezone: "UTC",
         agenda: body.description,
         settings: {
           use_pmi: true,

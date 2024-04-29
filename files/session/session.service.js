@@ -50,8 +50,6 @@ class SessionService {
     const { meeting_url, password, purpose, duration, meetingId, meetingTime } =
       initiateSession
 
-    let meetingDate = new Date(meetingTime)
-
     const session = await SessionRepository.create({
       title: purpose,
       free: payload.free,
@@ -64,7 +62,7 @@ class SessionService {
       duration,
       meetingLink: meeting_url,
       curriculumId: new mongoose.Types.ObjectId(payload.curriculumId),
-      date: meetingDate,
+      date: meetingTime,
       time: payload.time,
       passCode: "123456",
       meetingPassword: password,

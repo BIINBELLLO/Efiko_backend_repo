@@ -53,7 +53,7 @@ class ProfileService {
         {
           ...body,
           profileImage: uploadImage?.image,
-          $push: { studentSubjectInterest: body.studentSubjectInterest },
+          $push: { subjectOfInterest: body.subjectOfInterest },
           "tutorEducationDetails.nationalId": uploadImage?.nationalId,
           "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
         }

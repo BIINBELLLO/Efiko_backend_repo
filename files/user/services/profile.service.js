@@ -18,6 +18,7 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
+    console.log("the form data payload", payload.body)
     let uploadImage
     if (payload.files) {
       uploadImage = await uploadMultiple(payload)

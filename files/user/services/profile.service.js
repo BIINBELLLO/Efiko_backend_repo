@@ -46,26 +46,13 @@ class ProfileService {
       }
     }
 
-    if (body.studentSubjectInterest) {
-      const { studentSubjectInterest, ...restOfBody } = body
-      // Parse the JSON string value of studentSubjectInterest into an array
-      const parsedStudentSubjectInterest = JSON.parse(studentSubjectInterest)
-
-      userProfile = await UserRepository.updateUserDetails(
-        { _id: new mongoose.Types.ObjectId(id) },
-        {
-          $addToSet: {
-            studentSubjectInterest: { $each: parsedStudentSubjectInterest },
-          },
-          $set: { ...restOfBody, profileImage: uploadImage?.image }, // Update other properties as well
-        }
-      )
-    } else if (!status) {
+    if (!status) {
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
         {
           ...body,
           profileImage: uploadImage?.image,
+          $push: { studentSubjectInterest: body.studentSubjectInterest },
           "tutorEducationDetails.nationalId": uploadImage?.nationalId,
           "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
         }

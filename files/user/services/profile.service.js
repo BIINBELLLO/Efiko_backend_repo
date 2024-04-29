@@ -48,12 +48,13 @@ class ProfileService {
     }
 
     if (!status) {
+      const { subjectOfInterest, ...restOfBody } = body
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
         {
-          ...body,
+          ...restOfBody,
           profileImage: uploadImage?.image,
-          $push: { subjectOfInterest: body.subjectOfInterest },
+          $push: { subjectOfInterest: body?.subjectOfInterest },
           "tutorEducationDetails.nationalId": uploadImage?.nationalId,
           "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
         }

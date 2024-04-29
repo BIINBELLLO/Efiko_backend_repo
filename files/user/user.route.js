@@ -40,7 +40,7 @@ userRoute
 
 userRoute.route("/").get(getUserController)
 
-// userRoute.use(isAuthenticated)
+userRoute.use(isAuthenticated)
 
 userRoute.patch("/update/:id", updateUserProfileController)
 

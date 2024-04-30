@@ -18,7 +18,6 @@ const {
 
 class ProfileService {
   static async updateProfileService(id, payload) {
-    console.log("the form data payload", payload.body)
     let uploadImage
     if (payload.files) {
       uploadImage = await uploadMultiple(payload)
@@ -48,16 +47,27 @@ class ProfileService {
     }
 
     if (!status) {
-      const { subjectOfInterest, ...restOfBody } = body
+      let subjectOfInterest = []
+      for (const key in payload.body) {
+        if (key.startsWith("subjectOfInterest[")) {
+          const index = parseInt(key.match(/\[(.*?)\]/)[1]) // Extract index from key
+          subjectOfInterest[index] = payload.body[key]
+        }
+      }
+
+      let updateObject = {
+        ...payload.body, // Assuming payload.body contains other user details
+        profileImage: uploadImage?.image,
+        "tutorEducationDetails.nationalId": uploadImage?.nationalId,
+        "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
+      }
+
+      if (subjectOfInterest.length > 0) {
+        updateObject.subjectOfInterest = subjectOfInterest
+      }
       userProfile = await UserRepository.updateUserDetails(
         { _id: new mongoose.Types.ObjectId(id) },
-        {
-          ...restOfBody,
-          profileImage: uploadImage?.image,
-          $push: { subjectOfInterest: body?.subjectOfInterest },
-          "tutorEducationDetails.nationalId": uploadImage?.nationalId,
-          "tutorEducationDetails.educationDoc": uploadImage?.educationDoc,
-        }
+        updateObject
       )
     }
 
